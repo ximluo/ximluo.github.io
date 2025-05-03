@@ -205,31 +205,34 @@ function App() {
   /* track if device is mobile */
   const [isMobile, setIsMobile] = useState(false);
   
-  /* track safe area top */
-  const [safeAreaTop, setSafeAreaTop] = useState('15px');
+  /* track safe area top and bottom */
+const [safeAreaTop, setSafeAreaTop] = useState('15px');
+const [safeAreaBottom, setSafeAreaBottom] = useState('15px');
 
-  /* check device type and safe area */
-  useEffect(() => {
-    const checkDeviceAndSafeArea = () => {
-      // Only mobile devices (not tablets) should have different nav behavior
-      const mobile = window.innerWidth <= 480;
-      setIsMobile(mobile);
-      
-      // Check for safe area insets
-      if (mobile) {
-        // Use safe area inset for mobile devices
-        setSafeAreaTop('max(15px, env(safe-area-inset-top))');
-      } else {
-        // Standard padding for desktop
-        setSafeAreaTop('15px');
-      }
-    };
+/* check device type and safe area */
+useEffect(() => {
+  const checkDeviceAndSafeArea = () => {
+    // Only mobile devices (not tablets) should have different nav behavior
+    const mobile = window.innerWidth <= 480;
+    setIsMobile(mobile);
+    
+    // Check for safe area insets
+    if (mobile) {
+      // Use safe area inset for mobile devices
+      setSafeAreaTop('max(15px, env(safe-area-inset-top))');
+      setSafeAreaBottom('max(15px, env(safe-area-inset-bottom))');
+    } else {
+      // Standard padding for desktop
+      setSafeAreaTop('15px');
+      setSafeAreaBottom('15px');
+    }
+  };
 
-    checkDeviceAndSafeArea();
-    window.addEventListener('resize', checkDeviceAndSafeArea);
+  checkDeviceAndSafeArea();
+  window.addEventListener('resize', checkDeviceAndSafeArea);
 
-    return () => window.removeEventListener('resize', checkDeviceAndSafeArea);
-  }, []);
+  return () => window.removeEventListener('resize', checkDeviceAndSafeArea);
+}, []);
   
   /* theme side‑effects */
   useEffect(() => {
@@ -294,7 +297,7 @@ function App() {
         className={`fade ${phase >= 1 ? 'show' : ''}`}
         style={{
           width: '100vw', 
-          height: '100vh',
+          height: '100dvh',
           display: 'flex', 
           justifyContent: 'center', 
           alignItems: 'center',
