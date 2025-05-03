@@ -47,6 +47,28 @@ const GradientBackground: React.FC<GradientBackgroundProps> = ({
     return /Safari/i.test(ua) && !/Chrome|Chromium|CriOS/i.test(ua);
   }, []);
 
+  const isMobileOrTablet = useMemo(() => {
+    if (typeof navigator === "undefined") return false;
+    const ua = navigator.userAgent;
+    // Check for mobile/tablet using multiple patterns
+    return (
+      /Android/i.test(ua) || 
+      /webOS/i.test(ua) || 
+      /iPhone/i.test(ua) || 
+      /iPad/i.test(ua) || 
+      /iPod/i.test(ua) || 
+      /BlackBerry/i.test(ua) || 
+      /Windows Phone/i.test(ua) ||
+      /Tablet/i.test(ua) ||
+      // Additional check for touch screen devices
+      ('ontouchstart' in window) ||
+      (navigator.maxTouchPoints > 0)
+    );
+  }, []);
+
+  // If mobile/tablet, treat as Safari (no goo filter, blur on circles)
+  const useSafariMode = isSafari || isMobileOrTablet;
+
   const containerRef = useRef<HTMLDivElement>(null);
   const interBubbleRef = useRef<HTMLDivElement>(null);
   const noiseCanvasRef = useRef<HTMLCanvasElement>(null);
@@ -62,6 +84,38 @@ const GradientBackground: React.FC<GradientBackgroundProps> = ({
 
   /* ---------- mouse‑follow bubble & noise ---------- */
   useEffect(() => {
+    // Skip mouse tracking on mobile/tablet
+    if (isMobileOrTablet) {
+      const canvas = noiseCanvasRef.current;
+      if (canvas) {
+        const ctx = canvas.getContext("2d")!;
+        const paint = () => {
+          canvas.width = window.innerWidth;
+          canvas.height = window.innerHeight;
+          const img = ctx.createImageData(canvas.width, canvas.height);
+          const buf = img.data;
+          for (let y = 0; y < canvas.height; y += 2) {
+            for (let x = 0; x < canvas.width; x += 2) {
+              const i = (y * canvas.width + x) * 4;
+              if (Math.random() > 0.2) {
+                const s = (Math.random() * 256) | 0;
+                buf[i] = buf[i + 1] = buf[i + 2] = s;
+                buf[i + 3] = 35;
+              }
+            }
+          }
+          ctx.putImageData(img, 0, 0);
+        };
+        paint();
+        window.addEventListener("resize", paint);
+        return () => {
+          window.removeEventListener("resize", paint);
+        };
+      }
+      return;
+    }
+
+    // Desktop mouse tracking
     let curX = 0,
       curY = 0,
       tgX = 0,
@@ -111,7 +165,7 @@ const GradientBackground: React.FC<GradientBackgroundProps> = ({
       };
     }
     return () => window.removeEventListener("mousemove", onMouse);
-  }, []);
+  }, [isMobileOrTablet]);
 
   /* ---------- helper to make circles ---------- */
   const circle = (
@@ -132,8 +186,8 @@ const GradientBackground: React.FC<GradientBackgroundProps> = ({
         height: "var(--circle-size)",
         background: `radial-gradient(circle at center, rgba(var(${varName}),0.6) 0%, rgba(var(${varName}),0) 50%) no-repeat`,
         mixBlendMode: "var(--blending)" as React.CSSProperties["mixBlendMode"],
-        /* Safari needs blur on each circle, Chrome uses wrapper filter */
-        filter: isSafari ? "blur(40px)" : "none",
+        /* Safari/Mobile/Tablet needs blur on each circle, Chrome desktop uses wrapper filter */
+        filter: useSafariMode ? "blur(40px)" : "none",
         ...extra,
       }}
     />
@@ -165,8 +219,8 @@ const GradientBackground: React.FC<GradientBackgroundProps> = ({
         }}
       />
 
-      {/* goo filter for Chrome / Edge / Firefox only */}
-      {!isSafari && (
+      {/* goo filter for Chrome / Edge / Firefox desktop only */}
+      {!useSafariMode && (
         <svg style={{ position: "absolute", width: 0, height: 0 }}>
           <defs>
             <filter id="goo">
@@ -188,8 +242,8 @@ const GradientBackground: React.FC<GradientBackgroundProps> = ({
         style={{
           position: "absolute",
           inset: 0,
-          /* Chrome gets big gooey filter; Safari keeps none */
-          filter: isSafari ? "none" : "url(#goo) blur(40px)",
+          /* Chrome desktop gets big gooey filter; Safari/mobile/tablet keeps none */
+          filter: useSafariMode ? "none" : "url(#goo) blur(40px)",
           zIndex: 1,
         }}
       >
@@ -231,21 +285,23 @@ const GradientBackground: React.FC<GradientBackgroundProps> = ({
           opacity: 0.5,
         })}
 
-        {/* mouse‑tracked bubble */}
-        <div
-          ref={interBubbleRef}
-          style={{
-            position: "absolute",
-            background: `radial-gradient(circle at center, rgba(var(--color-interactive),0.5) 0%, rgba(var(--color-interactive),0) 50%)`,
-            mixBlendMode: "var(--blending)" as React.CSSProperties["mixBlendMode"],
-            width: "140%",
-            height: "140%",
-            top: "-70%",
-            left: "-70%",
-            opacity: 0.6,
-            filter: isSafari ? "blur(40px)" : "none",
-          }}
-        />
+        {/* mouse‑tracked bubble - only render on desktop */}
+        {!isMobileOrTablet && (
+          <div
+            ref={interBubbleRef}
+            style={{
+              position: "absolute",
+              background: `radial-gradient(circle at center, rgba(var(--color-interactive),0.5) 0%, rgba(var(--color-interactive),0) 50%)`,
+              mixBlendMode: "var(--blending)" as React.CSSProperties["mixBlendMode"],
+              width: "140%",
+              height: "140%",
+              top: "-70%",
+              left: "-70%",
+              opacity: 0.6,
+              filter: useSafariMode ? "blur(40px)" : "none",
+            }}
+          />
+        )}
       </div>
 
       {/* slot for children */}
