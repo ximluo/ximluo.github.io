@@ -212,7 +212,7 @@ function App() {
   useEffect(() => {
     const checkDeviceAndSafeArea = () => {
       // Only mobile devices (not tablets) should have different nav behavior
-      const mobile = window.innerWidth <= 410;
+      const mobile = window.innerWidth <= 480;
       setIsMobile(mobile);
       
       // Check for safe area insets
