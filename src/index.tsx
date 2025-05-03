@@ -12,6 +12,7 @@ const root = ReactDOM.createRoot(
 root.render(
   <React.StrictMode>
     <BrowserRouter basename={process.env.PUBLIC_URL}>
+        <CustomCursor /> 
         <App />
     </BrowserRouter>
   </React.StrictMode>
