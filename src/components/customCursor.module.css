@@ -1,7 +1,7 @@
 body {
   cursor: none;
 }
-   
+  
 .cursor {
   position: fixed;
   top: 0;
@@ -10,18 +10,18 @@ body {
   height: 24px;
   border-radius: 50%;
   background: transparent; /* No fill by default */
-  border: 2.5px solid var(--cursor-border-color, rgba(255, 255, 255, 0.7)); /* Dynamic border color */
+  border: 2.5px solid var(--cursor-color, rgba(255, 255, 255, 0.7)); /* Theme-dependent border color */
   pointer-events: none;
   transform: translate3d(-50%, -50%, 0) scale(1); /* Center the cursor */
   transition: background-color 0.2s ease, border-color 0.2s ease;
   will-change: transform;
   z-index: 9999;
-  box-shadow: var(--cursor-box-shadow, 0 0 8px rgba(255, 255, 255, 0.6)); /* Dynamic glow */
+  box-shadow: var(--cursor-glow, 0 0 8px rgba(255, 255, 255, 0.6)); /* Theme-dependent glow */
 }
 
 /* Style when hovering over clickable elements */
 .cursor.hovering {
   background-color: rgba(255, 255, 255, 0.1); /* Slight fill */
-  border-color: var(--cursor-hover-border-color, rgba(255, 105, 180, 0.7)); /* Dynamic border on hover */
-  box-shadow: var(--cursor-hover-box-shadow, 0 0 12px rgba(255, 105, 180, 0.6)); /* Dynamic glow on hover */
+  border-color: var(--cursor-hover-color, rgba(255, 255, 255, 0.7)); /* Theme-dependent border on hover */
+  box-shadow: var(--cursor-hover-glow, 0 0 12px rgba(255, 255, 255, 0.6)); /* Theme-dependent glow on hover */
 }

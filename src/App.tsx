@@ -8,13 +8,13 @@ type ThemeType = 'bunny' | 'water';
 
 const themes = {
   bunny: {
-    "--color-text": "rgb(112, 22, 153)",
+    "--color-text": "rgb(121, 85, 189)",
     "--color-text-secondary": "rgba(249, 240, 251, 1)",
     "--color-accent-primary": "rgba(223, 30, 155, 1)",
     "--button-bg": "rgba(223, 30, 155, 0.8)",
     "--button-bg-light": "rgba(223, 30, 155, 0.2)",
     "--button-text": "rgba(249, 240, 251, 1)",
-    "--border-color": "rgba(223, 30, 155, 1)",
+    "--border-color": "rgb(152, 128, 220)",
     "--outer-bg": "#a892e7",
     "--cursor-color": "rgba(223, 30, 155, 0.7)",
     "--cursor-glow": "0 0 8px rgba(223, 30, 155, 0.6)",
@@ -84,25 +84,47 @@ const NavButton = ({
 );
 
 const CustomCursorWrapper = ({ theme }: { theme: ThemeType }) => {
+  const [isDesktop, setIsDesktop] = useState(false);
+
   useEffect(() => {
-    document.documentElement.style.setProperty(
-      '--cursor-border-color',
-      theme === 'bunny' ? themes.bunny["--cursor-color"] : themes.water["--cursor-color"]
-    );
-    document.documentElement.style.setProperty(
-      '--cursor-box-shadow',
-      theme === 'bunny' ? themes.bunny["--cursor-glow"] : themes.water["--cursor-glow"]
-    );
-    document.documentElement.style.setProperty(
-      '--cursor-hover-border-color',
-      theme === 'bunny' ? themes.bunny["--cursor-hover-color"] : themes.water["--cursor-hover-color"]
-    );
-    document.documentElement.style.setProperty(
-      '--cursor-hover-box-shadow',
-      theme === 'bunny' ? themes.bunny["--cursor-hover-glow"] : themes.water["--cursor-hover-glow"]
-    );
-  }, [theme]);
-  return <CustomCursor />;
+    // Check if the device is desktop (wider than iPad width)
+    const checkDevice = () => {
+      // Consider desktop if width > 1024px (common tablet breakpoint)
+      setIsDesktop(window.innerWidth > 1024);
+    };
+
+    // Initial check
+    checkDevice();
+
+    // Listen for resize events
+    window.addEventListener('resize', checkDevice);
+
+    return () => window.removeEventListener('resize', checkDevice);
+  }, []);
+
+  useEffect(() => {
+    if (isDesktop) {
+      document.documentElement.style.setProperty(
+        '--cursor-border-color',
+        theme === 'bunny' ? themes.bunny["--cursor-color"] : themes.water["--cursor-color"]
+      );
+      document.documentElement.style.setProperty(
+        '--cursor-box-shadow',
+        theme === 'bunny' ? themes.bunny["--cursor-glow"] : themes.water["--cursor-glow"]
+      );
+      document.documentElement.style.setProperty(
+        '--cursor-hover-border-color',
+        theme === 'bunny' ? themes.bunny["--cursor-hover-color"] : themes.water["--cursor-hover-color"]
+      );
+      document.documentElement.style.setProperty(
+        '--cursor-hover-box-shadow',
+        theme === 'bunny' ? themes.bunny["--cursor-hover-glow"] : themes.water["--cursor-hover-glow"]
+      );
+    }
+  }, [theme, isDesktop]);
+
+  // Only render the custom cursor on desktop
+  return isDesktop ? <CustomCursor /> : null;
 };
 
 /* ------------------------------------------------------------------ */
@@ -179,6 +201,22 @@ function App() {
   /* save original text values for re-scrambling */
   const [originalTop] = useState("SOFTWARE ENGINEER");
   const [originalBot] = useState("PRODUCT DESIGNER");
+
+  /* track if device is mobile */
+  const [isMobile, setIsMobile] = useState(false);
+
+  /* check device type */
+  useEffect(() => {
+    const checkMobile = () => {
+      // Only mobile devices (not tablets) should have different nav behavior
+      setIsMobile(window.innerWidth <= 480);
+    };
+
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   /* theme side‑effects */
   useEffect(() => {
@@ -269,9 +307,10 @@ function App() {
                 alignItems: 'center',
                 position: 'relative',
                 width: '100%',
-                justifyContent: 'center'
+                justifyContent: isMobile ? 'space-between' : 'center',
+                padding: isMobile ? '0 20px' : '0'
               }}>
-                <div style={{ display: 'flex', gap: 10 }}>
+                <div style={{ display: 'flex', gap: 12 }}>
                   {['HOME', 'PORTFOLIO', 'PLAY'].map(lbl => (
                     <NavButton
                       key={lbl}
@@ -283,13 +322,14 @@ function App() {
                   ))}
                 </div>
                 <div style={{ 
-                  position: 'absolute', 
-                  right: '20px'
+                  position: isMobile ? 'relative' : 'absolute', 
+                  right: isMobile ? '0' : '20px'
                 }}>
                   <ThemeToggle currentTheme={theme} toggleTheme={toggleTheme} />
                 </div>
               </div>
             </div>
+            
             {/* MAIN COPY */}
             <div
               style={{
