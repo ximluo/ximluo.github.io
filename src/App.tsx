@@ -217,8 +217,6 @@ function App() {
 
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
-
-  /* theme side‑effects */
   
 /* theme side‑effects */
 useEffect(() => {
