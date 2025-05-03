@@ -106,7 +106,7 @@ const CustomCursorWrapper = ({ theme }: { theme: ThemeType }) => {
 };
 
 /* ------------------------------------------------------------------ */
-/* ✦Scramble helper + minimal fade‑in CSS                      */
+/* ✦Scramble helper + minimal fade‑in CSS                    */
 /* ------------------------------------------------------------------ */
 
 const scrambleSets = {
