@@ -219,17 +219,20 @@ function App() {
   }, []);
 
   /* theme side‑effects */
-  useEffect(() => {
-    const cur = themes[theme];
-    Object.entries(cur).forEach(([k, v]) =>
-      document.documentElement.style.setProperty(k, v as string)
-    );
-    /* outer bg tint = border‑color */
-    document.body.style.background = cur["--border-color"];
-    document.body.style.margin = '0';
-    document.body.style.overflow = 'hidden';
-  }, [theme]);
-
+  
+/* theme side‑effects */
+useEffect(() => {
+  const cur = themes[theme];
+  Object.entries(cur).forEach(([k, v]) =>
+    document.documentElement.style.setProperty(k, v as string)
+  );
+  /* outer bg tint = border‑color */
+  document.body.style.background = cur["--border-color"];
+  document.body.style.margin = '0';
+  document.body.style.overflow = 'hidden';
+  document.body.style.height = '100%';
+  document.documentElement.style.height = '100%';
+}, [theme]);
   /* drive the timeline on mount */
   useEffect(() => {
     /* 1: container */
