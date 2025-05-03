@@ -204,33 +204,47 @@ function App() {
 
   /* track if device is mobile */
   const [isMobile, setIsMobile] = useState(false);
+  
+  /* track safe area top */
+  const [safeAreaTop, setSafeAreaTop] = useState('15px');
 
-  /* check device type */
+  /* check device type and safe area */
   useEffect(() => {
-    const checkMobile = () => {
+    const checkDeviceAndSafeArea = () => {
       // Only mobile devices (not tablets) should have different nav behavior
-      setIsMobile(window.innerWidth <= 480);
+      const mobile = window.innerWidth <= 410;
+      setIsMobile(mobile);
+      
+      // Check for safe area insets
+      if (mobile) {
+        // Use safe area inset for mobile devices
+        setSafeAreaTop('max(15px, env(safe-area-inset-top))');
+      } else {
+        // Standard padding for desktop
+        setSafeAreaTop('15px');
+      }
     };
 
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
+    checkDeviceAndSafeArea();
+    window.addEventListener('resize', checkDeviceAndSafeArea);
 
-    return () => window.removeEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkDeviceAndSafeArea);
   }, []);
   
-/* theme side‑effects */
-useEffect(() => {
-  const cur = themes[theme];
-  Object.entries(cur).forEach(([k, v]) =>
-    document.documentElement.style.setProperty(k, v as string)
-  );
-  /* outer bg tint = border‑color */
-  document.body.style.background = cur["--border-color"];
-  document.body.style.margin = '0';
-  document.body.style.overflow = 'hidden';
-  document.body.style.height = '100%';
-  document.documentElement.style.height = '100%';
-}, [theme]);
+  /* theme side‑effects */
+  useEffect(() => {
+    const cur = themes[theme];
+    Object.entries(cur).forEach(([k, v]) =>
+      document.documentElement.style.setProperty(k, v as string)
+    );
+    /* outer bg tint = border‑color */
+    document.body.style.background = cur["--border-color"];
+    document.body.style.margin = '0';
+    document.body.style.overflow = 'hidden';
+    document.body.style.height = '100%';
+    document.documentElement.style.height = '100%';
+  }, [theme]);
+  
   /* drive the timeline on mount */
   useEffect(() => {
     /* 1: container */
@@ -279,15 +293,24 @@ useEffect(() => {
       <div
         className={`fade ${phase >= 1 ? 'show' : ''}`}
         style={{
-          width: '100vw', height: '100vh',
-          display: 'flex', justifyContent: 'center', alignItems: 'center',
+          width: '100vw', 
+          height: '100vh',
+          display: 'flex', 
+          justifyContent: 'center', 
+          alignItems: 'center',
+          // Add safe area padding
+          paddingTop: safeAreaTop,
+          paddingBottom: '15px',
+          paddingLeft: '15px',
+          paddingRight: '15px',
+          boxSizing: 'border-box'
         }}
       >
         <div
           className="App"
           style={{
-            width: 'calc(100vw - 30px)',
-            height: 'calc(100vh - 30px)',
+            width: '100%',
+            height: '100%',
             position: 'relative',
             borderRadius: 12,
             overflow: 'hidden',
@@ -311,7 +334,7 @@ useEffect(() => {
                 justifyContent: isMobile ? 'space-between' : 'center',
                 padding: isMobile ? '0 20px' : '0'
               }}>
-                <div style={{ display: 'flex', gap: 12 }}>
+                <div style={{ display: 'flex', gap: isMobile ? 2 : 12 }}>
                   {['HOME', 'PORTFOLIO', 'PLAY'].map(lbl => (
                     <NavButton
                       key={lbl}
