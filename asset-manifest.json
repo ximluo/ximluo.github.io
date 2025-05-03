@@ -1,15 +1,15 @@
 {
   "files": {
     "main.css": "/ximluo.github.io/static/css/main.671624a1.css",
-    "main.js": "/ximluo.github.io/static/js/main.dc41cec9.js",
+    "main.js": "/ximluo.github.io/static/js/main.7b8b8ceb.js",
     "static/js/453.1407b060.chunk.js": "/ximluo.github.io/static/js/453.1407b060.chunk.js",
     "index.html": "/ximluo.github.io/index.html",
     "main.671624a1.css.map": "/ximluo.github.io/static/css/main.671624a1.css.map",
-    "main.dc41cec9.js.map": "/ximluo.github.io/static/js/main.dc41cec9.js.map",
+    "main.7b8b8ceb.js.map": "/ximluo.github.io/static/js/main.7b8b8ceb.js.map",
     "453.1407b060.chunk.js.map": "/ximluo.github.io/static/js/453.1407b060.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.671624a1.css",
-    "static/js/main.dc41cec9.js"
+    "static/js/main.7b8b8ceb.js"
   ]
 }
