@@ -263,21 +263,33 @@ function App() {
                 alignItems: 'center', padding: '20px 0', position: 'relative',
               }}
             >
-              <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
-                {['HOME', 'PORTFOLIO', 'PLAY'].map(lbl => (
-                  <NavButton
-                    key={lbl}
-                    label={lbl}
-                    isActive={activeTab === lbl}
-                    theme={theme}
-                    onClick={() => setTab(lbl)}
-                  />
-                ))}
-                <div style={{ width: 20 }} />
-                <ThemeToggle currentTheme={theme} toggleTheme={toggleTheme} />
+              <div style={{ 
+                display: 'flex', 
+                gap: 12, 
+                alignItems: 'center',
+                position: 'relative',
+                width: '100%',
+                justifyContent: 'center'
+              }}>
+                <div style={{ display: 'flex', gap: 10 }}>
+                  {['HOME', 'PORTFOLIO', 'PLAY'].map(lbl => (
+                    <NavButton
+                      key={lbl}
+                      label={lbl}
+                      isActive={activeTab === lbl}
+                      theme={theme}
+                      onClick={() => setTab(lbl)}
+                    />
+                  ))}
+                </div>
+                <div style={{ 
+                  position: 'absolute', 
+                  right: '20px'
+                }}>
+                  <ThemeToggle currentTheme={theme} toggleTheme={toggleTheme} />
+                </div>
               </div>
             </div>
-
             {/* MAIN COPY */}
             <div
               style={{
