@@ -8,7 +8,6 @@ export default function CustomCursor() {
   const frame = useRef(0)
   const cursorRef = useRef<HTMLDivElement>(null)
   const cursorSize = 24 // Cursor diameter
-  const borderWidth = 3 // Border width
   const hoverRadius = cursorSize / 2 // Radius for hover detection
 
   // Hide the default cursor when component mounts
@@ -62,7 +61,7 @@ export default function CustomCursor() {
     const intervalId = setInterval(checkProximity, 10) // Check every 10ms
     
     return () => clearInterval(intervalId)
-  }, [position])
+  }, [position, hoverRadius])
 
   // click/tap effect
   useEffect(() => {

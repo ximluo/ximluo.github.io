@@ -1,7 +1,10 @@
-body {
+/* body {
   cursor: none;
-}
-  
+} */
+@media (hover: hover) and (pointer: coarse) {
+  .cursor{ display: none !important; }
+} 
+
 .cursor {
   position: fixed;
   top: 0;
@@ -25,3 +28,4 @@ body {
   border-color: var(--cursor-hover-color, rgba(255, 255, 255, 0.7)); /* Theme-dependent border on hover */
   box-shadow: var(--cursor-hover-glow, 0 0 12px rgba(255, 255, 255, 0.6)); /* Theme-dependent glow on hover */
 }
+

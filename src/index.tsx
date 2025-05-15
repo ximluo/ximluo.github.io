@@ -8,36 +8,11 @@ import CustomCursor from "./components/customCursor"
 
 // Custom cursor wrapper component
 const ConditionalCustomCursor = () => {
-  const [isMobileOrTablet, setIsMobileOrTablet] = React.useState(false);
+  const isFinePointer = window.matchMedia(
+    '(hover: hover) and (pointer: fine)'
+  ).matches;
 
-  React.useEffect(() => {
-    const checkDevice = () => {
-      const ua = navigator.userAgent;
-      
-      // Check for mobile/tablet using user agent
-      const isMobileOrTabletDevice = (
-        /Android/i.test(ua) || 
-        /webOS/i.test(ua) || 
-        /iPhone/i.test(ua) || 
-        /iPad/i.test(ua) || 
-        /iPod/i.test(ua) || 
-        /BlackBerry/i.test(ua) || 
-        /Windows Phone/i.test(ua) ||
-        /Tablet/i.test(ua) ||
-        // Additional check for touch screen devices
-        ('ontouchstart' in window) ||
-        (navigator.maxTouchPoints > 0)
-      );
-      
-      setIsMobileOrTablet(isMobileOrTabletDevice);
-    };
-
-    // Check on mount
-    checkDevice();
-  }, []);
-
-  // Only render the custom cursor on desktop (not mobile/tablet)
-  return !isMobileOrTablet ? <CustomCursor /> : null;
+  return isFinePointer ? <CustomCursor /> : null;
 };
 
 const root = ReactDOM.createRoot(
