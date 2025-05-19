@@ -178,31 +178,30 @@ const Creative: React.FC<CreativeProps> = ({ theme }) => {
   }, [isMobile, isCarouselView, isScrolling, startAutoRotate, stopAutoRotate]);
 
   /* manual rotation */
-  const handleScroll = useCallback<React.WheelEventHandler>(
-    (e) => {
-      if (isMobile || !isCarouselView) return;
+const handleScroll = useCallback<React.WheelEventHandler>(
+  (e) => {
+    if (isMobile || !isCarouselView) return;
 
-      if (showInstructions.current) showInstructions.current = false; 
-      e.preventDefault();
-
-      // Use RAF for smooth animation
-      if (!scrollTimeout.current) {
-        setIsScrolling(true);
-        scrollTimeout.current = setTimeout(() => {
-          scrollTimeout.current = null;
-          setIsScrolling(false);
-        }, 150); 
-
-        const delta = Math.abs(e.deltaY) > 5 ? e.deltaY : 0;
-        if (delta) {
-          requestAnimationFrame(() => {
-            setCarouselRotation((prev) => prev + (delta > 0 ? 6 : -6));
-          });
-        }
-      }
-    },
-    [isMobile, isCarouselView],
-  );
+    if (showInstructions.current) showInstructions.current = false;
+    e.preventDefault();
+    
+    const sensitivity = 0.15;
+    const normalizedDelta = Math.sign(e.deltaY) * Math.min(Math.abs(e.deltaY) * sensitivity, 3);
+    
+    setCarouselRotation(prev => prev + normalizedDelta);
+    
+    if (scrollTimeout.current) {
+      clearTimeout(scrollTimeout.current);
+    }
+    
+    setIsScrolling(true);
+    scrollTimeout.current = setTimeout(() => {
+      scrollTimeout.current = null;
+      setIsScrolling(false);
+    }, 160);
+  },
+  [isMobile, isCarouselView]
+);
 
   /* dynamic CSS (once/theme) */
   useEffect(() => {

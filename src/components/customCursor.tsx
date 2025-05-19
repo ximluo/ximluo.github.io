@@ -1,18 +1,19 @@
 "use client"
 
-import { useEffect, useState, useRef } from "react"
+import { useEffect, useRef } from "react"
 
 const CLICKABLE =
   'a, button, [role="button"], input[type="button"], input[type="submit"]'
 const MEDIA_SELECTOR = "iframe, video"
 
 export default function CustomCursor() {
-  const [pos, setPos] = useState({ x: 0, y: 0 })
-  const [isHovering, setIsHovering] = useState(false)
-  const [isClicking, setIsClicking] = useState(false)
-  const [isOffPage, setIsOffPage] = useState(false)
-  const [isVisible, setIsVisible] = useState(false)
-  const [isOverVideo, setIsOverVideo] = useState(false)
+  // Refs (avoid React state -> smoother)
+  const pos = useRef({ x: 0, y: 0 })
+  const isHovering = useRef(false)
+  const isClicking = useRef(false)
+  const isOffPage = useRef(false)
+  const isVisible = useRef(false)
+  const isOverVideo = useRef(false)
 
   const raf = useRef(0)
   const cursorRef = useRef<HTMLDivElement>(null)
@@ -20,29 +21,28 @@ export default function CustomCursor() {
   const SIZE = 24
   const RADIUS = SIZE / 2
 
-  // Global-cursor show / hide                          
-
+  // Global-cursor show / hide
   useEffect(() => {
     document.body.style.cursor = "none"
     return () => { document.body.style.cursor = "auto" }
   }, [])
 
-  // Track pointer position                            
-
+  // Track pointer position
   useEffect(() => {
-    const move = (e: MouseEvent) => {
-      setPos({ x: e.clientX, y: e.clientY })
-      setIsVisible(true)
+    const move = (e: PointerEvent) => {
+      pos.current.x = e.clientX
+      pos.current.y = e.clientY
+      isVisible.current = true
     }
-    window.addEventListener("mousemove", move)
-    return () => window.removeEventListener("mousemove", move)
+    window.addEventListener("pointermove", move, { passive: true })
+    return () => window.removeEventListener("pointermove", move)
   }, [])
 
-  //  Hide cursor when pointer leaves the viewport      
+  // Hide cursor when pointer leaves the viewport
   useEffect(() => {
-    const enter = () => setIsOffPage(false)
+    const enter = () => { isOffPage.current = false }
     const leave = (e: PointerEvent) => {
-      if (e.relatedTarget === null) setIsOffPage(true)
+      if (e.relatedTarget === null) isOffPage.current = true
     }
     document.addEventListener("pointerenter", enter, true)
     document.addEventListener("pointerleave", leave, true)
@@ -52,39 +52,22 @@ export default function CustomCursor() {
     }
   }, [])
 
-  // Detect hovering over clickable elements    
-  useEffect(() => {
-    const tester = setInterval(() => {
-      let hovering = false
-      document.querySelectorAll(CLICKABLE).forEach(el => {
-        const r = el.getBoundingClientRect()
-        const cx = Math.max(r.left, Math.min(pos.x, r.right))
-        const cy = Math.max(r.top, Math.min(pos.y, r.bottom))
-        if (Math.hypot(pos.x - cx, pos.y - cy) <= RADIUS) hovering = true
-      })
-      setIsHovering(hovering)
-    }, 10)
-    return () => clearInterval(tester)
-  }, [pos])
-
-  // Detect clicks                                     
-
+  // Detect clicks
   useEffect(() => {
     const down = () => {
-      setIsClicking(true)
-      setTimeout(() => setIsClicking(false), 80)
+      isClicking.current = true
+      setTimeout(() => { isClicking.current = false }, 80)
     }
-    window.addEventListener("mousedown", down)
-    return () => window.removeEventListener("mousedown", down)
+    window.addEventListener("pointerdown", down)
+    return () => window.removeEventListener("pointerdown", down)
   }, [])
 
-
-  // Hide cursor only while inside <iframe> / <video>  
+  // Hide cursor only while inside <iframe> / <video>
   useEffect(() => {
-    const enter = () => setIsOverVideo(true)
-    const leave = () => setIsOverVideo(false)
+    const enter = () => { isOverVideo.current = true }
+    const leave = () => { isOverVideo.current = false }
 
-    // attach listeners to current and future media nodes 
+    // attach listeners to current and future media nodes
     const attach = (root: ParentNode) =>
       root.querySelectorAll(MEDIA_SELECTOR).forEach(el => {
         el.addEventListener("mouseenter", enter)
@@ -110,24 +93,35 @@ export default function CustomCursor() {
     }
   }, [])
 
+  // Main render loop (runs every animation frame)
   useEffect(() => {
+    const isClickable = (el: Element | null): boolean =>
+      !!el && (el.matches(CLICKABLE) || isClickable(el.parentElement))
+
     const render = () => {
-      if (cursorRef.current) {
+      const el = cursorRef.current
+      if (el) {
+        // Hover detection
+        isHovering.current = isClickable(
+          document.elementFromPoint(pos.current.x, pos.current.y),
+        )
+
         const offset = RADIUS
-        cursorRef.current.style.transform =
-          `translate(${pos.x - offset}px, ${pos.y - offset}px)
-           scale(${isClicking ? 0.6 : isHovering ? 1.2 : 1})`
-        cursorRef.current.classList.toggle("hovering", isHovering)
-        cursorRef.current.classList.toggle(
+        el.style.transform =
+          `translate(${pos.current.x - offset}px, ${pos.current.y - offset}px)
+           scale(${isClicking.current ? 0.6 : isHovering.current ? 1.2 : 1})`
+
+        el.classList.toggle("hovering", isHovering.current)
+        el.classList.toggle(
           "hidden",
-          isOffPage || !isVisible || isOverVideo,
+          isOffPage.current || !isVisible.current || isOverVideo.current,
         )
       }
       raf.current = requestAnimationFrame(render)
     }
     render()
     return () => cancelAnimationFrame(raf.current)
-  }, [pos, isHovering, isClicking, isOffPage, isVisible, isOverVideo])
+  }, [])
 
   return (
     <>
