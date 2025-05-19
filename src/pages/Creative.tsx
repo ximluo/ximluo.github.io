@@ -442,7 +442,7 @@ const Creative: React.FC<CreativeProps> = ({ theme }) => {
                     bottom: 0,
                     left: 0,
                     right: 0,
-                    height: "20%",
+                    height: "15%",
                     backgroundColor: "rgba(0, 0, 0, 0.6)",
                     backdropFilter: "blur(2px)",
                     display: "flex",
@@ -498,7 +498,7 @@ const Creative: React.FC<CreativeProps> = ({ theme }) => {
                 width: "150px",
                 height: "200px",
                 top: "10%",
-                left: "calc(50% - 125px)",
+                left: "calc(50% - 90px)",
                 transformStyle: "preserve-3d",
                 transform: `perspective(1000px) rotateX(-10deg) rotateY(${carouselRotation}deg)`,
                 zIndex: 2,
@@ -542,7 +542,7 @@ const Creative: React.FC<CreativeProps> = ({ theme }) => {
                         bottom: 0,
                         left: 0,
                         right: 0,
-                        height: "20%", // title area
+                        height: "15%", // title area
                         backgroundColor: "rgba(0, 0, 0, 0.6)",
                         backdropFilter: "blur(2px)",
                         display: "flex",

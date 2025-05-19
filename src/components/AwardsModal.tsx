@@ -49,7 +49,8 @@ const AwardsModal: React.FC<AwardsModalProps> = ({ onClose, theme }) => {
       {
         title: "NCWIT Aspirations for Computing Award Winner",
         year: "2023",
-        description: "https://www.aspirations.org/people/ximing-l/129010",
+        description: "",
+        link: "https://www.aspirations.org/people/ximing-l/129010",
       },
       {
         title: "American Computer Science League 1st Place",

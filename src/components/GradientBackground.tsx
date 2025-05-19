@@ -37,7 +37,7 @@ const GradientBackground: React.FC<GradientBackgroundProps> = ({
   theme,
   children,
 }) => {
-  /* UA CHECK (client-only) */
+  /* UA CHECK (client‑only) */
   const isSafari = useMemo(() => {
     if (typeof navigator === "undefined") return false;
     const ua = navigator.userAgent;
@@ -47,6 +47,7 @@ const GradientBackground: React.FC<GradientBackgroundProps> = ({
   const isMobileOrTablet = useMemo(() => {
     if (typeof navigator === "undefined") return false;
     const ua = navigator.userAgent;
+    // Check for mobile/tablet
     return (
       /Android/i.test(ua) ||
       /webOS/i.test(ua) ||
@@ -56,18 +57,20 @@ const GradientBackground: React.FC<GradientBackgroundProps> = ({
       /BlackBerry/i.test(ua) ||
       /Windows Phone/i.test(ua) ||
       /Tablet/i.test(ua) ||
-      "ontouchstart" in window ||
-      navigator.maxTouchPoints > 0
+      // Check for touch screen devices
+      ('ontouchstart' in window) ||
+      (navigator.maxTouchPoints > 0)
     );
   }, []);
 
+  // If mobile/tablet, treat as Safari (no goo filter, blur on circles)
   const useSafariMode = isSafari || isMobileOrTablet;
 
   const containerRef = useRef<HTMLDivElement>(null);
   const interBubbleRef = useRef<HTMLDivElement>(null);
   const noiseCanvasRef = useRef<HTMLCanvasElement>(null);
 
-  /* apply theme vars */
+  /* apply theme vars*/
   useEffect(() => {
     const t = themeStyles[theme];
     const el = containerRef.current;
@@ -76,8 +79,9 @@ const GradientBackground: React.FC<GradientBackgroundProps> = ({
     el.style.backgroundColor = t["--color-bg1"] as string;
   }, [theme]);
 
-  /* mouse-follow bubble & noise */
+  /* mouse‑follow bubble & noise */
   useEffect(() => {
+    // Skip mouse tracking on mobile/tablet
     if (isMobileOrTablet) {
       const canvas = noiseCanvasRef.current;
       if (canvas) {
@@ -108,6 +112,7 @@ const GradientBackground: React.FC<GradientBackgroundProps> = ({
       return;
     }
 
+    // Desktop mouse tracking
     let curX = 0,
       curY = 0,
       tgX = 0,
@@ -156,7 +161,6 @@ const GradientBackground: React.FC<GradientBackgroundProps> = ({
         window.removeEventListener("resize", paint);
       };
     }
-
     return () => window.removeEventListener("mousemove", onMouse);
   }, [isMobileOrTablet]);
 
@@ -179,6 +183,7 @@ const GradientBackground: React.FC<GradientBackgroundProps> = ({
         height: "var(--circle-size)",
         background: `radial-gradient(circle at center, rgba(var(${varName}),0.6) 0%, rgba(var(${varName}),0) 50%) no-repeat`,
         mixBlendMode: "var(--blending)" as React.CSSProperties["mixBlendMode"],
+        /* Safari/Mobile/Tablet needs blur on each circle, Chrome desktop uses wrapper filter */
         filter: useSafariMode ? "blur(40px)" : "none",
         ...extra,
       }}
@@ -210,9 +215,6 @@ const GradientBackground: React.FC<GradientBackgroundProps> = ({
         }}
       />
 
-      {/* updated particle effect */}
-      <ParticleCanvas theme={theme} />
-
       {/* goo filter for Chrome / Edge / Firefox desktop only */}
       {!useSafariMode && (
         <svg style={{ position: "absolute", width: 0, height: 0 }}>
@@ -236,6 +238,7 @@ const GradientBackground: React.FC<GradientBackgroundProps> = ({
         style={{
           position: "absolute",
           inset: 0,
+          /* Chrome desktop gets big gooey filter; Safari/mobile/tablet keeps none */
           filter: useSafariMode ? "none" : "url(#goo) blur(40px)",
           zIndex: 1,
         }}
@@ -278,7 +281,7 @@ const GradientBackground: React.FC<GradientBackgroundProps> = ({
           opacity: 0.5,
         })}
 
-        {/* mouse-tracked bubble - only render on desktop */}
+        {/* mouse‑tracked bubble - only render on desktop */}
         {!isMobileOrTablet && (
           <div
             ref={interBubbleRef}
@@ -305,109 +308,3 @@ const GradientBackground: React.FC<GradientBackgroundProps> = ({
 };
 
 export default GradientBackground;
-
-
-// Particle canvas
-interface ParticleCanvasProps {
-  theme: ThemeType;
-}
-
-const ParticleCanvas: React.FC<ParticleCanvasProps> = ({ theme }) => {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-
-  useEffect(() => {
-    const canvas = canvasRef.current!;
-    const ctx = canvas.getContext("2d")!;
-
-    interface Particle {
-      x: number;
-      y: number;
-      size: number;
-      speed: number;
-      opacity: number;
-    }
-
-    const MAX = 80; 
-    const particles: Particle[] = [];
-
-  
-    for (let i = 0; i < MAX; i++) {
-      const size = Math.random() * 8;
-      particles.push({
-        x: Math.random() * window.innerWidth,
-        y: window.innerHeight + Math.random() * 100,
-        size,
-        speed: 0.2 + Math.random() * 0.6,   
-        opacity: 0.1 + Math.random() * 0.2, 
-      });
-    }
-
-    let rafId: number;
-    const draw = () => {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-      particles.forEach((p) => {
-        // choose color by theme
-        const color =
-          theme === "water"
-            ? `hsla(180,100%,80%,${p.opacity})`
-            : `hsla(0, 0%, 100%, ${0})`;
-
-        const grad = ctx.createRadialGradient(
-          p.x,
-          p.y,
-          p.size * 0.1,
-          p.x,
-          p.y,
-          p.size
-        );
-        grad.addColorStop(0, color);
-        grad.addColorStop(1, "transparent");
-
-        ctx.fillStyle = grad;
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-        ctx.fill();
-
-        // move upward
-        p.y -= p.speed;
-        if (p.y < -p.size) {
-          p.y = canvas.height + p.size;
-          p.x = Math.random() * canvas.width;
-        }
-      });
-
-      rafId = requestAnimationFrame(draw);
-    };
-
-    draw();
-
-    // only adjust canvas size on resize, don't reinit particles
-    const onResize = () => {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-    };
-    window.addEventListener("resize", onResize);
-
-    return () => {
-      cancelAnimationFrame(rafId);
-      window.removeEventListener("resize", onResize);
-    };
-  }, [theme]);
-
-  return (
-    <canvas
-      ref={canvasRef}
-      style={{
-        position: "absolute",
-        inset: 0,
-        width: "100%",
-        height: "100%",
-        pointerEvents: "none",
-        zIndex: 0.5,
-      }}
-    />
-  );
-};
