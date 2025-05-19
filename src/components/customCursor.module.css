@@ -1,10 +1,3 @@
-/* body {
-  cursor: none;
-} */
-@media (hover: hover) and (pointer: coarse) {
-  .cursor{ display: none !important; }
-} 
-
 .cursor {
   position: fixed;
   top: 0;
@@ -12,20 +5,23 @@
   width: 24px;
   height: 24px;
   border-radius: 50%;
-  background: transparent; /* No fill by default */
-  border: 2.5px solid var(--cursor-color, rgba(255, 255, 255, 0.7)); /* Theme-dependent border color */
+  border: 2.5px solid var(--cursor-color, rgba(255, 255, 255, .7));
+  background: transparent;
   pointer-events: none;
-  transform: translate3d(-50%, -50%, 0) scale(1); /* Center the cursor */
-  transition: background-color 0.2s ease, border-color 0.2s ease;
+  transition: background-color .2s ease, border-color .2s ease, opacity .2s ease;
   will-change: transform;
   z-index: 9999;
-  box-shadow: var(--cursor-glow, 0 0 8px rgba(255, 255, 255, 0.6)); /* Theme-dependent glow */
+  box-shadow: var(--cursor-glow, 0 0 8px rgba(255, 255, 255, .6));
 }
 
-/* Style when hovering over clickable elements */
+/* Hovering over a clickable target */
 .cursor.hovering {
-  background-color: rgba(255, 255, 255, 0.1); /* Slight fill */
-  border-color: var(--cursor-hover-color, rgba(255, 255, 255, 0.7)); /* Theme-dependent border on hover */
-  box-shadow: var(--cursor-hover-glow, 0 0 12px rgba(255, 255, 255, 0.6)); /* Theme-dependent glow on hover */
+  background-color: rgba(255, 255, 255, .4);
+  border-color: var(--cursor-hover-color, rgba(255, 255, 255, .7));
+  box-shadow: var(--cursor-hover-glow, 0 0 12px rgba(255, 255, 255, .6));
 }
 
+/* Mouse is outside the window, hasn't moved yet, or over an iframe */
+.cursor.hidden {
+  opacity: 0;
+}

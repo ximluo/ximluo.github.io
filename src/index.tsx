@@ -21,8 +21,8 @@ const root = ReactDOM.createRoot(
 root.render(
   <React.StrictMode>
     <BrowserRouter basename={process.env.PUBLIC_URL}>
-        <ConditionalCustomCursor /> 
-        <App />
+      <ConditionalCustomCursor />
+      <App />
     </BrowserRouter>
   </React.StrictMode>
 );
