@@ -1,48 +1,51 @@
-"use client"
+"use client";
 
-import type React from "react"
-import { useState, useEffect, useRef } from "react"
-import photos from "../data/photos"
+import React, { useState, useEffect, useRef, useCallback, useMemo } from "react";
+import photos from "../data/photos";
+
+type Theme = "bunny" | "water";
+
+const THEMES = {
+  bunny: {
+    "--color-text": "rgb(121, 85, 189)",
+    "--color-text-secondary": "rgba(249, 240, 251, 1)",
+    "--color-accent-primary": "rgba(223, 30, 155, 1)",
+    "--button-bg": "rgba(223, 30, 155, 0.8)",
+    "--button-bg-light": "rgba(223, 30, 155, 0.2)",
+    "--button-text": "rgba(249, 240, 251, 1)",
+    "--border-color": "rgb(152, 128, 220)",
+  },
+  water: {
+    "--color-text": "rgb(191, 229, 249)",
+    "--color-accent-primary": "rgb(134, 196, 240)",
+    "--button-bg": "rgba(214, 235, 251, 0.8)",
+    "--button-bg-light": "rgba(214, 220, 251, 0.2)",
+    "--button-text": "rgb(46, 80, 192)",
+    "--border-color": "rgba(8, 34, 163, 1)",
+  },
+} as const;
 
 interface CreativeProps {
-  theme: "bunny" | "water"
+  theme: Theme;
 }
 
 interface ModalProps {
-  photo: (typeof photos)[0] | null
-  onClose: () => void
-  theme: "bunny" | "water"
+  photo: (typeof photos)[number] | null;
+  onClose: () => void;
+  theme: Theme;
 }
 
-const PhotoModal: React.FC<ModalProps> = ({ photo, onClose, theme }) => {
-  const themes = {
-    bunny: {
-      "--color-text": "rgb(121, 85, 189)",
-      "--color-text-secondary": "rgba(249, 240, 251, 1)",
-      "--color-accent-primary": "rgba(223, 30, 155, 1)",
-      "--button-bg": "rgba(223, 30, 155, 0.8)",
-      "--button-bg-light": "rgba(223, 30, 155, 0.2)",
-      "--button-text": "rgba(249, 240, 251, 1)",
-      "--border-color": "rgb(152, 128, 220)",
-    },
-    water: {
-      "--color-text": "rgb(191, 229, 249)",
-      "--color-accent-primary": "rgb(134, 196, 240)",
-      "--button-bg": "rgba(214, 235, 251, 0.8)",
-      "--button-bg-light": "rgba(214, 220, 251, 0.2)",
-      "--button-text": "rgb(46, 80, 192)",
-      "--border-color": "rgba(8, 34, 163, 1)",
-    },
-  }
-
-  if (!photo) return null
+// Photo modal
+const PhotoModal = React.memo<ModalProps>(({ photo, onClose, theme }) => {
+  if (!photo) return null;
+  const colors = THEMES[theme];
 
   return (
     <div
       style={{
         position: "fixed",
         inset: 0,
-        backgroundColor: "rgba(0, 0, 0, 0.8)",
+        backgroundColor: "rgba(0,0,0,0.8)",
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
@@ -53,7 +56,8 @@ const PhotoModal: React.FC<ModalProps> = ({ photo, onClose, theme }) => {
     >
       <div
         style={{
-          backgroundColor: theme === "bunny" ? "rgba(121, 85, 189, 0.2)" : "rgba(8, 34, 163, 0.2)",
+          backgroundColor:
+            theme === "bunny" ? "rgba(121, 85, 189, 0.2)" : "rgba(8, 34, 163, 0.2)",
           borderRadius: 12,
           maxWidth: "90%",
           maxHeight: "90%",
@@ -65,11 +69,12 @@ const PhotoModal: React.FC<ModalProps> = ({ photo, onClose, theme }) => {
         }}
         onClick={(e) => e.stopPropagation()}
       >
-        <div style={{ position: "relative", width: "100%", height: "70vh", maxHeight: "70vh" }}>
+        <div style={{ position: "relative", width: "100%", height: "70vh" }}>
           <img
             src={photo.image || "/placeholder.svg"}
             alt={photo.title}
             style={{ width: "100%", height: "100%", objectFit: "contain" }}
+            loading="lazy"
           />
           <button
             onClick={onClose}
@@ -93,18 +98,11 @@ const PhotoModal: React.FC<ModalProps> = ({ photo, onClose, theme }) => {
             ×
           </button>
         </div>
-        <div
-          style={{
-            padding: 20,
-            color: theme === "bunny" ? themes.bunny["--color-text"] : themes.water["--color-text"],
-            fontFamily: "monospace",
-          }}
-        >
+        <div style={{ padding: 20, color: colors["--color-text"], fontFamily: "monospace" }}>
           <h2
             style={{
               margin: "0 0 10px",
-              color:
-                theme === "bunny" ? themes.bunny["--color-accent-primary"] : themes.water["--color-accent-primary"],
+              color: colors["--color-accent-primary"],
             }}
           >
             {photo.title}
@@ -113,175 +111,124 @@ const PhotoModal: React.FC<ModalProps> = ({ photo, onClose, theme }) => {
         </div>
       </div>
     </div>
-  )
-}
+  );
+});
+PhotoModal.displayName = "PhotoModal";
+
+const useIsMobile = () => {
+  const [isMobile, setIsMobile] = useState(
+    typeof window !== "undefined" && window.innerWidth <= 768,
+  );
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth <= 768);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  return isMobile;
+};
 
 const Creative: React.FC<CreativeProps> = ({ theme }) => {
-  const [activeFilter, setActiveFilter] = useState<string | null>(null)
-  const [filteredPhotos, setFilteredPhotos] = useState(photos)
-  const [selectedPhoto, setSelectedPhoto] = useState<(typeof photos)[0] | null>(null)
-  const [isMobile, setIsMobile] = useState(false)
-  const [carouselRotation, setCarouselRotation] = useState(0)
-  const carouselRef = useRef<HTMLDivElement>(null)
-  const [isDesktop, setIsDesktop] = useState(typeof window !== "undefined" && window.innerWidth > 1024)
-  const [isCarouselView, setIsCarouselView] = useState(true)
-  const [isScrolling, setIsScrolling] = useState(false)
-  const scrollTimeoutRef = useRef<NodeJS.Timeout | null>(null)
-  const autoRotateIntervalRef = useRef<NodeJS.Timeout | null>(null)
-  const [showInstructions, setShowInstructions] = useState(true)
+  const isMobile = useIsMobile();
 
-  // Theme palette 
-  const themes = {
-    bunny: {
-      "--color-text": "rgb(121, 85, 189)",
-      "--color-text-secondary": "rgba(249, 240, 251, 1)",
-      "--color-accent-primary": "rgba(223, 30, 155, 1)",
-      "--button-bg": "rgba(223, 30, 155, 0.8)",
-      "--button-bg-light": "rgba(223, 30, 155, 0.2)",
-      "--button-text": "rgba(249, 240, 251, 1)",
-      "--border-color": "rgb(152, 128, 220)",
-    },
-    water: {
-      "--color-text": "rgb(191, 229, 249)",
-      "--color-accent-primary": "rgb(134, 196, 240)",
-      "--button-bg": "rgba(214, 235, 251, 0.8)",
-      "--button-bg-light": "rgba(214, 220, 251, 0.2)",
-      "--button-text": "rgb(46, 80, 192)",
-      "--border-color": "rgba(8, 34, 163, 1)",
-    },
-  }
+  const [activeFilter, setActiveFilter] = useState<string | null>(null);
+  const [selectedPhoto, setSelectedPhoto] = useState<(typeof photos)[number] | null>(null);
+  const [carouselRotation, setCarouselRotation] = useState(0);
+  const [isCarouselView, setIsCarouselView] = useState(true);
+  const [isScrolling, setIsScrolling] = useState(false);
 
-  // Window resizes 
-  useEffect(() => {
-    const handleResize = () => {
-      setIsMobile(window.innerWidth <= 768)
-      setIsDesktop(window.innerWidth > 1024)
+  const scrollTimeout = useRef<NodeJS.Timeout | null>(null);
+  const raf = useRef<number | null>(null);
+  const showInstructions = useRef(true);
+
+  /* filtering */
+  const filteredPhotos = useMemo(
+    () => (activeFilter ? photos.filter((p) => p.categories.includes(activeFilter)) : photos),
+    [activeFilter],
+  );
+
+  /* smooth auto‑rotation via RAF */
+  const startAutoRotate = useCallback(() => {
+    let lastTime = performance.now();
+    const step = (currentTime: number) => {
+      const deltaTime = currentTime - lastTime;
+      const rotationPerFrame = 0.18 * (deltaTime / 16.67); //speed
+      setCarouselRotation((prev) => prev + rotationPerFrame);
+      lastTime = currentTime;
+      raf.current = requestAnimationFrame(step);
+    };
+    raf.current = requestAnimationFrame(step);
+  }, []);
+
+  const stopAutoRotate = useCallback(() => {
+    if (raf.current) {
+      cancelAnimationFrame(raf.current);
+      raf.current = null;
     }
-    handleResize()
-    window.addEventListener("resize", handleResize)
-    return () => window.removeEventListener("resize", handleResize)
-  }, [])
+  }, []);
 
-  // Filter changes 
   useEffect(() => {
-    setFilteredPhotos(activeFilter ? photos.filter((p) => p.categories.includes(activeFilter)) : photos)
-  }, [activeFilter])
-
-  // Auto-rotation for carousel when not scrolling 
-  useEffect(() => {
-    // Only auto-rotate if in carousel view, on desktop, and not scrolling
-    if (isCarouselView && !isMobile && !isScrolling) {
-      // Clear any existing interval
-      if (autoRotateIntervalRef.current) {
-        clearInterval(autoRotateIntervalRef.current)
-      }
-
-      // Set up auto-rotation
-      autoRotateIntervalRef.current = setInterval(() => {
-        setCarouselRotation((prev) => prev + 0.5)
-      }, 100)
+    if (!isMobile && isCarouselView && !isScrolling) {
+      startAutoRotate();
     } else {
-      // Clear interval if conditions not met
-      if (autoRotateIntervalRef.current) {
-        clearInterval(autoRotateIntervalRef.current)
-        autoRotateIntervalRef.current = null
-      }
+      stopAutoRotate();
     }
+    return stopAutoRotate;
+  }, [isMobile, isCarouselView, isScrolling, startAutoRotate, stopAutoRotate]);
 
-    return () => {
-      if (autoRotateIntervalRef.current) {
-        clearInterval(autoRotateIntervalRef.current)
+  /* manual rotation */
+  const handleScroll = useCallback<React.WheelEventHandler>(
+    (e) => {
+      if (isMobile || !isCarouselView) return;
+
+      if (showInstructions.current) showInstructions.current = false; 
+      e.preventDefault();
+
+      // Use RAF for smooth animation
+      if (!scrollTimeout.current) {
+        setIsScrolling(true);
+        scrollTimeout.current = setTimeout(() => {
+          scrollTimeout.current = null;
+          setIsScrolling(false);
+        }, 150); 
+
+        const delta = Math.abs(e.deltaY) > 5 ? e.deltaY : 0;
+        if (delta) {
+          requestAnimationFrame(() => {
+            setCarouselRotation((prev) => prev + (delta > 0 ? 6 : -6));
+          });
+        }
       }
-    }
-  }, [isCarouselView, isDesktop, isMobile, isScrolling])
+    },
+    [isMobile, isCarouselView],
+  );
 
-  // Custom scrollbar and carousel styles 
+  /* dynamic CSS (once/theme) */
   useEffect(() => {
-    const styleId = "creative-custom-styles"
-    let el = document.getElementById(styleId) as HTMLStyleElement | null
-    if (!el) {
-      el = document.createElement("style")
-      el.id = styleId
-      document.head.appendChild(el)
+    const styleId = "creative-custom-styles";
+    let styleEl = document.getElementById(styleId) as HTMLStyleElement | null;
+    if (!styleEl) {
+      styleEl = document.createElement("style");
+      styleEl.id = styleId;
+      document.head.appendChild(styleEl);
     }
-
-    // custom scrollbar and carousel animation styles
-    el.innerHTML = `
-      /* Custom scrollbar */
+    const colors = THEMES[theme];
+    styleEl.innerHTML = `
       .creative-container::-webkit-scrollbar{width:8px}
       .creative-container::-webkit-scrollbar-track{background:transparent}
-      .creative-container::-webkit-scrollbar-thumb{
-        border-radius:4px;
-        background-color:${theme === "bunny" ? themes.bunny["--button-bg"] : themes.water["--button-bg"]};
-      }
-      
-      /* Import fonts */
-      @import url('https://fonts.cdnfonts.com/css/ica-rubrik-black');
-      @import url('https://fonts.cdnfonts.com/css/poppins');
-      
-      /* Carousel auto-rotation animation */
-      @keyframes autoRotate {
-        from {
-          transform: perspective(1000px) rotateX(-10deg) rotateY(0deg);
-        }
-        to {
-          transform: perspective(1000px) rotateX(-10deg) rotateY(360deg);
-        }
-      }
-      
-      /* Grid layout for non-carousel view */
-      .photo-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-        gap: 20px;
-        width: 100%;
-      }
-    `
-
+      .creative-container::-webkit-scrollbar-thumb{border-radius:4px;background:${colors["--button-bg"]};}
+      .photo-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:20px;width:100%;}
+    `;
     return () => {
-      el && el.remove()
-    }
-  }, [theme])
+      if (styleEl) styleEl.remove();
+    };
+  }, [theme]);
 
-  const handleFilterClick = (filter: string) => setActiveFilter(activeFilter === filter ? null : filter)
+  const handleFilterClick = (filter: string) =>
+    setActiveFilter((prev) => (prev === filter ? null : filter));
 
-  const handlePhotoClick = (photo: (typeof photos)[0]) => setSelectedPhoto(photo)
-
-  const handleToggleView = () => {
-    setIsCarouselView(!isCarouselView)
-  }
-
-  // Handle scroll for manual carousel rotation
-  const handleScroll = (e: React.WheelEvent) => {
-    if (isMobile || !isCarouselView) return
-
-    // Hide instructions after first scroll
-    if (showInstructions) {
-      setShowInstructions(false)
-    }
-
-    // Prevent default to avoid page scrolling
-    e.preventDefault()
-
-    // Mark as scrolling
-    setIsScrolling(true)
-
-    // Clear any existing timeout
-    if (scrollTimeoutRef.current) {
-      clearTimeout(scrollTimeoutRef.current)
-    }
-
-    // Rotate based on scroll direction
-    const delta = Math.abs(e.deltaY) > 5 ? e.deltaY : 0
-    if (delta !== 0) {
-      setCarouselRotation((prev) => prev + (delta > 0 ? 5 : -5))
-    }
-
-    // End scrolling state after inactivity
-    scrollTimeoutRef.current = setTimeout(() => {
-      setIsScrolling(false)
-    }, 220)
-  }
+  const colors = THEMES[theme];
 
   return (
     <div
@@ -298,20 +245,19 @@ const Creative: React.FC<CreativeProps> = ({ theme }) => {
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
-        color: theme === "bunny" ? themes.bunny["--color-text"] : themes.water["--color-text"],
+        color: colors["--color-text"],
         fontFamily: "monospace",
       }}
     >
-      {/* Filter section */}
+      {/* header */}
       <div
         style={{
           width: "100%",
-          maxWidth: 980,
+          maxWidth: 940,
           margin: "0 auto 30px",
           padding: "0 20px 15px",
           boxSizing: "border-box",
-          borderBottom: `1px solid ${theme === "bunny" ? themes.bunny["--border-color"] : themes.water["--border-color"]
-            }`,
+          borderBottom: `1px solid ${colors["--border-color"]}`,
           display: "flex",
           alignItems: "center",
           justifyContent: "space-between",
@@ -319,20 +265,19 @@ const Creative: React.FC<CreativeProps> = ({ theme }) => {
           gap: "10px 20px",
         }}
       >
-        {/* toggle button */}
         {!isMobile ? (
           <button
-            onClick={handleToggleView}
+            onClick={() => setIsCarouselView((v) => !v)}
             style={{
               padding: "7px 14px",
-              backgroundColor: "transparent",
-              color: theme === "bunny" ? themes.bunny["--color-text"] : themes.water["--color-text"],
-              border: `1px solid ${theme === "bunny" ? themes.bunny["--color-text"] : themes.water["--color-text"]}`,
+              background: "transparent",
+              color: colors["--color-text"],
+              border: `1px solid ${colors["--color-text"]}`,
               borderRadius: 20,
               fontFamily: "monospace",
               cursor: "pointer",
               opacity: 0.8,
-              transition: "opacity 0.3s ease",
+              transition: "opacity 0.3s",
             }}
             onMouseEnter={(e) => (e.currentTarget.style.opacity = "1")}
             onMouseLeave={(e) => (e.currentTarget.style.opacity = "0.8")}
@@ -340,18 +285,10 @@ const Creative: React.FC<CreativeProps> = ({ theme }) => {
             {isCarouselView ? "Grid View" : "Carousel View"}
           </button>
         ) : (
-          <h3
-            style={{
-              margin: 0,
-              fontFamily: "monospace",
-              color: theme === "bunny" ? themes.bunny["--color-text"] : themes.water["--color-text"],
-            }}
-          >
-            Creative
-          </h3>
+          <h3 style={{ margin: 0, fontFamily: "monospace" }}>Creative</h3>
         )}
 
-        <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+        <div style={{ display: "flex", gap: "8px" }}>
           {["art", "photos"].map((filter) => (
             <button
               key={filter}
@@ -359,23 +296,10 @@ const Creative: React.FC<CreativeProps> = ({ theme }) => {
               style={{
                 padding: "7px 14px",
                 backgroundColor:
-                  activeFilter === filter
-                    ? theme === "bunny"
-                      ? themes.bunny["--button-bg"]
-                      : themes.water["--button-bg"]
-                    : theme === "bunny"
-                      ? themes.bunny["--button-bg-light"]
-                      : themes.water["--button-bg-light"],
-                color:
-                  activeFilter === filter
-                    ? theme === "bunny"
-                      ? themes.bunny["--button-text"]
-                      : themes.water["--button-text"]
-                    : theme === "bunny"
-                      ? themes.bunny["--color-text"]
-                      : themes.water["--color-text"],
+                  activeFilter === filter ? colors["--button-bg"] : colors["--button-bg-light"],
+                color: activeFilter === filter ? colors["--button-text"] : colors["--color-text"],
                 border: "none",
-                borderRadius: 20,
+                borderRadius: "20px",
                 fontFamily: "monospace",
                 cursor: "pointer",
                 textTransform: "lowercase",
@@ -387,286 +311,206 @@ const Creative: React.FC<CreativeProps> = ({ theme }) => {
         </div>
       </div>
 
-      {/* Mobile list OR Desktop view (carousel or grid) */}
+      {/* content */}
       {isMobile ? (
-        /* Mobile: vertical list with overlay titles */
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            gap: 20,
-            width: "100%",
-            maxWidth: 500,
-            padding: "0 20px",
-          }}
-        >
-          {filteredPhotos.map((photo) => (
-            <div
-              key={photo.id}
-              onClick={() => handlePhotoClick(photo)}
-              style={{
-                width: "100%",
-                borderRadius: 12,
-                overflow: "hidden",
-                backgroundColor: theme === "bunny" ? "rgba(121, 85, 189, 0.1)" : "rgba(8, 34, 163, 0.1)",
-                cursor: "pointer",
-                boxShadow: "0 4px 20px rgba(0,0,0,0.1)",
-                position: "relative",
-              }}
-            >
-              {/* Image container */}
-              <div
-                style={{
-                  width: "100%",
-                  position: "relative",
-                  paddingBottom: "100%",
-                  overflow: "hidden",
-                }}
-              >
-                <img
-                  src={photo.image || "/placeholder.svg"}
-                  alt={photo.title}
-                  style={{
-                    position: "absolute",
-                    width: "100%",
-                    height: "100%",
-                    objectFit: "cover",
-                    display: "block",
-                  }}
-                />
-
-                {/* Overlay title */}
-                <div
-                  style={{
-                    position: "absolute",
-                    bottom: 0,
-                    left: 0,
-                    right: 0,
-                    height: "15%",
-                    backgroundColor: "rgba(0, 0, 0, 0.6)",
-                    backdropFilter: "blur(2px)",
-                    display: "flex",
-                    flexDirection: "column",
-                    justifyContent: "center",
-                    padding: "0 15px",
-                  }}
-                >
-                  <h3
-                    style={{
-                      margin: 0,
-                      fontSize: "12px",
-                      color: "#ffffff",
-                      whiteSpace: "nowrap",
-                      overflow: "hidden",
-                      textOverflow: "ellipsis",
-                    }}
-                  >
-                    {photo.title}
-                  </h3>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
+        <MobileList photos={filteredPhotos} theme={theme} onPhotoClick={setSelectedPhoto} />
       ) : isCarouselView ? (
-        /* Desktop: 3D auto-rotating carousel */
-        <div
-          style={{
-            width: "100%",
-            maxWidth: 980,
-            margin: "0 auto",
-            position: "relative",
-          }}
-        >
-          <div
-            className="banner"
-            style={{
-              width: "100%",
-              height: "60vh",
-              minHeight: 400,
-              textAlign: "center",
-              overflow: "hidden",
-              position: "relative",
-            }}
-            onWheel={handleScroll}
-          >
-            <div
-              ref={carouselRef}
-              className="slider"
-              style={{
-                position: "absolute",
-                width: "150px",
-                height: "200px",
-                top: "10%",
-                left: "calc(50% - 90px)",
-                transformStyle: "preserve-3d",
-                transform: `perspective(1000px) rotateX(-10deg) rotateY(${carouselRotation}deg)`,
-                zIndex: 2,
-              }}
-            >
-              {filteredPhotos.map((photo, index) => (
-                <div
-                  key={photo.id}
-                  onClick={() => handlePhotoClick(photo)}
-                  style={{
-                    position: "absolute",
-                    inset: 0,
-                    transform: `rotateY(calc(${index} * (360 / ${filteredPhotos.length}) * 1deg)) translateZ(450px)`, // Reduced distance
-                    borderRadius: 12,
-                    overflow: "hidden",
-                    boxShadow: "0 4px 20px rgba(0,0,0,0.3)",
-                    cursor: "pointer",
-                  }}
-                >
-                  <div
-                    style={{
-                      width: "100%",
-                      height: "100%",
-                      position: "relative",
-                    }}
-                  >
-                    <img
-                      src={photo.image || "/placeholder.svg"}
-                      alt={photo.title}
-                      style={{
-                        width: "100%",
-                        height: "100%",
-                        objectFit: "cover",
-                      }}
-                    />
-
-                    {/* Overlay title */}
-                    <div
-                      style={{
-                        position: "absolute",
-                        bottom: 0,
-                        left: 0,
-                        right: 0,
-                        height: "15%", // title area
-                        backgroundColor: "rgba(0, 0, 0, 0.6)",
-                        backdropFilter: "blur(2px)",
-                        display: "flex",
-                        flexDirection: "column",
-                        justifyContent: "center",
-                        padding: "0 15px",
-                      }}
-                    >
-                      <h3
-                        style={{
-                          margin: 0,
-                          fontSize: "12px",
-                          color: "#ffffff",
-                          whiteSpace: "nowrap",
-                          overflow: "hidden",
-                          textOverflow: "ellipsis",
-                        }}
-                      >
-                        {photo.title}
-                      </h3>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            {/* Instruction overlay */}
-            {showInstructions && (
-              <div
-                style={{
-                  position: "absolute",
-                  bottom: "0px",
-                  left: "50%",
-                  transform: "translateX(-50%)",
-                  backgroundColor: "rgba(0, 0, 0, 0.6)",
-                  color: "#ffffff",
-                  padding: "8px 16px",
-                  borderRadius: "20px",
-                  fontSize: "12px",
-                  fontFamily: "monospace",
-                  zIndex: 10,
-                  backdropFilter: "blur(2px)",
-                }}
-              >
-                Scroll to rotate carousel. Click to view.
-              </div>
-            )}
-          </div>
-        </div>
+        <Carousel
+          photos={filteredPhotos}
+          theme={theme}
+          rotation={carouselRotation}
+          onPhotoClick={setSelectedPhoto}
+          onWheel={handleScroll}
+          showInstructions={showInstructions.current}
+        />
       ) : (
-        /* Desktop: Grid view */
-        <div className="photo-grid" style={{ width: "100%" }}>
-          {filteredPhotos.map((photo) => (
-            <div
-              key={photo.id}
-              onClick={() => handlePhotoClick(photo)}
-              style={{
-                borderRadius: 12,
-                overflow: "hidden",
-                backgroundColor: theme === "bunny" ? "rgba(121, 85, 189, 0.1)" : "rgba(8, 34, 163, 0.1)",
-                cursor: "pointer",
-                boxShadow: "0 4px 20px rgba(0,0,0,0.1)",
-                position: "relative",
-              }}
-            >
-              {/* Image container */}
-              <div
-                style={{
-                  width: "100%",
-                  position: "relative",
-                  paddingBottom: "100%",
-                  overflow: "hidden",
-                }}
-              >
-                <img
-                  src={photo.image || "/placeholder.svg"}
-                  alt={photo.title}
-                  style={{
-                    position: "absolute",
-                    width: "100%",
-                    height: "100%",
-                    objectFit: "cover",
-                    display: "block",
-                  }}
-                />
-
-                {/* Overlay title */}
-                <div
-                  style={{
-                    position: "absolute",
-                    bottom: 0,
-                    left: 0,
-                    right: 0,
-                    height: "20%",
-                    backgroundColor: "rgba(0, 0, 0, 0.6)",
-                    backdropFilter: "blur(2px)",
-                    display: "flex",
-                    flexDirection: "column",
-                    justifyContent: "center",
-                    padding: "0 15px",
-                  }}
-                >
-                  <h3
-                    style={{
-                      margin: 0,
-                      fontSize: "12px",
-                      color: "#ffffff",
-                      whiteSpace: "nowrap",
-                      overflow: "hidden",
-                      textOverflow: "ellipsis",
-                    }}
-                  >
-                    {photo.title}
-                  </h3>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
+        <Grid photos={filteredPhotos} theme={theme} onPhotoClick={setSelectedPhoto} />
       )}
 
-      {selectedPhoto && <PhotoModal photo={selectedPhoto} onClose={() => setSelectedPhoto(null)} theme={theme} />}
+      {selectedPhoto && (
+        <PhotoModal photo={selectedPhoto} onClose={() => setSelectedPhoto(null)} theme={theme} />
+      )}
     </div>
-  )
+  );
+};
+
+interface ListProps {
+  photos: typeof photos;
+  theme: Theme;
+  onPhotoClick: (p: typeof photos[number]) => void;
 }
 
-export default Creative
+const AspectImage: React.FC<{ photo: typeof photos[number]; isCarousel?: boolean }> = ({ photo, isCarousel }) => (
+  <div style={{ 
+    width: "100%", 
+    position: "relative", 
+    paddingBottom: isCarousel ? "0" : "100%", 
+    height: isCarousel ? "100%" : "auto",
+    overflow: "hidden" 
+  }}>
+    <img
+      src={photo.image || "/placeholder.svg"}
+      srcSet={photo.image ? `${photo.image} 1x, ${photo.image} 2x` : undefined}
+      alt={photo.title}
+      style={{ 
+        position: isCarousel ? "relative" : "absolute", 
+        width: "100%", 
+        height: "100%", 
+        objectFit: "cover", 
+        display: "block",
+        willChange: isCarousel ? "transform" : "auto"
+      }}
+      loading="lazy"
+      decoding="async"
+    />
+  </div>
+);
+
+const TitleOverlay: React.FC<{ title: string; heightPct: number }> = ({ title, heightPct }) => (
+  <div
+    style={{
+      position: "absolute",
+      bottom: 0,
+      left: 0,
+      right: 0,
+      height: `${heightPct}%`,
+      backgroundColor: "rgba(0,0,0,0.6)",
+      backdropFilter: "blur(2px)",
+      display: "flex",
+      flexDirection: "column",
+      justifyContent: "center",
+      padding: "0 15px",
+    }}
+  >
+    <h3
+      style={{
+        margin: 0,
+        fontSize: 12,
+        color: "#fff",
+        whiteSpace: "nowrap",
+        overflow: "hidden",
+        textOverflow: "ellipsis",
+      }}
+    >
+      {title}
+    </h3>
+  </div>
+);
+
+const MobileList: React.FC<ListProps> = ({ photos, theme, onPhotoClick }) => (
+  <div style={{ display: "flex", flexDirection: "column", gap: 20, width: "100%", maxWidth: 500, padding: "0 20px" }}>
+    {photos.map((photo) => (
+      <div
+        key={photo.id}
+        onClick={() => onPhotoClick(photo)}
+        style={{
+          width: "100%",
+          borderRadius: 12,
+          overflow: "hidden",
+          backgroundColor: theme === "bunny" ? "rgba(121,85,189,0.1)" : "rgba(8,34,163,0.1)",
+          cursor: "pointer",
+          boxShadow: "0 4px 20px rgba(0,0,0,0.1)",
+          position: "relative",
+        }}
+      >
+        <AspectImage photo={photo} />
+        <TitleOverlay title={photo.title} heightPct={15} />
+      </div>
+    ))}
+  </div>
+);
+
+interface CarouselProps extends ListProps {
+  rotation: number;
+  onWheel: React.WheelEventHandler;
+  showInstructions: boolean;
+}
+
+const Carousel: React.FC<CarouselProps> = ({ photos, theme, rotation, onPhotoClick, onWheel, showInstructions }) => (
+  <div style={{ width: "100%", maxWidth: 980, margin: "0 auto", position: "relative" }}>
+    <div
+      className="banner"
+      style={{ width: "100%", height: "60vh", minHeight: 400, textAlign: "center", overflow: "hidden", position: "relative" }}
+      onWheel={onWheel}
+    >
+      <div
+      style={{
+        position: "absolute",
+        width: 150,
+        height: 200,
+        top: "10%",
+        left: "calc(50% - 75px)",
+        transformStyle: "preserve-3d",
+        transform: `perspective(1000px) rotateX(-10deg) rotateY(${rotation}deg)`,
+        zIndex: 1,
+        willChange: "transform",
+      }}
+      >
+      {photos.map((photo, index) => (
+        <div
+        key={photo.id}
+        onClick={() => onPhotoClick(photo)}
+        style={{
+          position: "absolute",
+          inset: 0,
+          transform: `rotateY(${(index * 360) / photos.length}deg) translateZ(450px)`,
+          borderRadius: 12,
+          overflow: "hidden",
+          boxShadow: "0 4px 20px rgba(0,0,0,0.3)",
+          cursor: "pointer",
+          height: "100%",
+        }}
+        >
+        <AspectImage photo={photo} isCarousel={true} />
+        <TitleOverlay title={photo.title} heightPct={15} />
+        </div>
+      ))}
+      </div>
+
+      {showInstructions && (
+      <div
+        style={{
+        position: "absolute",
+        bottom: 0,
+        left: "50%",
+        transform: "translateX(-50%)",
+        background: "rgba(0,0,0,0.6)",
+        color: "#fff",
+        padding: "8px 16px",
+        borderRadius: 20,
+        fontSize: 12,
+        fontFamily: "monospace",
+        backdropFilter: "blur(2px)",
+        zIndex: 2,
+        }}
+      >
+        Scroll to rotate carousel. Click to view.
+      </div>
+      )}
+    </div>
+  </div>
+);
+
+const Grid: React.FC<ListProps> = ({ photos, theme, onPhotoClick }) => (
+  <div className="photo-grid" style={{ width: "100%" }}>
+    {photos.map((photo) => (
+      <div
+        key={photo.id}
+        onClick={() => onPhotoClick(photo)}
+        style={{
+          borderRadius: 12,
+          overflow: "hidden",
+          backgroundColor: theme === "bunny" ? "rgba(121,85,189,0.1)" : "rgba(8,34,163,0.1)",
+          cursor: "pointer",
+          boxShadow: "0 4px 20px rgba(0,0,0,0.1)",
+          position: "relative",
+        }}
+      >
+        <AspectImage photo={photo} />
+        <TitleOverlay title={photo.title} heightPct={20} />
+      </div>
+    ))}
+  </div>
+);
+
+export default Creative;
