@@ -11,6 +11,8 @@ import Portfolio from "./pages/Portfolio"
 import Creative from "./pages/Creative"
 import ProjectDetail from "./pages/ProjectDetail"
 import Footer from "./components/Footer"
+import NotFound from "./pages/NotFound"
+
 
 type ThemeType = "bunny" | "water"
 
@@ -51,7 +53,7 @@ const ThemeToggle = ({
 }: { currentTheme: ThemeType; toggleTheme: () => void; isMobile: boolean }) => {
   const moonIcon = "☾"
   const sunIcon = "☼"
-  const buttonSize = isMobile ? 32 : 40
+  const buttonSize = isMobile ? 34 : 40
 
   return (
     <button
@@ -92,12 +94,12 @@ const NavButton = ({
   <button
     onClick={onClick}
     style={{
-      padding: isMobile ? "6px 10px" : "10px 14px", // Smaller padding on mobile
+      padding: isMobile ? "9px 14px" : "10px 14px",
       fontFamily: "monospace",
-      fontSize: isMobile ? 12 : 14, // Smaller font on mobile
+      fontSize: isMobile ? 12 : 14,
       fontWeight: "bold",
       textTransform: "uppercase",
-      letterSpacing: isMobile ? "0.05em" : "0.1em", // Reduced letter spacing on mobile
+      letterSpacing: isMobile ? "0.08em" : "0.1em",
       backgroundColor: isActive
         ? theme === "bunny"
           ? themes.bunny["--button-bg"]
@@ -116,7 +118,7 @@ const NavButton = ({
       outline: "none",
       borderRadius: 20,
       cursor: "pointer",
-      margin: isMobile ? "0 2px" : "0 5px", // Smaller margin on mobile
+      margin: isMobile ? "0 2px" : "0 5px",
     }}
   >
     {label}
@@ -129,14 +131,9 @@ const CustomCursorWrapper = ({ theme }: { theme: ThemeType }) => {
   useEffect(() => {
     // Check if the device is desktop (wider than iPad width)
     const checkDevice = () => {
-      // Consider desktop if width > 1024px (common tablet breakpoint)
       setIsDesktop(window.innerWidth > 1024)
     }
-
-    // Initial check
     checkDevice()
-
-    // Listen for resize events
     window.addEventListener("resize", checkDevice)
 
     return () => window.removeEventListener("resize", checkDevice)
@@ -167,17 +164,11 @@ const CustomCursorWrapper = ({ theme }: { theme: ThemeType }) => {
   return isDesktop ? <CustomCursor /> : null
 }
 
-/* ------------------------------------------------------------------ */
-/* ✦Scramble helper + minimal fade‑in CSS                    */
-/* ------------------------------------------------------------------ */
-
+// Scramble helper + minimal fade‑in CSS 
 const scrambleSets = {
-  // swapped out the Japanese kana for plain A–Z
   japanese: "!@#$%^&*?<>/",
   binary: "01",
-  // removed the em-dash (—) since that sometimes lives in a different font
   symbols: "!<>-_\\/[]{}=+*^?#",
-  // replaced half-width katakana with more ASCII symbols
   matrix: "!@#$%^&*?<>/",
   code: "{([/\\])}@#$%^&*<>+=",
 }
@@ -192,20 +183,6 @@ function scramble(
     let frame = 0
     const chars = scrambleSets[set]
     let out = Array.from(target)
-
-    // Create a container element to measure text width
-    const measureEl = document.createElement("span")
-    measureEl.style.visibility = "hidden"
-    measureEl.style.position = "absolute"
-    measureEl.style.fontFamily = "monospace"
-    measureEl.style.fontSize = "16px"
-    measureEl.style.fontWeight = "bold"
-    measureEl.textContent = target
-    document.body.appendChild(measureEl)
-
-    // Get the original width
-    const originalWidth = measureEl.offsetWidth
-    document.body.removeChild(measureEl)
 
     const tick = () => {
       out = out.map((c, i) =>
@@ -231,18 +208,6 @@ function scramble(
 const fadeCSS = `
 .fade { opacity: 0; transition: opacity .8s ease; }
 .fade.show { opacity: 1; }
-
-/* Add these new styles to prevent layout shifts during scramble */
-.role-text {
-  font-family: "JetBrains Mono", monospace;
-  display: inline-block;
-  min-width: 100%;
-  white-space: nowrap;
-}
-
-.scrambling {
-  position: relative;
-}
 `
 if (!document.getElementById("fade-css")) {
   const style = document.createElement("style")
@@ -251,12 +216,8 @@ if (!document.getElementById("fade-css")) {
   document.head.appendChild(style)
 }
 
-/* ------------------------------------------------------------------ */
-/* ✦  APP COMPONENT                                                   */
-/* ------------------------------------------------------------------ */
-
 function App() {
-  /* theme + nav */
+  // theme + nav 
   const [theme, setTheme] = useState<ThemeType>("water")
   const location = useLocation()
   const navigate = useNavigate()
@@ -266,29 +227,29 @@ function App() {
   const getActiveTab = () => {
     const path = location.pathname
     if (path.includes("/portfolio")) return "PORTFOLIO"
-    if (path.includes("/play")) return "PLAY"
+    if (path.includes("/creative")) return "CREATIVE"
     return "HOME"
   }
   const activeTab = getActiveTab()
 
-  /* phased reveal: 0-4 */
+  // phased reveal: 0-4 
   const [phase, setPhase] = useState(0)
 
-  /* dynamic role text */
+  // dynamic role text 
   const [roleTop, setTop] = useState("SOFTWARE ENGINEER")
   const [roleBot, setBot] = useState("DEVELOPER & DESIGNER")
   const [originalTop] = useState("SOFTWARE ENGINEER")
   const [originalBot] = useState("DEVELOPER & DESIGNER")
 
-  /* track if device is mobile */
+  // track if device is mobile
   const [isMobile, setIsMobile] = useState(false)
   const [isTablet, setIsTablet] = useState(false)
 
-  /* track safe area top and bottom */
+  // track safe area top and bottom 
   const [safeAreaTop, setSafeAreaTop] = useState("15px")
   const [safeAreaBottom, setSafeAreaBottom] = useState("15px")
 
-  /* check device type and safe area */
+  // check device type and safe area 
   useEffect(() => {
     const checkDeviceAndSafeArea = () => {
       // Only mobile devices (not tablets) should have different nav behavior
@@ -315,11 +276,11 @@ function App() {
     return () => window.removeEventListener("resize", checkDeviceAndSafeArea)
   }, [])
 
-  /* theme side‑effects */
+  // theme side‑effects 
   useEffect(() => {
     const cur = themes[theme]
     Object.entries(cur).forEach(([k, v]) => document.documentElement.style.setProperty(k, v as string))
-    /* outer bg tint = border‑color */
+    // outer bg tint = border color 
     document.body.style.background = cur["--border-color"]
     document.body.style.margin = "0"
     document.body.style.overflow = "hidden"
@@ -327,7 +288,7 @@ function App() {
     document.documentElement.style.height = "100%"
   }, [theme])
 
-  /* drive the timeline on mount */
+  // drive the timeline on mount 
   useEffect(() => {
     setPhase(1) // container
     const t1 = setTimeout(() => setPhase(2), 600) // greeting
@@ -345,7 +306,7 @@ function App() {
     }
   }, [originalTop, originalBot])
 
-  /* toggle with scramble effect */
+  // toggle with scramble effect 
   const toggleTheme = () => {
     // Toggle the theme
     setTheme((prevTheme) => {
@@ -356,8 +317,8 @@ function App() {
       const botSet = newTheme === "bunny" ? "japanese" : "symbols"
 
       // Apply scramble effect to role texts
-      scramble(originalTop, topSet, 30, setTop).then(() => {})
-      scramble(originalBot, botSet, 30, setBot).then(() => {})
+      scramble(originalTop, topSet, 30, setTop).then(() => { })
+      scramble(originalBot, botSet, 30, setBot).then(() => { })
 
       return newTheme
     })
@@ -367,7 +328,7 @@ function App() {
   const handleNavClick = (tab: string) => {
     let path = "/"
     if (tab === "PORTFOLIO") path = "/portfolio"
-    if (tab === "PLAY") path = "/play"
+    if (tab === "CREATIVE") path = "/creative"
     navigate(path)
   }
 
@@ -377,33 +338,11 @@ function App() {
       const topSet = theme === "bunny" ? "code" : "matrix"
       const botSet = theme === "bunny" ? "japanese" : "symbols"
 
-      // Store original dimensions before scrambling
-      const topEl = document.querySelector(".role-top") as HTMLElement;
-      const botEl = document.querySelector(".role-bot")
-
-      if (topEl) topEl.classList.add("scrambling")
-      if (botEl) botEl.classList.add("scrambling")
-
-if (topEl) {
-  topEl.style.width = `${topEl.offsetWidth}px`;
-  topEl.classList.add("scrambling");
-}
-      scramble(originalTop, topSet, 30, setTop).then(() => {
-        if (topEl) {
-    topEl.style.width = "";            // release lock
-    topEl.classList.remove("scrambling");
-  }
-      })
-
-      scramble(originalBot, botSet, 30, setBot).then(() => {
-        if (botEl) botEl.classList.remove("scrambling")
-      })
+      scramble(originalTop, topSet, 30, setTop).then(() => { })
+      scramble(originalBot, botSet, 30, setBot).then(() => { })
     }
   }
 
-  /* ---------------------------------------------------------------- */
-  /* RENDER                                                           */
-  /* ---------------------------------------------------------------- */
   return (
     <>
       <CustomCursorWrapper theme={theme} />
@@ -415,7 +354,6 @@ if (topEl) {
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
-          // Add safe area padding
           paddingTop: safeAreaTop,
           paddingBottom: "15px",
           paddingLeft: "15px",
@@ -440,70 +378,67 @@ if (topEl) {
               className={`fade ${phase >= 4 ? "show" : ""}`}
               style={{
                 width: "100%",
+                padding: isMobile ? "18px 0" : "20px 0",
                 display: "flex",
                 justifyContent: "center",
                 alignItems: "center",
-                padding: isMobile ? "15px 0" : "20px 0", // Smaller padding on mobile
                 position: "relative",
               }}
             >
+              {/* desktop/tablet: name on the left */}
+              {!isMobile && (
+                <div
+                  style={{
+                    position: "absolute",
+                    left: 28,
+                    fontFamily: "monospace",
+                    fontSize: 16,
+                    fontWeight: "bold",
+                    color: theme === "bunny" ? themes.bunny["--color-text"] : themes.water["--color-text"],
+                    display: isTablet ? "none" : "block",
+                  }}
+                >
+                  <Link to="/" style={{ color: "inherit", textDecoration: "none" }}>XIMING LUO</Link>
+                </div>
+              )}
+
+              {/* main row */}
               <div
                 style={{
                   display: "flex",
-                  gap: isMobile ? 2 : 5,
+                  gap: isMobile ? 8 : 12,
                   alignItems: "center",
-                  position: "relative",
+                  justifyContent: "center",
                   width: "100%",
-                  justifyContent: isMobile ? "space-between" : "center",
-                  padding: isMobile ? "0 10px" : "0 20px", // Smaller padding on mobile
                 }}
               >
-                {/* Name in top left for desktop/tablet - only visible when not overlapping nav */}
-                {!isMobile && (
-                  <div
-                    style={{
-                      position: "absolute",
-                      left: "28px",
-                      fontFamily: "monospace",
-                      fontSize: "16px",
-                      fontWeight: "bold",
-                      color: theme === "bunny" ? themes.bunny["--color-text"] : themes.water["--color-text"],
-                      // Hide when it would overlap with nav buttons
-                      display: isTablet ? "none" : "block",
-                    }}
-                  >
-                    <Link
-                      to="/"
-                      style={{
-                        color: "inherit",
-                        textDecoration: "none",
-                      }}
-                    >
-                      XIMING LUO
-                    </Link>
-                  </div>
-                )}
+                {["HOME", "PORTFOLIO", "CREATIVE"].map((lbl) => (
+                  <NavButton
+                    key={lbl}
+                    label={lbl}
+                    isActive={activeTab === lbl}
+                    theme={theme}
+                    onClick={() => handleNavClick(lbl)}
+                    isMobile={isMobile}
+                  />
+                ))}
 
-                <div style={{ display: "flex", gap: isMobile ? 0 : 12 }}>
-                  {["HOME", "PORTFOLIO", "PLAY"].map((lbl) => (
-                    <NavButton
-                      key={lbl}
-                      label={lbl}
-                      isActive={activeTab === lbl}
-                      theme={theme}
-                      onClick={() => handleNavClick(lbl)}
+                {/* mobile: theme toggle in the same row; desktop/tablet: far right */}
+                {isMobile ? (
+                  <ThemeToggle
+                    currentTheme={theme}
+                    toggleTheme={toggleTheme}
+                    isMobile={isMobile}
+                  />
+                ) : (
+                  <div style={{ position: "absolute", right: 20 }}>
+                    <ThemeToggle
+                      currentTheme={theme}
+                      toggleTheme={toggleTheme}
                       isMobile={isMobile}
                     />
-                  ))}
-                </div>
-                <div
-                  style={{
-                    position: isMobile ? "relative" : "absolute",
-                    right: isMobile ? "0" : "20px",
-                  }}
-                >
-                  <ThemeToggle currentTheme={theme} toggleTheme={toggleTheme} isMobile={isMobile} />
-                </div>
+                  </div>
+                )}
               </div>
             </div>
 
@@ -511,11 +446,11 @@ if (topEl) {
             <div
               style={{
                 width: "100%",
-                height: "calc(100% - 80px)", // Reduced to make room for footer
+                height: "calc(100% - 80px)",
                 display: "flex",
                 flexDirection: "column",
                 alignItems: "center",
-                justifyContent: "center", // Center content vertically
+                justifyContent: "center",
                 overflow: "auto", // Allow scrolling if content is too tall
                 position: "relative",
               }}
@@ -535,10 +470,11 @@ if (topEl) {
                 />
                 <Route path="/portfolio" element={<Portfolio theme={theme} />} />
                 <Route path="/portfolio/:projectId" element={<ProjectDetail theme={theme} />} />
-                <Route path="/play" element={<Creative theme={theme} />} />
+                <Route path="/creative" element={<Creative theme={theme} />} />
+                <Route path="*" element={<NotFound theme={theme} />} />
               </Routes>
 
-              {/* Footer - positioned at the bottom */}
+              {/* Footer */}
               <div
                 className={`fade ${phase >= 4 ? "show" : ""}`}
                 style={{

@@ -278,7 +278,7 @@ const Portfolio: React.FC<PortfolioProps> = ({ theme }) => {
           </div>
         ))}
       </div>
-
+  
       {/* hover effect */}
       <style>
         {`

@@ -1,7 +1,17 @@
 "use client";
 
-import React, { useState, useEffect, useRef, useCallback, useMemo } from "react";
+import React, {
+  useState,
+  useEffect,
+  useRef,
+  useCallback,
+  useMemo,
+} from "react";
 import photos from "../data/photos";
+
+/* --------------------------------------------------
+ *  Theme constants
+ * --------------------------------------------------*/
 
 type Theme = "bunny" | "water";
 
@@ -25,6 +35,10 @@ const THEMES = {
   },
 } as const;
 
+/* --------------------------------------------------
+ *  Type declarations
+ * --------------------------------------------------*/
+
 interface CreativeProps {
   theme: Theme;
 }
@@ -35,85 +49,9 @@ interface ModalProps {
   theme: Theme;
 }
 
-// Photo modal
-const PhotoModal = React.memo<ModalProps>(({ photo, onClose, theme }) => {
-  if (!photo) return null;
-  const colors = THEMES[theme];
-
-  return (
-    <div
-      style={{
-        position: "fixed",
-        inset: 0,
-        backgroundColor: "rgba(0,0,0,0.8)",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        zIndex: 1000,
-        padding: 20,
-      }}
-      onClick={onClose}
-    >
-      <div
-        style={{
-          backgroundColor:
-            theme === "bunny" ? "rgba(121, 85, 189, 0.2)" : "rgba(8, 34, 163, 0.2)",
-          borderRadius: 12,
-          maxWidth: "90%",
-          maxHeight: "90%",
-          overflow: "hidden",
-          display: "flex",
-          flexDirection: "column",
-          backdropFilter: "blur(10px)",
-          boxShadow: "0 4px 30px rgba(0,0,0,0.3)",
-        }}
-        onClick={(e) => e.stopPropagation()}
-      >
-        <div style={{ position: "relative", width: "100%", height: "70vh" }}>
-          <img
-            src={photo.image || "/placeholder.svg"}
-            alt={photo.title}
-            style={{ width: "100%", height: "100%", objectFit: "contain" }}
-            loading="lazy"
-          />
-          <button
-            onClick={onClose}
-            style={{
-              position: "absolute",
-              top: 15,
-              right: 15,
-              width: 36,
-              height: 36,
-              borderRadius: "50%",
-              backgroundColor: "rgba(0,0,0,0.5)",
-              color: "#fff",
-              border: "none",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              fontSize: 18,
-              cursor: "pointer",
-            }}
-          >
-            ×
-          </button>
-        </div>
-        <div style={{ padding: 20, color: colors["--color-text"], fontFamily: "monospace" }}>
-          <h2
-            style={{
-              margin: "0 0 10px",
-              color: colors["--color-accent-primary"],
-            }}
-          >
-            {photo.title}
-          </h2>
-          <p style={{ margin: 0, lineHeight: 1.6 }}>{photo.description}</p>
-        </div>
-      </div>
-    </div>
-  );
-});
-PhotoModal.displayName = "PhotoModal";
+/* --------------------------------------------------
+ *  Hooks
+ * --------------------------------------------------*/
 
 const useIsMobile = () => {
   const [isMobile, setIsMobile] = useState(
@@ -129,9 +67,120 @@ const useIsMobile = () => {
   return isMobile;
 };
 
+/* --------------------------------------------------
+ *  Photo Modal
+ * --------------------------------------------------*/
+
+const PhotoModal = React.memo<ModalProps>(({ photo, onClose, theme }) => {
+  if (!photo) return null;
+  const colors = THEMES[theme];
+
+  return (
+    <div
+      /* dark backdrop */
+      style={{
+        position: "fixed",
+        inset: 0,
+        background: "rgba(0,0,0,0.8)",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        padding: 16,
+        zIndex: 1000,
+      }}
+      onClick={onClose}
+    >
+      <div
+        /* modal card */
+        style={{
+          position: "relative",         
+          width: "100%",
+          maxWidth: 640,               
+          maxHeight: "90vh",           
+          display: "flex",
+          flexDirection: "column",
+          overflow: "hidden",
+          borderRadius: 12,
+          background:
+            theme === "bunny"
+              ? "rgba(121, 85, 189, 0.2)"
+              : "rgba(8, 34, 163, 0.2)",
+          backdropFilter: "blur(10px)",
+          boxShadow: "0 4px 30px rgba(0,0,0,0.3)",
+        }}
+        onClick={(e) => e.stopPropagation()}
+      >
+        {/* ------------ IMAGE ------------ */}
+        <img
+          src={photo.image || "/placeholder.svg"}
+          alt={photo.title}
+          loading="lazy"
+          style={{
+            width: "100%",
+            height: "auto",
+            maxHeight: "65vh",         
+            objectFit: "contain",
+          }}
+        />
+
+        {/* ---------- DESCRIPTION ---------- */}
+        <div
+          style={{
+            flexShrink: 0,
+            padding: 16,
+            overflowY: "auto",         
+            color: colors["--color-text"],
+            fontFamily: "monospace",
+          }}
+        >
+          <h2
+            style={{
+              margin: "0 0 8px",
+              color: colors["--color-accent-primary"],
+            }}
+          >
+            {photo.title}
+          </h2>
+          <p style={{ margin: 0, lineHeight: 1.5 }}>{photo.description}</p>
+        </div>
+
+        {/* ------------ CLOSE  ×  ------------ */}
+        <button
+          onClick={onClose}
+          style={{
+            position: "absolute",
+            top: 12,
+            right: 12,
+            width: 32,
+            height: 32,
+            border: "none",
+            borderRadius: "50%",
+            background: "rgba(0,0,0,0.55)",
+            color: "#fff",
+            fontSize: 18,
+            cursor: "pointer",
+          }}
+          aria-label="close modal"
+        >
+          ×
+        </button>
+      </div>
+    </div>
+  );
+});
+PhotoModal.displayName = "PhotoModal";
+
+
+/* --------------------------------------------------
+ *  Creative Page
+ * --------------------------------------------------*/
+
 const Creative: React.FC<CreativeProps> = ({ theme }) => {
   const isMobile = useIsMobile();
 
+  /* --------------------------------------------------
+   *  State + Refs
+   * --------------------------------------------------*/
   const [activeFilter, setActiveFilter] = useState<string | null>(null);
   const [selectedPhoto, setSelectedPhoto] = useState<(typeof photos)[number] | null>(null);
   const [carouselRotation, setCarouselRotation] = useState(0);
@@ -142,13 +191,13 @@ const Creative: React.FC<CreativeProps> = ({ theme }) => {
   const raf = useRef<number | null>(null);
   const showInstructions = useRef(true);
 
-  /* filtering */
+  /* ---------------------------- filtering ---------------------------- */
   const filteredPhotos = useMemo(
     () => (activeFilter ? photos.filter((p) => p.categories.includes(activeFilter)) : photos),
     [activeFilter],
   );
 
-  /* smooth auto‑rotation via RAF */
+  /* ----------------------- auto‑rotation via RAF ---------------------- */
   const startAutoRotate = useCallback(() => {
     let lastTime = performance.now();
     const step = (currentTime: number) => {
@@ -177,33 +226,33 @@ const Creative: React.FC<CreativeProps> = ({ theme }) => {
     return stopAutoRotate;
   }, [isMobile, isCarouselView, isScrolling, startAutoRotate, stopAutoRotate]);
 
-  /* manual rotation */
-const handleScroll = useCallback<React.WheelEventHandler>(
-  (e) => {
-    if (isMobile || !isCarouselView) return;
+  /* ----------------------------- scroll ------------------------------ */
+  const handleScroll = useCallback<React.WheelEventHandler>(
+    (e) => {
+      if (isMobile || !isCarouselView) return;
 
-    if (showInstructions.current) showInstructions.current = false;
-    e.preventDefault();
-    
-    const sensitivity = 0.15;
-    const normalizedDelta = Math.sign(e.deltaY) * Math.min(Math.abs(e.deltaY) * sensitivity, 3);
-    
-    setCarouselRotation(prev => prev + normalizedDelta);
-    
-    if (scrollTimeout.current) {
-      clearTimeout(scrollTimeout.current);
-    }
-    
-    setIsScrolling(true);
-    scrollTimeout.current = setTimeout(() => {
-      scrollTimeout.current = null;
-      setIsScrolling(false);
-    }, 160);
-  },
-  [isMobile, isCarouselView]
-);
+      if (showInstructions.current) showInstructions.current = false;
+      e.preventDefault();
 
-  /* dynamic CSS (once/theme) */
+      const sensitivity = 0.15;
+      const normalizedDelta = Math.sign(e.deltaY) * Math.min(Math.abs(e.deltaY) * sensitivity, 3);
+
+      setCarouselRotation((prev) => prev + normalizedDelta);
+
+      if (scrollTimeout.current) {
+        clearTimeout(scrollTimeout.current);
+      }
+
+      setIsScrolling(true);
+      scrollTimeout.current = setTimeout(() => {
+        scrollTimeout.current = null;
+        setIsScrolling(false);
+      }, 160);
+    },
+    [isMobile, isCarouselView],
+  );
+
+  /* -------------------------- dynamic CSS --------------------------- */
   useEffect(() => {
     const styleId = "creative-custom-styles";
     let styleEl = document.getElementById(styleId) as HTMLStyleElement | null;
@@ -224,11 +273,13 @@ const handleScroll = useCallback<React.WheelEventHandler>(
     };
   }, [theme]);
 
+  /* ---------------------------- handlers ----------------------------- */
   const handleFilterClick = (filter: string) =>
     setActiveFilter((prev) => (prev === filter ? null : filter));
 
   const colors = THEMES[theme];
 
+  /* ----------------------------- render ------------------------------ */
   return (
     <div
       className="creative-container"
@@ -248,7 +299,7 @@ const handleScroll = useCallback<React.WheelEventHandler>(
         fontFamily: "monospace",
       }}
     >
-      {/* header */}
+      {/* ------------------------------ header ------------------------------ */}
       <div
         style={{
           width: "100%",
@@ -288,15 +339,23 @@ const handleScroll = useCallback<React.WheelEventHandler>(
         )}
 
         <div style={{ display: "flex", gap: "8px" }}>
-          {["art", "photos"].map((filter) => (
+          {[
+            "art",
+            "photos",
+          ].map((filter) => (
             <button
               key={filter}
               onClick={() => handleFilterClick(filter)}
               style={{
                 padding: "7px 14px",
                 backgroundColor:
-                  activeFilter === filter ? colors["--button-bg"] : colors["--button-bg-light"],
-                color: activeFilter === filter ? colors["--button-text"] : colors["--color-text"],
+                  activeFilter === filter
+                    ? colors["--button-bg"]
+                    : colors["--button-bg-light"],
+                color:
+                  activeFilter === filter
+                    ? colors["--button-text"]
+                    : colors["--color-text"],
                 border: "none",
                 borderRadius: "20px",
                 fontFamily: "monospace",
@@ -310,7 +369,7 @@ const handleScroll = useCallback<React.WheelEventHandler>(
         </div>
       </div>
 
-      {/* content */}
+      {/* ----------------------------- content ----------------------------- */}
       {isMobile ? (
         <MobileList photos={filteredPhotos} theme={theme} onPhotoClick={setSelectedPhoto} />
       ) : isCarouselView ? (
@@ -333,31 +392,40 @@ const handleScroll = useCallback<React.WheelEventHandler>(
   );
 };
 
+/* --------------------------------------------------
+ *  Shared components
+ * --------------------------------------------------*/
+
 interface ListProps {
   photos: typeof photos;
   theme: Theme;
   onPhotoClick: (p: typeof photos[number]) => void;
 }
 
-const AspectImage: React.FC<{ photo: typeof photos[number]; isCarousel?: boolean }> = ({ photo, isCarousel }) => (
-  <div style={{ 
-    width: "100%", 
-    position: "relative", 
-    paddingBottom: isCarousel ? "0" : "100%", 
-    height: isCarousel ? "100%" : "auto",
-    overflow: "hidden" 
-  }}>
+const AspectImage: React.FC<{ photo: typeof photos[number]; isCarousel?: boolean }> = ({
+  photo,
+  isCarousel,
+}) => (
+  <div
+    style={{
+      width: "100%",
+      position: "relative",
+      paddingBottom: isCarousel ? "0" : "100%",
+      height: isCarousel ? "100%" : "auto",
+      overflow: "hidden",
+    }}
+  >
     <img
       src={photo.image || "/placeholder.svg"}
       srcSet={photo.image ? `${photo.image} 1x, ${photo.image} 2x` : undefined}
       alt={photo.title}
-      style={{ 
-        position: isCarousel ? "relative" : "absolute", 
-        width: "100%", 
-        height: "100%", 
-        objectFit: "cover", 
+      style={{
+        position: isCarousel ? "relative" : "absolute",
+        width: "100%",
+        height: "100%",
+        objectFit: "cover",
         display: "block",
-        willChange: isCarousel ? "transform" : "auto"
+        willChange: isCarousel ? "transform" : "auto",
       }}
       loading="lazy"
       decoding="async"
@@ -397,7 +465,16 @@ const TitleOverlay: React.FC<{ title: string; heightPct: number }> = ({ title, h
 );
 
 const MobileList: React.FC<ListProps> = ({ photos, theme, onPhotoClick }) => (
-  <div style={{ display: "flex", flexDirection: "column", gap: 20, width: "100%", maxWidth: 500, padding: "0 20px" }}>
+  <div
+    style={{
+      display: "flex",
+      flexDirection: "column",
+      gap: 20,
+      width: "100%",
+      maxWidth: 500,
+      padding: "0 20px",
+    }}
+  >
     {photos.map((photo) => (
       <div
         key={photo.id}
@@ -406,7 +483,8 @@ const MobileList: React.FC<ListProps> = ({ photos, theme, onPhotoClick }) => (
           width: "100%",
           borderRadius: 12,
           overflow: "hidden",
-          backgroundColor: theme === "bunny" ? "rgba(121,85,189,0.1)" : "rgba(8,34,163,0.1)",
+          backgroundColor:
+            theme === "bunny" ? "rgba(121,85,189,0.1)" : "rgba(8,34,163,0.1)",
           cursor: "pointer",
           boxShadow: "0 4px 20px rgba(0,0,0,0.1)",
           position: "relative",
@@ -419,76 +497,98 @@ const MobileList: React.FC<ListProps> = ({ photos, theme, onPhotoClick }) => (
   </div>
 );
 
+/* --------------------------------------------------
+ *  Carousel
+ * --------------------------------------------------*/
+
 interface CarouselProps extends ListProps {
   rotation: number;
   onWheel: React.WheelEventHandler;
   showInstructions: boolean;
 }
 
-const Carousel: React.FC<CarouselProps> = ({ photos, theme, rotation, onPhotoClick, onWheel, showInstructions }) => (
+const Carousel: React.FC<CarouselProps> = ({
+  photos,
+  theme,
+  rotation,
+  onPhotoClick,
+  onWheel,
+  showInstructions,
+}) => (
   <div style={{ width: "100%", maxWidth: 980, margin: "0 auto", position: "relative" }}>
     <div
       className="banner"
-      style={{ width: "100%", height: "60vh", minHeight: 400, textAlign: "center", overflow: "hidden", position: "relative" }}
+      style={{
+        width: "100%",
+        height: "60vh",
+        minHeight: 400,
+        textAlign: "center",
+        overflow: "hidden",
+        position: "relative",
+      }}
       onWheel={onWheel}
     >
       <div
-      style={{
-        position: "absolute",
-        width: 150,
-        height: 200,
-        top: "10%",
-        left: "calc(50% - 75px)",
-        transformStyle: "preserve-3d",
-        transform: `perspective(1000px) rotateX(-10deg) rotateY(${rotation}deg)`,
-        zIndex: 1,
-        willChange: "transform",
-      }}
-      >
-      {photos.map((photo, index) => (
-        <div
-        key={photo.id}
-        onClick={() => onPhotoClick(photo)}
         style={{
           position: "absolute",
-          inset: 0,
-          transform: `rotateY(${(index * 360) / photos.length}deg) translateZ(450px)`,
-          borderRadius: 12,
-          overflow: "hidden",
-          boxShadow: "0 4px 20px rgba(0,0,0,0.3)",
-          cursor: "pointer",
-          height: "100%",
+          width: 150,
+          height: 200,
+          top: "10%",
+          left: "calc(50% - 75px)",
+          transformStyle: "preserve-3d",
+          transform: `perspective(1000px) rotateX(-10deg) rotateY(${rotation}deg)`,
+          zIndex: 1,
+          willChange: "transform",
         }}
-        >
-        <AspectImage photo={photo} isCarousel={true} />
-        <TitleOverlay title={photo.title} heightPct={15} />
-        </div>
-      ))}
+      >
+        {photos.map((photo, index) => (
+          <div
+            key={photo.id}
+            onClick={() => onPhotoClick(photo)}
+            style={{
+              position: "absolute",
+              inset: 0,
+              transform: `rotateY(${(index * 360) / photos.length}deg) translateZ(450px)`,
+              borderRadius: 12,
+              overflow: "hidden",
+              boxShadow: "0 4px 20px rgba(0,0,0,0.3)",
+              cursor: "pointer",
+              height: "100%",
+            }}
+          >
+            <AspectImage photo={photo} isCarousel={true} />
+            <TitleOverlay title={photo.title} heightPct={15} />
+          </div>
+        ))}
       </div>
 
       {showInstructions && (
-      <div
-        style={{
-        position: "absolute",
-        bottom: 0,
-        left: "50%",
-        transform: "translateX(-50%)",
-        background: "rgba(0,0,0,0.6)",
-        color: "#fff",
-        padding: "8px 16px",
-        borderRadius: 20,
-        fontSize: 12,
-        fontFamily: "monospace",
-        backdropFilter: "blur(2px)",
-        zIndex: 2,
-        }}
-      >
-        Scroll to rotate carousel. Click to view.
-      </div>
+        <div
+          style={{
+            position: "absolute",
+            bottom: 0,
+            left: "50%",
+            transform: "translateX(-50%)",
+            background: "rgba(0,0,0,0.6)",
+            color: "#fff",
+            padding: "8px 16px",
+            borderRadius: 20,
+            fontSize: 12,
+            fontFamily: "monospace",
+            backdropFilter: "blur(2px)",
+            zIndex: 2,
+          }}
+        >
+          Scroll to rotate carousel. Click to view.
+        </div>
       )}
     </div>
   </div>
 );
+
+/* --------------------------------------------------
+ *  Grid
+ * --------------------------------------------------*/
 
 const Grid: React.FC<ListProps> = ({ photos, theme, onPhotoClick }) => (
   <div className="photo-grid" style={{ width: "100%" }}>
@@ -499,7 +599,8 @@ const Grid: React.FC<ListProps> = ({ photos, theme, onPhotoClick }) => (
         style={{
           borderRadius: 12,
           overflow: "hidden",
-          backgroundColor: theme === "bunny" ? "rgba(121,85,189,0.1)" : "rgba(8,34,163,0.1)",
+          backgroundColor:
+            theme === "bunny" ? "rgba(121,85,189,0.1)" : "rgba(8,34,163,0.1)",
           cursor: "pointer",
           boxShadow: "0 4px 20px rgba(0,0,0,0.1)",
           position: "relative",

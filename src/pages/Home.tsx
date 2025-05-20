@@ -183,7 +183,7 @@ const Home: React.FC<HomeProps> = ({
   }, [isSmallScreen, isMobile])
 
   const contentHeight = isSmallScreen ? "auto" : "100vh"
-  const padding = window.innerWidth < 510 ? "15px" : isMobile ? "50px" : "20px"
+  const padding = window.innerWidth < 510 ? "11px" : isMobile ? "50px" : "20px"
 
   return (
     <>
@@ -253,9 +253,9 @@ const Home: React.FC<HomeProps> = ({
               flexDirection: isMobile ? "column" : "row",
               alignItems: "center",
               justifyContent: "center",
-              gap: isMobile ? 15 : 20,
+              gap: isMobile ? 5 : 20,
               marginTop: isMobile ? 30 : 20,
-              marginBottom: isMobile ? 25 : 40,
+              marginBottom: isMobile ? 25 : 0,
               width: "100%",
               visibility: isAnimationComplete ? "visible" : "hidden",
             }}
@@ -269,7 +269,7 @@ const Home: React.FC<HomeProps> = ({
                 className={`fade ${phase >= 3 && isAnimationComplete ? "show" : ""}`}
                 style={{
                   fontFamily: "monospace",
-                  fontSize: isMobile ? 15 : 16,
+                  fontSize: isMobile ? 12 : 16,
                   fontWeight: "bold",
                   color:
                     theme === "bunny" ? themes.bunny["--color-text"] : themes.water["--color-text"],
@@ -284,7 +284,7 @@ const Home: React.FC<HomeProps> = ({
                 className={`fade ${phase >= 2 && isAnimationComplete ? "show" : ""}`}
                 style={{
                   fontFamily: "monospace",
-                  fontSize: isMobile ? 30 : 32,
+                  fontSize: isMobile ? 25 : 32,
                   fontWeight: "bold",
                   color:
                     theme === "bunny"
@@ -300,11 +300,11 @@ const Home: React.FC<HomeProps> = ({
                 className={`fade ${phase >= 3 && isAnimationComplete ? "show" : ""}`}
                 style={{
                   fontFamily: "monospace",
-                  fontSize: isMobile ? 15 : 16,
+                  fontSize: isMobile ? 12 : 16,
                   fontWeight: "bold",
                   color:
                     theme === "bunny" ? themes.bunny["--color-text"] : themes.water["--color-text"],
-                  margin: isMobile ? "5px 0" : "10px 0",
+                  margin: isMobile ? "0px 0" : "10px 0",
                 }}
               >
                 {roleBot}
@@ -320,7 +320,7 @@ const Home: React.FC<HomeProps> = ({
               textAlign: "center",
               fontFamily: "monospace",
               fontSize: isMobile ? 11 : 13,
-              lineHeight: 1.4,
+              lineHeight: isMobile ? 1.1 : 1.4,
               opacity: phase >= 4 && isAnimationComplete ? 1 : 0,
               transform: `translateY(${phase >= 4 && isAnimationComplete ? 0 : 20}px)`,
               transition: "opacity 0.8s ease, transform 0.8s ease",
@@ -329,12 +329,12 @@ const Home: React.FC<HomeProps> = ({
               padding: isMobile ? "0 10px" : 0,
             }}
           >
-            <p style={{ marginBottom: isMobile ? 10 : 20 }}>
+            <p style={{ marginBottom: isMobile ? 0 : 20 }}>
               I'm a student at the University of Pennsylvania, studying Computer Science (DMD) and Economics. I love
               exploring the intersection of design and technology to develop impactful solutions. I dabble in web and
               iOS dev, AI/ML, CG, AR/VR, HCI, and DevOps.
             </p>
-            <p style={{ marginBottom: isMobile ? 10 : 20 }}>
+            <p style={{ marginBottom: isMobile ? 0 : 20 }}>
               I'm an incoming summer analyst at Apollo Global Management. My work has been recognized by Adobe and{' '}
               <button
                 onClick={(e) => {
@@ -371,7 +371,7 @@ const Home: React.FC<HomeProps> = ({
               </a>{' '}
               |{' '}
               <a
-                href="https://linkedin.com/in/"
+                href="https://linkedin.com/in/ximingluo/"
                 target="_blank"
                 rel="noopener noreferrer"
                 style={{
