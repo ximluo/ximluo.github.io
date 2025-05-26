@@ -66,7 +66,7 @@ const ThemeToggle = ({
         width: buttonSize,
         height: buttonSize,
         borderRadius: "50%",
-        background: isHovered 
+        background: isHovered
           ? currentTheme === "bunny" ? themes.bunny["--button-bg"] : themes.water["--button-bg"]
           : currentTheme === "bunny" ? themes.bunny["--button-bg-light"] : themes.water["--button-bg-light"],
         color: currentTheme === "bunny" ? themes.bunny["--color-text"] : themes.water["--color-text"],

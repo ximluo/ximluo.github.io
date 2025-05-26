@@ -50,7 +50,7 @@ const Footer: React.FC<FooterProps> = ({ theme }) => {
   const buttonBg = theme === "bunny" ? themes.bunny["--button-bg-light"] : themes.water["--button-bg-light"]
   const buttonHoverBg = theme === "bunny" ? themes.bunny["--button-bg"] : themes.water["--button-bg"]
 
-  const bunnyGlow = theme === "bunny" 
+  const bunnyGlow = theme === "bunny"
     ? "0 0 15px rgba(223, 30, 155, 0.3)"
     : "0 0 15px rgba(134, 196, 240, 0.3)"
 

@@ -72,20 +72,20 @@ const Home: React.FC<HomeProps> = ({
     const fullText = "Hi, I'm Ximing!"
     let index = 0
     let lastTime = 0
-const typeNext = (currentTime: number) => {
-  if (currentTime - lastTime >= 50) { // More reliable interval
-    index += 1
-    setTypingText(fullText.slice(0, index))
-    lastTime = currentTime
-  }
-  
-  if (index < fullText.length) {
+    const typeNext = (currentTime: number) => {
+      if (currentTime - lastTime >= 50) { // More reliable interval
+        index += 1
+        setTypingText(fullText.slice(0, index))
+        lastTime = currentTime
+      }
+
+      if (index < fullText.length) {
+        requestAnimationFrame(typeNext)
+      } else {
+        setIsTypingComplete(true)
+      }
+    }
     requestAnimationFrame(typeNext)
-  } else {
-    setIsTypingComplete(true)
-  }
-}
-requestAnimationFrame(typeNext)
   }, [phase, isNavigatingFromPage])
 
   // image preload
@@ -343,47 +343,47 @@ requestAnimationFrame(typeNext)
               padding: isMobile ? "0 10px" : 0,
             }}
           >
-          <p style={{ marginBottom: isMobile ? 0 : 20 }}>
-  I'm a student at the University of Pennsylvania, studying Computer Science (<a
-    href="http://www.cg.cis.upenn.edu/dmd.html"
-    target="_blank"
-    rel="noopener noreferrer"
-    style={{
-      textDecoration: "underline",
-      color: theme === "bunny"
-        ? themes.bunny["--link-color"]
-        : themes.water["--link-color"],
-    }}
-  >
-    Computer Graphics
-  </a>) and Economics. I dabble in iOS, graphics, fullstack, product, XR, and AI/ML.
-</p>
-<p style={{ marginBottom: isMobile ? 0 : 20 }}>
-  I'm an incoming summer analyst at <a
-    href="https://www.apollo.com/"
-    target="_blank"
-    rel="noopener noreferrer"
-    style={{
-      textDecoration: "underline",
-      color: theme === "bunny"
-        ? themes.bunny["--link-color"]
-        : themes.water["--link-color"],
-    }}
-  >
-    Apollo Global Management
-  </a> and a developer at <a
-    href="https://pennlabs.org/"
-    target="_blank"
-    rel="noopener noreferrer"
-    style={{
-      textDecoration: "underline",
-      color: theme === "bunny"
-        ? themes.bunny["--link-color"]
-        : themes.water["--link-color"],
-    }}
-  >
-    Penn Labs
-  </a>. My work has been recognized by Adobe and{' '}
+            <p style={{ marginBottom: isMobile ? 0 : 20 }}>
+              I'm a student at the University of Pennsylvania, studying Computer Science (<a
+                href="http://www.cg.cis.upenn.edu/dmd.html"
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{
+                  textDecoration: "underline",
+                  color: theme === "bunny"
+                    ? themes.bunny["--link-color"]
+                    : themes.water["--link-color"],
+                }}
+              >
+                Computer Graphics
+              </a>) and Economics. I dabble in iOS, graphics, fullstack, product, XR, and AI/ML.
+            </p>
+            <p style={{ marginBottom: isMobile ? 0 : 20 }}>
+              I'm an incoming summer analyst at <a
+                href="https://www.apollo.com/"
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{
+                  textDecoration: "underline",
+                  color: theme === "bunny"
+                    ? themes.bunny["--link-color"]
+                    : themes.water["--link-color"],
+                }}
+              >
+                Apollo Global Management
+              </a> and a developer at <a
+                href="https://pennlabs.org/"
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{
+                  textDecoration: "underline",
+                  color: theme === "bunny"
+                    ? themes.bunny["--link-color"]
+                    : themes.water["--link-color"],
+                }}
+              >
+                Penn Labs
+              </a>. My work has been recognized by Adobe and{' '}
 
               <button
                 onClick={(e) => {
@@ -408,7 +408,7 @@ requestAnimationFrame(typeNext)
             <p>
               Say hello:{' '}
               <a
-                href="mailto:ximluo@seas.upenn.edu"
+                href="mailto:ximluo@upenn.edu"
                 style={{
                   color: theme === "bunny" ? themes.bunny["--link-color"] : themes.water["--link-color"],
                   textDecoration: "none",
@@ -416,7 +416,7 @@ requestAnimationFrame(typeNext)
                 }}
                 onClick={(e) => e.stopPropagation()}
               >
-                ximluo@seas.upenn.edu
+                ximluo@upenn.edu
               </a>{' '}
               |{' '}
               <a

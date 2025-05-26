@@ -93,10 +93,10 @@ const PhotoModal = React.memo<ModalProps>(({ photo, onClose, theme }) => {
       <div
         /* modal card */
         style={{
-          position: "relative",         
+          position: "relative",
           width: "100%",
-          maxWidth: 640,               
-          maxHeight: "90vh",           
+          maxWidth: 640,
+          maxHeight: "90vh",
           display: "flex",
           flexDirection: "column",
           overflow: "hidden",
@@ -118,7 +118,7 @@ const PhotoModal = React.memo<ModalProps>(({ photo, onClose, theme }) => {
           style={{
             width: "100%",
             height: "auto",
-            maxHeight: "65vh",         
+            maxHeight: "65vh",
             objectFit: "contain",
           }}
         />
@@ -128,7 +128,7 @@ const PhotoModal = React.memo<ModalProps>(({ photo, onClose, theme }) => {
           style={{
             flexShrink: 0,
             padding: 16,
-            overflowY: "auto",         
+            overflowY: "auto",
             color: colors["--color-text"],
             fontFamily: "monospace",
           }}

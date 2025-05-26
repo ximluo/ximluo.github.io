@@ -26,7 +26,7 @@ const projects: Project[] = [
     languages: ["Swift", "SwiftUI"],
     categories: ["software", "mobile", "AI", "AR"],
     sections: [
-            {
+      {
         text:
           "PetSteps was recognized at Adobe MAX 2024 with the Digital Edge Standout Prize. The judges praised it as an original, well-executed project that successfully blends emerging technology with real-world health goals. They highlighted its data-driven design and thoughtful use of augmented reality and artificial intelligence to create a fun and effective fitness experience.",
       },
@@ -41,23 +41,23 @@ const projects: Project[] = [
         text:
           "Built in Xcode using Swift and SwiftUI, the app follows the MVVM architecture pattern for clean separation of logic and UI. Augmented reality interactions were implemented using Apple’s RealityKit framework, allowing pets to appear naturally in the user’s environment. The AI coaching experience was developed using Google's Gemini API and dynamically responds to user behavior using custom prompts and goal-tracking logic. All motion and health data is pulled from CoreMotion and HealthKit, while CoreLocation and Open Meteo power real-time weather personalization. Persistent storage and user state are managed through CoreData. Extensive use of asynchronous data flows and reactive UI updates ensures performance stays smooth even with real-time sensor and API inputs.",
       },
-                  {
+      {
         video: "/images/petsteps-slides.pdf"
       },
-            {
+      {
         text:
           "The app encourages physical activity by turning it into a game. Users care for a virtual pet that reacts in real time to how active they are. If they walk, the pet is energized and happy. If they stop, the pet becomes tired and hungry. This simple mechanic creates emotional accountability and builds positive habits.",
       },
-         
+
       {
         text:
           "PetSteps was designed to make staying active feel rewarding, especially for users who struggle with motivation. By combining emotional engagement with gamified movement and smart technology, it turns everyday exercise into something playful, personal, and consistent."
       },
-            {
+      {
         text:
           "Adobe spotlighted PetSteps in one of its marketing campaigns. Watch it below!"
       },
-            {
+      {
         video: "https://www.linkedin.com/embed/feed/update/urn:li:ugcPost:7306349381673197569?compact=1"
       },
     ]

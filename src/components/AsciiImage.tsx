@@ -6,7 +6,7 @@ import { useState, useEffect, useRef } from "react"
 interface AsciiImageProps {
   src: string
   alt: string
-  size: string             
+  size: string
   theme: "bunny" | "water"
   borderWidth?: string
   className?: string
@@ -20,18 +20,18 @@ const AsciiImage: React.FC<AsciiImageProps> = ({
   className = "",
 }) => {
   // state 
-  const [asciiData, setAsciiData]   = useState<string[]>([])  
-  const [baseAscii, setBaseAscii]   = useState<string[]>([])  
-  const [isHovered, setIsHovered]   = useState(false)
-  const [isTapped, setIsTapped]     = useState(false)
+  const [asciiData, setAsciiData] = useState<string[]>([])
+  const [baseAscii, setBaseAscii] = useState<string[]>([])
+  const [isHovered, setIsHovered] = useState(false)
+  const [isTapped, setIsTapped] = useState(false)
   const [isTransitioning, setIsTransitioning] = useState(false)
-  const [isMobile, setIsMobile]     = useState(false)
+  const [isMobile, setIsMobile] = useState(false)
 
   // refs
-  const containerRef   = useRef<HTMLDivElement>(null)
-  const imageRef       = useRef<HTMLImageElement>(null)
-  const animFrameRef   = useRef<number>(0)
-  const imgRef         = useRef<HTMLImageElement | null>(null)
+  const containerRef = useRef<HTMLDivElement>(null)
+  const imageRef = useRef<HTMLImageElement>(null)
+  const animFrameRef = useRef<number>(0)
+  const imgRef = useRef<HTMLImageElement | null>(null)
 
   // Constants 
   // Dark -> light
@@ -39,14 +39,14 @@ const AsciiImage: React.FC<AsciiImageProps> = ({
   // colour palette
   const THEMES = {
     bunny: {
-      glow:   "rgba(223, 30, 155, 0.5)",
+      glow: "rgba(223, 30, 155, 0.5)",
       border: "rgba(223, 30, 155, 1)",
-      text:   "rgba(223, 30, 155, 1)",
+      text: "rgba(223, 30, 155, 1)",
     },
     water: {
-      glow:   "rgba(134, 196, 240, 0.5)",
+      glow: "rgba(134, 196, 240, 0.5)",
       border: "rgb(134, 196, 240)",
-      text:   "rgb(134, 196, 240)",
+      text: "rgb(134, 196, 240)",
     },
   } as const
 
@@ -60,8 +60,8 @@ const AsciiImage: React.FC<AsciiImageProps> = ({
     H: number,
     step: number
   ) => {
-    const off  = new OffscreenCanvas(W, H)
-    const ctx  = off.getContext("2d", { willReadFrequently: false }) as OffscreenCanvasRenderingContext2D
+    const off = new OffscreenCanvas(W, H)
+    const ctx = off.getContext("2d", { willReadFrequently: false }) as OffscreenCanvasRenderingContext2D
     if (!ctx) return []
 
     ctx.drawImage(img, 0, 0, W, H)
@@ -74,9 +74,9 @@ const AsciiImage: React.FC<AsciiImageProps> = ({
     for (let y = 0; y < H; y += stepY) {
       let line = ""
       for (let x = 0; x < W; x += stepX) {
-        const idx        = (y * W + x) * 4
+        const idx = (y * W + x) * 4
         const brightness = (data[idx] + data[idx + 1] + data[idx + 2]) / 3 / 255
-        const charIdx    = Math.floor(brightness * (ASCII_CHARS.length - 1))
+        const charIdx = Math.floor(brightness * (ASCII_CHARS.length - 1))
         line += ASCII_CHARS[charIdx]
       }
       ascii.push(line)
@@ -128,7 +128,7 @@ const AsciiImage: React.FC<AsciiImageProps> = ({
     img.onload = () => {
       // display photo
       if (imageRef.current) imageRef.current.src = src
-      
+
       imgRef.current = img
       calculateAsciiArt()
     }
@@ -198,16 +198,16 @@ const AsciiImage: React.FC<AsciiImageProps> = ({
       ref={containerRef}
       className={`ascii-image-container ${className}`}
       style={{
-        width:           size,
-        height:          size,
-        borderRadius:    "50%",
-        overflow:        "hidden",
-        position:        "relative",
-        flexShrink:      0,
-        border:          `${borderWidth} solid ${THEMES[theme].border}`,
-        boxShadow:       `0 0 20px ${THEMES[theme].glow}`,
-        transition:      "box-shadow 0.3s ease",
-        cursor:          isMobile ? "pointer" : undefined,
+        width: size,
+        height: size,
+        borderRadius: "50%",
+        overflow: "hidden",
+        position: "relative",
+        flexShrink: 0,
+        border: `${borderWidth} solid ${THEMES[theme].border}`,
+        boxShadow: `0 0 20px ${THEMES[theme].glow}`,
+        transition: "box-shadow 0.3s ease",
+        cursor: isMobile ? "pointer" : undefined,
       }}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
@@ -219,10 +219,10 @@ const AsciiImage: React.FC<AsciiImageProps> = ({
         src={src || "/placeholder.svg"}
         alt={alt}
         style={{
-          width:      "100%",
-          height:     "100%",
-          objectFit:  "cover",
-          display:    (isHovered || isTapped) ? "none" : "block",
+          width: "100%",
+          height: "100%",
+          objectFit: "cover",
+          display: (isHovered || isTapped) ? "none" : "block",
         }}
       />
 
@@ -230,18 +230,18 @@ const AsciiImage: React.FC<AsciiImageProps> = ({
       {(isHovered || isTapped || isTransitioning) && (
         <div
           style={{
-            position:      "absolute",
-            inset:         0,
-            background:    "#000",
-            color:         THEMES[theme].text,
-            fontSize:      "6px",      
-            lineHeight:    "6px",
-            fontFamily:    "monospace",
-            whiteSpace:    "pre",
-            display:       "flex",
-            justifyContent:"center",
-            alignItems:    "center",
-            overflow:      "hidden",
+            position: "absolute",
+            inset: 0,
+            background: "#000",
+            color: THEMES[theme].text,
+            fontSize: "6px",
+            lineHeight: "6px",
+            fontFamily: "monospace",
+            whiteSpace: "pre",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            overflow: "hidden",
           }}
         >
           <pre style={{ margin: 0 }}>{asciiData.join("\n")}</pre>

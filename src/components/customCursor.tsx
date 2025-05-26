@@ -17,7 +17,7 @@ export default function CustomCursor() {
 
   const raf = useRef(0)
   const cursorRef = useRef<HTMLDivElement>(null)
-  
+
 
   const SIZE = 24
   const RADIUS = SIZE / 2

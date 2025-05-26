@@ -29,9 +29,9 @@ const LazyImage: React.FC<{
           observer.disconnect()
         }
       },
-      { 
+      {
         rootMargin: "50px", // Start loading 50px before it comes into view
-        threshold: 0.1 
+        threshold: 0.1
       }
     )
 
@@ -229,8 +229,8 @@ const Portfolio: React.FC<PortfolioProps> = ({ theme }) => {
               position: "relative",
               borderRadius: "12px",
               overflow: "hidden",
-              backgroundColor: theme === "bunny" 
-                ? "rgba(121, 85, 189, 0.1)" 
+              backgroundColor: theme === "bunny"
+                ? "rgba(121, 85, 189, 0.1)"
                 : "rgba(8, 34, 163, 0.25)",
               cursor: "pointer",
               transition: "transform 0.3s ease",
@@ -285,7 +285,7 @@ const Portfolio: React.FC<PortfolioProps> = ({ theme }) => {
                       margin: "0 0 5px 0",
                       fontFamily: "monospace",
                       color: currentTheme["--color-accent-primary"],
-                      textAlign: "left", 
+                      textAlign: "left",
                     }}
                   >
                     {project.name}
@@ -329,7 +329,7 @@ const Portfolio: React.FC<PortfolioProps> = ({ theme }) => {
                     justifyContent: "center",
                     fontSize: "20px",
                     color: currentTheme["--button-text"],
-                    opacity: 1, 
+                    opacity: 1,
                     transform: "none",
                     transition: "background 0.3s ease",
                   }}
@@ -341,7 +341,7 @@ const Portfolio: React.FC<PortfolioProps> = ({ theme }) => {
           </div>
         ))}
       </div>
-  
+
       {/* Optimized CSS with GPU acceleration */}
       <style>
         {`
