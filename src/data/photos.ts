@@ -17,7 +17,7 @@ const photos: Photo[] = [
   },
   {
     id: "photo-2",
-    title: "Crowning",
+    title: "The Crowning",
     image: "/images/Crowning.png",
     description: "Digital Illustration",
     categories: ["art"],
@@ -31,7 +31,7 @@ const photos: Photo[] = [
   },
   {
     id: "photo-4",
-    title: "Silver-Spoon",
+    title: "Silver Spoon",
     image: "/images/Silver-Spoon.png",
     description: '20" x 25" charcoal drawing | Scholastics Art and Writing Awards Silver Key',
     categories: ["art"],
@@ -73,18 +73,18 @@ const photos: Photo[] = [
   },
   {
     id: "photo-10",
-    title: "Starcatcher",
+    title: "The Starcatcher",
     image: "/images/Starcatcher.png",
-    description: "Book Cover Illustration | Published",
+    description: "Book Cover Illustration for 'The Starcatcher'",
     categories: ["art"],
   },
 
   // Photos
   {
     id: "photo-11",
-    title: "Echoes",
+    title: "Echoes of Earth",
     image: "/images/Echoes.png",
-    description: "Australia Travel Memoir | [add link to publication]",
+    description: "Australia Travel Memoir | Link: ximingluo.com/echoes.pdf",
     categories: ["photos"],
   },
   {

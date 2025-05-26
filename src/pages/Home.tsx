@@ -24,6 +24,7 @@ const Home: React.FC<HomeProps> = ({
 }) => {
   // state + refs
   const [showAwards, setShowAwards] = useState(false)
+  const [windowWidth, setWindowWidth] = useState(() => window.innerWidth)
   const [isMobile, setIsMobile] = useState(() => window.innerWidth <= 768)
   const [isSmallScreen, setIsSmallScreen] = useState(() => window.innerHeight <= 700)
   const [typingText, setTypingText] = useState("")
@@ -44,7 +45,9 @@ const Home: React.FC<HomeProps> = ({
       cancelAnimationFrame(resizeRaf.current)
     }
     resizeRaf.current = requestAnimationFrame(() => {
-      setIsMobile(window.innerWidth <= 768)
+      const width = window.innerWidth
+      setWindowWidth(width)
+      setIsMobile(width <= 768)
       setIsSmallScreen(window.innerHeight <= 700)
     })
   }, [])
@@ -68,13 +71,21 @@ const Home: React.FC<HomeProps> = ({
 
     const fullText = "Hi, I'm Ximing!"
     let index = 0
-    const typeNext = () => {
-      index += 1
-      setTypingText(fullText.slice(0, index))
-      if (index < fullText.length) setTimeout(typeNext, 41)
-      else setIsTypingComplete(true)
-    }
-    typeNext()
+    let lastTime = 0
+const typeNext = (currentTime: number) => {
+  if (currentTime - lastTime >= 50) { // More reliable interval
+    index += 1
+    setTypingText(fullText.slice(0, index))
+    lastTime = currentTime
+  }
+  
+  if (index < fullText.length) {
+    requestAnimationFrame(typeNext)
+  } else {
+    setIsTypingComplete(true)
+  }
+}
+requestAnimationFrame(typeNext)
   }, [phase, isNavigatingFromPage])
 
   // image preload
@@ -182,8 +193,11 @@ const Home: React.FC<HomeProps> = ({
     return isMobile ? "180px" : "220px"
   }, [isSmallScreen, isMobile])
 
+  const padding = useMemo(() => {
+    return windowWidth < 510 ? "11px" : isMobile ? "50px" : "20px"
+  }, [windowWidth, isMobile])
+
   const contentHeight = isSmallScreen ? "auto" : "100vh"
-  const padding = window.innerWidth < 510 ? "11px" : isMobile ? "50px" : "20px"
 
   return (
     <>
@@ -325,17 +339,52 @@ const Home: React.FC<HomeProps> = ({
               transform: `translateY(${phase >= 4 && isAnimationComplete ? 0 : 20}px)`,
               transition: "opacity 0.8s ease, transform 0.8s ease",
               color: theme === "bunny" ? themes.bunny["--color-text"] : themes.water["--color-text"],
-              marginBottom: isMobile ? 20 : 40,
+              marginBottom: isMobile ? 20 : 20,
               padding: isMobile ? "0 10px" : 0,
             }}
           >
-            <p style={{ marginBottom: isMobile ? 0 : 20 }}>
-              I'm a student at the University of Pennsylvania, studying Computer Science (DMD) and Economics. I love
-              exploring the intersection of design and technology to develop impactful solutions. I dabble in web and
-              iOS dev, AI/ML, CG, AR/VR, HCI, and DevOps.
-            </p>
-            <p style={{ marginBottom: isMobile ? 0 : 20 }}>
-              I'm an incoming summer analyst at Apollo Global Management. My work has been recognized by Adobe and{' '}
+          <p style={{ marginBottom: isMobile ? 0 : 20 }}>
+  I'm a student at the University of Pennsylvania, studying Computer Science (<a
+    href="http://www.cg.cis.upenn.edu/dmd.html"
+    target="_blank"
+    rel="noopener noreferrer"
+    style={{
+      textDecoration: "underline",
+      color: theme === "bunny"
+        ? themes.bunny["--link-color"]
+        : themes.water["--link-color"],
+    }}
+  >
+    Computer Graphics
+  </a>) and Economics. I dabble in iOS, graphics, fullstack, product, XR, and AI/ML.
+</p>
+<p style={{ marginBottom: isMobile ? 0 : 20 }}>
+  I'm an incoming summer analyst at <a
+    href="https://www.apollo.com/"
+    target="_blank"
+    rel="noopener noreferrer"
+    style={{
+      textDecoration: "underline",
+      color: theme === "bunny"
+        ? themes.bunny["--link-color"]
+        : themes.water["--link-color"],
+    }}
+  >
+    Apollo Global Management
+  </a> and a developer at <a
+    href="https://pennlabs.org/"
+    target="_blank"
+    rel="noopener noreferrer"
+    style={{
+      textDecoration: "underline",
+      color: theme === "bunny"
+        ? themes.bunny["--link-color"]
+        : themes.water["--link-color"],
+    }}
+  >
+    Penn Labs
+  </a>. My work has been recognized by Adobe and{' '}
+
               <button
                 onClick={(e) => {
                   e.stopPropagation()
@@ -352,7 +401,7 @@ const Home: React.FC<HomeProps> = ({
                   fontSize: "inherit",
                 }}
               >
-                other awards
+                several awards
               </button>
               . Feel free to explore!
             </p>

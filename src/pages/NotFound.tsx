@@ -17,11 +17,11 @@ const NotFound: React.FC<NotFoundProps> = ({ theme, backPath = "/" }) => {
       "japanese" | "binary" | "symbols" | "matrix" | "code",
       string
     > = {
-      japanese: "プロダクトデザイナーノーコードエンジニア",
+      japanese: "!@#$%^&*?<>/",
       binary: "01",
-      symbols: "!<>-_\\/[]{}—=+*^?#",
-      matrix: "ﾊﾐﾋｰｳｼﾅﾓﾆｻﾜﾂｵﾘｱﾎﾃﾏｹﾒﾕｾﾈｽﾀﾇﾍ",
-      code: "{([\\/\\])}@#$%^&*<>+=",
+      symbols: "!<>-_\\/[]{}=+*^?#",
+      matrix: "!@#$%^&*?<>/",
+      code: "{([/\\])}@#$%^&*<>+=",
     };
 
     const scramble = (

@@ -27,7 +27,7 @@ const AwardsModal: React.FC<AwardsModalProps> = ({ onClose, theme }) => {
 
   // Awards data organized by sections
   const awardsData = {
-    "SELECT AWARDS": [
+    "HIGHLIGHTS": [
       {
         title: "Adobe Digital Edge Awards Winner",
         year: "2024",
@@ -35,33 +35,34 @@ const AwardsModal: React.FC<AwardsModalProps> = ({ onClose, theme }) => {
         link: "https://www.behance.net/gallery/205694787/Computer-Science-Pennsylvania-USA",
       },
       {
+        title: "Stavros Niarchos Foundation Paideia Fellow",
+        year: "2024",
+        description: "Interdisciplinary fellowship at the University of Pennsylvania",
+        link: "https://snfpaideia.upenn.edu/people/ximing-luo/",
+      },
+      {
+        title: "Wharton Directed Reading Program",
+        year: "2025",
+        description: "One of five projects in selective Wharton research program",
+        link: "https://sites.google.com/view/wharton-drp/previous/spring-2025",
+      },
+      {
         title: "MIT Reality Hacks 2025 Winner",
         year: "2025",
         description: "Best Hardware Hack, Best Use of OpenBCI",
-        link: "https://devpost.com/software/neuroscent",
+        link: "",
       },
       {
-        title: "HackMIT Winner",
+        title: "HackMIT 2024 Winner",
         year: "2024",
         description: "Intersystems Challenge Winner",
-        link: "https://ballot.hackmit.org/project/dicbb-jczbc-nylxm-mcqsf",
+        link: "",
       },
       {
         title: "NCWIT Aspirations for Computing Award Winner",
         year: "2023",
-        description: "",
+        description: "Recognized for excellence and leadership in computing",
         link: "https://www.aspirations.org/people/ximing-l/129010",
-      },
-      {
-        title: "American Computer Science League 1st Place",
-        year: "2022",
-        description: "",
-      },
-      {
-        title: "Scholastic Art and Writing Awards",
-        year: "2023",
-        description: "2 Gold Medals, 3 Gold Keys, 8 Silver Key, 8 Honorable Mentions",
-        link: "",
       },
     ],
     "SCHOLARSHIPS": [
@@ -69,7 +70,7 @@ const AwardsModal: React.FC<AwardsModalProps> = ({ onClose, theme }) => {
         title: "Catalent Global Scholarship",
         year: "2024",
         description: "",
-        link: "https://www.catalent.com/scholarship",
+        link: "",
       },
       {
         title: "National Merit Scholar",
@@ -83,9 +84,9 @@ const AwardsModal: React.FC<AwardsModalProps> = ({ onClose, theme }) => {
         description: "",
       },
       {
-        title: "National Society of High School Scholars Visual Arts Scholarship",
+        title: "National Society of High School Scholars Scholarship",
         year: "2022",
-        description: "$2000 Scholarship Awardee",
+        description: "",
         link: "https://www.nshss.org/scholarships/current-winners/ximing-luo/",
       },
       {
@@ -101,15 +102,15 @@ const AwardsModal: React.FC<AwardsModalProps> = ({ onClose, theme }) => {
     ],
     "EXHIBITIONS": [
       {
-        title: "International 2022 SpaceTime Competition",
+        title: "SIGGRAPH Conference SpaceTime Gallery",
         year: "2022",
-        description: "SIGGRAPH Conference SpaceTime Gallery",
+        description: "International 2022 SpaceTime Competition",
         link: "https://education.siggraph.org/spacetime/gallery/2022",
       },
       {
-        title: "International Visual Art Competition",
+        title: "The World Art Institute of Youth – Centre for UNESCO",
         year: "2020",
-        description: "The World Art Institute of Youth – Centre for UNESCO; 2020 Nominee",
+        description: "",
       },
       {
         title: "Museum of Howard County History Exhibition",
@@ -124,15 +125,26 @@ const AwardsModal: React.FC<AwardsModalProps> = ({ onClose, theme }) => {
       {
         title: "Celebrating Art National Art Anthologies",
         year: "2020-2022",
-        description: "Spring 2022, Summer 2020, Spring 2020",
+        description: "",
         link: "",
       },
     ],
     "AWARDS": [
       {
+        title: "American Computer Science League State 1st Place",
+        year: "2022",
+        description: "",
+      },
+      {
+        title: "Scholastic Art and Writing Awards",
+        year: "2023",
+        description: "2 Gold Medals, 3 Gold Keys, 8 Silver Key, 8 Honorable Mentions",
+        link: "",
+      },
+      {
         title: "Winner, Illustrators of the Future",
         year: "2022",
-        description: "Art published in Writers of the Future Volume 39 bestselling anthology, ~$20,000",
+        description: " ~$20,000 & Art published in bestselling anthology",
         link: "https://writersofthefuture.com/introducing-the-illustrators-of-the-future-winners-of-2023/",
       },
       {
@@ -163,7 +175,7 @@ const AwardsModal: React.FC<AwardsModalProps> = ({ onClose, theme }) => {
         description: "",
       },
       {
-        title: "International Creative Karuta Award",
+        title: "Winner, International Creative Karuta Award",
         year: "2020",
         description: "",
       },
@@ -220,7 +232,7 @@ const AwardsModal: React.FC<AwardsModalProps> = ({ onClose, theme }) => {
                   : themes.water["--color-accent-primary"],
             }}
           >
-            Awards & Recognition
+            AWARDS & RECOGNITION
           </h2>
           <button
             onClick={onClose}

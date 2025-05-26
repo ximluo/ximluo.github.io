@@ -2,7 +2,7 @@
 
 "use client";
 
-import React from "react";
+import React, { JSX } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import projects from "../data/projects";
 import NotFound from "./NotFound";
@@ -32,6 +32,51 @@ const themes = {
     "--border-color": "rgba(8, 34, 163, 1)",
   },
 } as const;
+
+// Helper to turn Markdown-style [label](url) and raw URLs into <a> tags
+function parseTextWithLinks(text: string) {
+  const elements: (string | JSX.Element)[] = [];
+  // Regex matches either [label](url) or raw http(s)://… URLs
+  const linkRegex = /\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)|(https?:\/\/[^\s]+)/g;
+  let lastIndex = 0;
+  let match: RegExpExecArray | null;
+  let key = 0;
+
+  while ((match = linkRegex.exec(text)) !== null) {
+    const [fullMatch, mdLabel, mdUrl, rawUrl] = match;
+    const index = match.index;
+
+    // push any text before this match
+    if (lastIndex < index) {
+      elements.push(text.slice(lastIndex, index));
+    }
+
+    // determine which link form matched
+    const url = mdUrl || rawUrl!;
+    const label = mdLabel || rawUrl!;
+
+    elements.push(
+      <a
+        key={key++}
+        href={url}
+        target="_blank"
+        rel="noopener noreferrer"
+        style={{ color: "inherit", textDecoration: "underline" }}
+      >
+        {label}
+      </a>
+    );
+
+    lastIndex = index + fullMatch.length;
+  }
+
+  // push remaining text
+  if (lastIndex < text.length) {
+    elements.push(text.slice(lastIndex));
+  }
+
+  return elements;
+}
 
 const ProjectDetail: React.FC<ProjectDetailProps> = ({ theme }) => {
   const { projectId } = useParams<{ projectId: string }>();
@@ -77,7 +122,7 @@ const ProjectDetail: React.FC<ProjectDetailProps> = ({ theme }) => {
     if (section.text) {
       return (
         <p key={`txt-${idx}`} style={{ lineHeight: 1.6, marginBottom: "1.2em" }}>
-          {section.text}
+          {parseTextWithLinks(section.text)}
         </p>
       );
     }
@@ -88,7 +133,7 @@ const ProjectDetail: React.FC<ProjectDetailProps> = ({ theme }) => {
           key={`vid-${idx}`}
           style={{
             width: "100%",
-            maxWidth: "560px",
+            maxWidth: "600px",
             margin: "30px auto",
             aspectRatio: "16/9",
           }}
@@ -114,7 +159,7 @@ const ProjectDetail: React.FC<ProjectDetailProps> = ({ theme }) => {
           key={`img-${idx}`}
           style={{
             width: "100%",
-            height: "400px",
+            height: "width * 0.5625", // 16:9 aspect ratio
             borderRadius: "12px",
             overflow: "hidden",
             margin: "30px 0",
@@ -181,7 +226,7 @@ const ProjectDetail: React.FC<ProjectDetailProps> = ({ theme }) => {
         <div
           style={{
             width: "100%",
-            height: "400px",
+            height: "width * 0.5625",
             borderRadius: "12px",
             overflow: "hidden",
             marginBottom: "30px",

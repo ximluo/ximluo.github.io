@@ -12,6 +12,7 @@ import Creative from "./pages/Creative"
 import ProjectDetail from "./pages/ProjectDetail"
 import Footer from "./components/Footer"
 import NotFound from "./pages/NotFound"
+import { is } from "@react-three/fiber/dist/declarations/src/core/utils"
 
 
 type ThemeType = "bunny" | "water"
@@ -54,15 +55,20 @@ const ThemeToggle = ({
   const moonIcon = "☾"
   const sunIcon = "☼"
   const buttonSize = isMobile ? 34 : 40
+  const [isHovered, setIsHovered] = useState(false)
 
   return (
     <button
       onClick={toggleTheme}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
       style={{
         width: buttonSize,
         height: buttonSize,
         borderRadius: "50%",
-        background: currentTheme === "bunny" ? themes.bunny["--button-bg-light"] : themes.water["--button-bg-light"],
+        background: isHovered 
+          ? currentTheme === "bunny" ? themes.bunny["--button-bg"] : themes.water["--button-bg"]
+          : currentTheme === "bunny" ? themes.bunny["--button-bg-light"] : themes.water["--button-bg-light"],
         color: currentTheme === "bunny" ? themes.bunny["--color-text"] : themes.water["--color-text"],
         border: "none",
         outline: "none",
@@ -71,6 +77,8 @@ const ThemeToggle = ({
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
+        transition: "transform 0.2s ease, background-color 0.2s ease",
+        transform: isHovered ? "scale(1.1)" : "scale(1)",
       }}
     >
       {currentTheme === "bunny" ? moonIcon : sunIcon}
@@ -119,6 +127,26 @@ const NavButton = ({
       borderRadius: 20,
       cursor: "pointer",
       margin: isMobile ? "0 2px" : "0 5px",
+      transition: "all 0.2s ease",
+      boxShadow: isActive
+        ? theme === "bunny"
+          ? "0 0 15px rgba(223, 30, 155, 0.4)"
+          : "0 0 15px rgba(134, 196, 240, 0.4)"
+        : "none"
+    }}
+    onMouseEnter={(e) => {
+      e.currentTarget.style.transform = "scale(1.05)"
+      e.currentTarget.style.boxShadow = theme === "bunny"
+        ? "0 0 20px rgba(223, 30, 155, 0.6)"
+        : "0 0 20px rgba(134, 196, 240, 0.6)"
+    }}
+    onMouseLeave={(e) => {
+      e.currentTarget.style.transform = "scale(1)"
+      e.currentTarget.style.boxShadow = isActive
+        ? theme === "bunny"
+          ? "0 0 15px rgba(223, 30, 155, 0.4)"
+          : "0 0 15px rgba(134, 196, 240, 0.4)"
+        : "none"
     }}
   >
     {label}
@@ -406,7 +434,7 @@ function App() {
               <div
                 style={{
                   display: "flex",
-                  gap: isMobile ? 8 : 12,
+                  gap: isTablet || isMobile ? 6 : 12,
                   alignItems: "center",
                   justifyContent: "center",
                   width: "100%",

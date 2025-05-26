@@ -23,6 +23,7 @@ const AsciiImage: React.FC<AsciiImageProps> = ({
   const [asciiData, setAsciiData]   = useState<string[]>([])  
   const [baseAscii, setBaseAscii]   = useState<string[]>([])  
   const [isHovered, setIsHovered]   = useState(false)
+  const [isTapped, setIsTapped]     = useState(false)
   const [isTransitioning, setIsTransitioning] = useState(false)
   const [isMobile, setIsMobile]     = useState(false)
 
@@ -30,6 +31,7 @@ const AsciiImage: React.FC<AsciiImageProps> = ({
   const containerRef   = useRef<HTMLDivElement>(null)
   const imageRef       = useRef<HTMLImageElement>(null)
   const animFrameRef   = useRef<number>(0)
+  const imgRef         = useRef<HTMLImageElement | null>(null)
 
   // Constants 
   // Dark -> light
@@ -82,12 +84,40 @@ const AsciiImage: React.FC<AsciiImageProps> = ({
     return ascii
   }
 
+  // Calculate ASCII art based on current container size
+  const calculateAsciiArt = () => {
+    if (!imgRef.current || !containerRef.current) return
+
+    const box = containerRef.current.getBoundingClientRect()
+    const dim = Math.floor(box.width * 3.0)
+    const fontPx = 6
+    const step = Math.max(1, Math.floor(fontPx / GLYPH_ASPECT))
+
+    const ascii = convertToAscii(imgRef.current, dim, dim, step)
+    setBaseAscii(ascii)
+    setAsciiData(ascii)
+  }
+
   // Detect mobile (skip hover on small screens)
   useEffect(() => {
     const onResize = () => setIsMobile(window.innerWidth <= 768)
     onResize()
     window.addEventListener("resize", onResize)
     return () => window.removeEventListener("resize", onResize)
+  }, [])
+
+  // Set up resize observer
+  useEffect(() => {
+    if (!containerRef.current) return
+
+    const resizeObserver = new ResizeObserver(() => {
+      if (imgRef.current) {
+        calculateAsciiArt()
+      }
+    })
+
+    resizeObserver.observe(containerRef.current)
+    return () => resizeObserver.disconnect()
   }, [])
 
   // Load + preprocess once
@@ -98,20 +128,13 @@ const AsciiImage: React.FC<AsciiImageProps> = ({
     img.onload = () => {
       // display photo
       if (imageRef.current) imageRef.current.src = src
-
-      // pick resolution from desired font size
-      const box  = containerRef.current?.getBoundingClientRect()
-      const dim  = Math.floor((box?.width ?? 100) * 3.0)   
-      const fontPx = 6                                     
-      const step   = Math.max(1, Math.floor(fontPx / GLYPH_ASPECT))
-
-      const ascii = convertToAscii(img, dim, dim, step)
-      setBaseAscii(ascii)
-      setAsciiData(ascii)
+      
+      imgRef.current = img
+      calculateAsciiArt()
     }
   }, [src])
 
-  // Hover handlers
+  // Hover/tap handlers
   const startScramble = () => {
     let frame = 0
     const MAX = 15
@@ -157,6 +180,19 @@ const AsciiImage: React.FC<AsciiImageProps> = ({
     setIsTransitioning(false)
   }
 
+  const handleTap = () => {
+    if (!isMobile || baseAscii.length === 0) return
+    setIsTapped(!isTapped)
+    if (!isTapped) {
+      setIsTransitioning(true)
+      startScramble()
+    } else {
+      cancelAnimationFrame(animFrameRef.current)
+      setAsciiData(baseAscii)
+      setIsTransitioning(false)
+    }
+  }
+
   return (
     <div
       ref={containerRef}
@@ -171,9 +207,11 @@ const AsciiImage: React.FC<AsciiImageProps> = ({
         border:          `${borderWidth} solid ${THEMES[theme].border}`,
         boxShadow:       `0 0 20px ${THEMES[theme].glow}`,
         transition:      "box-shadow 0.3s ease",
+        cursor:          isMobile ? "pointer" : undefined,
       }}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
+      onClick={handleTap}
     >
       {/* Photo */}
       <img
@@ -184,12 +222,12 @@ const AsciiImage: React.FC<AsciiImageProps> = ({
           width:      "100%",
           height:     "100%",
           objectFit:  "cover",
-          display:    isHovered ? "none" : "block",
+          display:    (isHovered || isTapped) ? "none" : "block",
         }}
       />
 
       {/* ASCII overlay */}
-      {(isHovered || isTransitioning) && !isMobile && (
+      {(isHovered || isTapped || isTransitioning) && (
         <div
           style={{
             position:      "absolute",

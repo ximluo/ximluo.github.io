@@ -50,6 +50,10 @@ const Footer: React.FC<FooterProps> = ({ theme }) => {
   const buttonBg = theme === "bunny" ? themes.bunny["--button-bg-light"] : themes.water["--button-bg-light"]
   const buttonHoverBg = theme === "bunny" ? themes.bunny["--button-bg"] : themes.water["--button-bg"]
 
+  const bunnyGlow = theme === "bunny" 
+    ? "0 0 15px rgba(223, 30, 155, 0.3)"
+    : "0 0 15px rgba(134, 196, 240, 0.3)"
+
   // Adjust icon size for mobile
   const iconSize = isMobile ? 18 : 22
   const iconFontSize = isMobile ? "14px" : "18px"
@@ -67,8 +71,13 @@ const Footer: React.FC<FooterProps> = ({ theme }) => {
     justifyContent: "center",
     fontSize: iconFontSize,
     cursor: "pointer",
-    transition: "transform .2s, background-color .2s",
+    transition: "transform .2s, background-color .2s, box-shadow .2s",
     flexShrink: 0,
+  }
+
+  const bunnyIconStyle = {
+    ...iconStyle,
+    boxShadow: bunnyHover ? "none" : bunnyGlow,
   }
 
   const isDesktopNonHomePage = !isMobile
@@ -97,7 +106,7 @@ const Footer: React.FC<FooterProps> = ({ theme }) => {
             onMouseEnter={() => setBunnyHover(true)}
             onMouseLeave={() => setBunnyHover(false)}
             style={{
-              ...iconStyle,
+              ...bunnyIconStyle,
               backgroundColor: bunnyHover ? buttonHoverBg : buttonBg,
               transform: bunnyHover ? "scale(1.1)" : "scale(1)",
             }}
@@ -126,7 +135,7 @@ const Footer: React.FC<FooterProps> = ({ theme }) => {
             onMouseEnter={() => setBunnyHover(true)}
             onMouseLeave={() => setBunnyHover(false)}
             style={{
-              ...iconStyle,
+              ...bunnyIconStyle,
               backgroundColor: bunnyHover ? buttonHoverBg : buttonBg,
               transform: bunnyHover ? "scale(1.1)" : "scale(1)",
             }}

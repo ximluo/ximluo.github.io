@@ -1,7 +1,7 @@
 "use client"
 
 import type React from "react"
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback, useMemo } from "react"
 import { useNavigate } from "react-router-dom"
 import projects from "../data/projects"
 
@@ -9,13 +9,86 @@ interface PortfolioProps {
   theme: "bunny" | "water"
 }
 
+// Lazy Image Component with intersection observer
+const LazyImage: React.FC<{
+  src: string
+  alt: string
+  style: React.CSSProperties
+}> = ({ src, alt, style }) => {
+  const [isLoaded, setIsLoaded] = useState(false)
+  const [isInView, setIsInView] = useState(false)
+  const [imgRef, setImgRef] = useState<HTMLDivElement | null>(null)
+
+  useEffect(() => {
+    if (!imgRef) return
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsInView(true)
+          observer.disconnect()
+        }
+      },
+      { 
+        rootMargin: "50px", // Start loading 50px before it comes into view
+        threshold: 0.1 
+      }
+    )
+
+    observer.observe(imgRef)
+    return () => observer.disconnect()
+  }, [imgRef])
+
+  return (
+    <div ref={setImgRef} style={style}>
+      {isInView && (
+        <>
+          {/* Placeholder while loading */}
+          {!isLoaded && (
+            <div
+              style={{
+                position: "absolute",
+                top: 0,
+                left: 0,
+                width: "100%",
+                height: "100%",
+                backgroundColor: "rgba(128, 128, 128, 0.1)",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                color: "rgba(128, 128, 128, 0.6)",
+                fontSize: "14px",
+                fontFamily: "monospace",
+              }}
+            >
+              Loading...
+            </div>
+          )}
+          <img
+            src={src}
+            alt={alt}
+            loading="lazy"
+            decoding="async"
+            onLoad={() => setIsLoaded(true)}
+            style={{
+              ...style,
+              opacity: isLoaded ? 1 : 0,
+              transition: "opacity 0.3s ease, transform 0.3s ease",
+            }}
+          />
+        </>
+      )}
+    </div>
+  )
+}
+
 const Portfolio: React.FC<PortfolioProps> = ({ theme }) => {
   const [activeFilter, setActiveFilter] = useState<string | null>(null)
-  const [filteredProjects, setFilteredProjects] = useState(projects)
   const [isDesktop, setIsDesktop] = useState(window.innerWidth > 1024)
   const navigate = useNavigate()
 
-  const themes = {
+  // Memoize theme styles to prevent recalculation
+  const themes = useMemo(() => ({
     bunny: {
       "--color-text": "rgb(121, 85, 189)",
       "--color-text-secondary": "rgba(249, 240, 251, 1)",
@@ -33,32 +106,44 @@ const Portfolio: React.FC<PortfolioProps> = ({ theme }) => {
       "--button-text": "rgb(46, 80, 192)",
       "--border-color": "rgba(8, 34, 163, 1)",
     },
-  }
+  }), [])
 
-  useEffect(() => {
-    const handleResize = () => {
-      setIsDesktop(window.innerWidth > 1024)
-    }
-
-    window.addEventListener("resize", handleResize)
-    return () => window.removeEventListener("resize", handleResize)
-  }, [])
-
-  useEffect(() => {
+  // Memoize filtered projects to prevent unnecessary recalculations
+  const filteredProjects = useMemo(() => {
     if (activeFilter) {
-      setFilteredProjects(projects.filter((project) => project.categories.includes(activeFilter)))
-    } else {
-      setFilteredProjects(projects)
+      return projects.filter((project) => project.categories.includes(activeFilter))
     }
+    return projects
   }, [activeFilter])
 
-  const handleFilterClick = (filter: string) => {
-    setActiveFilter(activeFilter === filter ? null : filter)
-  }
+  // Debounced resize handler
+  useEffect(() => {
+    let timeoutId: NodeJS.Timeout
+    const handleResize = () => {
+      clearTimeout(timeoutId)
+      timeoutId = setTimeout(() => {
+        setIsDesktop(window.innerWidth > 1024)
+      }, 150)
+    }
 
-  const handleProjectClick = (projectId: string) => {
+    window.addEventListener("resize", handleResize, { passive: true })
+    return () => {
+      window.removeEventListener("resize", handleResize)
+      clearTimeout(timeoutId)
+    }
+  }, [])
+
+  // Memoized event handlers
+  const handleFilterClick = useCallback((filter: string) => {
+    setActiveFilter(current => current === filter ? null : filter)
+  }, [])
+
+  const handleProjectClick = useCallback((projectId: string) => {
     navigate(`/portfolio/${projectId}`)
-  }
+  }, [navigate])
+
+  // Memoize current theme
+  const currentTheme = useMemo(() => themes[theme], [themes, theme])
 
   return (
     <div
@@ -75,13 +160,11 @@ const Portfolio: React.FC<PortfolioProps> = ({ theme }) => {
       <div
         style={{
           width: "100%",
-          maxWidth: "940px", // cap at 3 cards + gaps
+          maxWidth: "940px",
           margin: "0 auto 30px",
           padding: "0 20px 15px",
           boxSizing: "border-box",
-          borderBottom: `1px solid ${
-            theme === "bunny" ? themes.bunny["--border-color"] : themes.water["--border-color"]
-          }`,
+          borderBottom: `1px solid ${currentTheme["--border-color"]}`,
           display: "flex",
           alignItems: "center",
           justifyContent: "space-between",
@@ -92,7 +175,7 @@ const Portfolio: React.FC<PortfolioProps> = ({ theme }) => {
         <h3
           style={{
             fontFamily: "monospace",
-            color: theme === "bunny" ? themes.bunny["--color-text"] : themes.water["--color-text"],
+            color: currentTheme["--color-text"],
             margin: 0,
           }}
         >
@@ -106,22 +189,12 @@ const Portfolio: React.FC<PortfolioProps> = ({ theme }) => {
               onClick={() => handleFilterClick(filter)}
               style={{
                 padding: "7px 14px",
-                backgroundColor:
-                  activeFilter === filter
-                    ? theme === "bunny"
-                      ? themes.bunny["--button-bg"]
-                      : themes.water["--button-bg"]
-                    : theme === "bunny"
-                    ? themes.bunny["--button-bg-light"]
-                    : themes.water["--button-bg-light"],
-                color:
-                  activeFilter === filter
-                    ? theme === "bunny"
-                      ? themes.bunny["--button-text"]
-                      : themes.water["--button-text"]
-                    : theme === "bunny"
-                    ? themes.bunny["--color-text"]
-                    : themes.water["--color-text"],
+                backgroundColor: activeFilter === filter
+                  ? currentTheme["--button-bg"]
+                  : currentTheme["--button-bg-light"],
+                color: activeFilter === filter
+                  ? currentTheme["--button-text"]
+                  : currentTheme["--color-text"],
                 border: "none",
                 borderRadius: "20px",
                 fontFamily: "monospace",
@@ -139,7 +212,7 @@ const Portfolio: React.FC<PortfolioProps> = ({ theme }) => {
       <div
         style={{
           display: "grid",
-          gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", // ≤ 3 columns in 940‑px container
+          gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))",
           gap: "20px",
           width: "100%",
           maxWidth: "940px",
@@ -156,15 +229,18 @@ const Portfolio: React.FC<PortfolioProps> = ({ theme }) => {
               position: "relative",
               borderRadius: "12px",
               overflow: "hidden",
-              backgroundColor:
-                theme === "bunny" ? "rgba(121, 85, 189, 0.1)" : "rgba(8, 34, 163, 0.25)",
+              backgroundColor: theme === "bunny" 
+                ? "rgba(121, 85, 189, 0.1)" 
+                : "rgba(8, 34, 163, 0.25)",
               cursor: "pointer",
               transition: "transform 0.3s ease",
               height: isDesktop ? "290px" : "auto",
+              // Add will-change for better transform performance
+              willChange: "transform",
             }}
             className="project-card"
           >
-            {/* Project Image */}
+            {/* Project Image with lazy loading */}
             <div
               style={{
                 width: "100%",
@@ -173,14 +249,14 @@ const Portfolio: React.FC<PortfolioProps> = ({ theme }) => {
                 position: "relative",
               }}
             >
-              <img
+              <LazyImage
                 src={project.image || "/placeholder.svg"}
                 alt={project.name}
                 style={{
                   width: "100%",
                   height: "100%",
                   objectFit: "cover",
-                  transition: "transform 0.3s ease",
+                  willChange: "transform", // Optimize for transform animations
                 }}
               />
             </div>
@@ -208,10 +284,7 @@ const Portfolio: React.FC<PortfolioProps> = ({ theme }) => {
                     style={{
                       margin: "0 0 5px 0",
                       fontFamily: "monospace",
-                      color:
-                        theme === "bunny"
-                          ? themes.bunny["--color-accent-primary"]
-                          : themes.water["--color-accent-primary"],
+                      color: currentTheme["--color-accent-primary"],
                       textAlign: "left", 
                     }}
                   >
@@ -226,21 +299,18 @@ const Portfolio: React.FC<PortfolioProps> = ({ theme }) => {
                       marginBottom: "0",
                     }}
                   >
-                    {project.languages.map((lang) => (
+                    {project.languages.map((lang, index) => (
                       <span
                         key={lang}
                         style={{
                           fontFamily: "monospace",
                           fontSize: "12px",
-                          color:
-                            theme === "bunny"
-                              ? themes.bunny["--color-text"]
-                              : themes.water["--color-text"],
+                          color: currentTheme["--color-text"],
                           opacity: 0.8,
                         }}
                       >
                         {lang}
-                        {project.languages.indexOf(lang) < project.languages.length - 1 ? " / " : ""}
+                        {index < project.languages.length - 1 ? " / " : ""}
                       </span>
                     ))}
                   </div>
@@ -253,18 +323,12 @@ const Portfolio: React.FC<PortfolioProps> = ({ theme }) => {
                     minWidth: "36px",
                     height: "36px",
                     borderRadius: "50%",
-                    background:
-                      theme === "bunny"
-                        ? themes.bunny["--button-bg"]
-                        : themes.water["--button-bg"],
+                    background: currentTheme["--button-bg"],
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
                     fontSize: "20px",
-                    color:
-                      theme === "bunny"
-                        ? themes.bunny["--button-text"]
-                        : themes.water["--button-text"],
+                    color: currentTheme["--button-text"],
                     opacity: 1, 
                     transform: "none",
                     transition: "background 0.3s ease",
@@ -273,37 +337,29 @@ const Portfolio: React.FC<PortfolioProps> = ({ theme }) => {
                   →
                 </div>
               </div>
-
             </div>
           </div>
         ))}
       </div>
   
-      {/* hover effect */}
+      {/* Optimized CSS with GPU acceleration */}
       <style>
         {`
         .portfolio-container::-webkit-scrollbar{width:8px}
         .portfolio-container::-webkit-scrollbar-track{background:transparent}
         .portfolio-container::-webkit-scrollbar-thumb{
           border-radius:4px;
-          background-color:${
-            theme === "bunny" ? themes.bunny["--button-bg"] : themes.water["--button-bg"]
-          };
+          background-color:${currentTheme["--button-bg"]};
         }
         @media (min-width:1025px){
           .project-card:hover{
-            transform:scale(1.05); /* grow in place */
+            transform:scale(1.05) translateZ(0); /* GPU acceleration */
             z-index:2;
           }
 
           .project-card:hover img{
-            transform:scale(1.08);
+            transform:scale(1.08) translateZ(0); /* GPU acceleration */
           }
-
-        //   .project-card:hover .project-description{
-        //     opacity:1!important;
-        //     height:auto!important;
-        //   }
         }
         `}
       </style>
