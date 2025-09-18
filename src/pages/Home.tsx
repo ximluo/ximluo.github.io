@@ -359,7 +359,7 @@ const Home: React.FC<HomeProps> = ({
               </a>) and Economics. I dabble in iOS, graphics, fullstack, product, XR, and AI/ML.
             </p>
             <p style={{ marginBottom: isMobile ? 0 : 20 }}>
-              I'm an incoming summer analyst at <a
+              I was previously a summer analyst at <a
                 href="https://www.apollo.com/"
                 target="_blank"
                 rel="noopener noreferrer"
