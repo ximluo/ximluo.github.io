@@ -4,24 +4,12 @@ import { BrowserRouter } from 'react-router-dom';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
-import CustomCursor from "./components/customCursor"
-
-// Custom cursor wrapper component
-const ConditionalCustomCursor = () => {
-  const isFinePointer = window.matchMedia(
-    '(hover: hover) and (pointer: fine)'
-  ).matches;
-
-  return isFinePointer ? <CustomCursor /> : null;
-};
-
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
 root.render(
   <React.StrictMode>
     <BrowserRouter basename={process.env.PUBLIC_URL}>
-      <ConditionalCustomCursor />
       <App />
     </BrowserRouter>
   </React.StrictMode>

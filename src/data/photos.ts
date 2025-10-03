@@ -36,13 +36,13 @@ const photos: Photo[] = [
     description: '20" x 25" charcoal drawing | Scholastics Art and Writing Awards Silver Key',
     categories: ["art"],
   },
-  {
-    id: "photo-5",
-    title: "Blossom",
-    image: "/images/Blossom.png",
-    description: "Digital Illustration",
-    categories: ["art"],
-  },
+  // {
+  //   id: "photo-5",
+  //   title: "Blossom",
+  //   image: "/images/Blossom.png",
+  //   description: "Digital Illustration",
+  //   categories: ["art"],
+  // },
   {
     id: "photo-6",
     title: "Ashen",
@@ -71,13 +71,13 @@ const photos: Photo[] = [
     description: '20" x 25" charcoal drawing | Scholastics Art and Writing Awards Silver Key',
     categories: ["art"],
   },
-  {
-    id: "photo-10",
-    title: "The Starcatcher",
-    image: "/images/Starcatcher.png",
-    description: "Book Cover Illustration for 'The Starcatcher'",
-    categories: ["art"],
-  },
+  // {
+  //   id: "photo-10",
+  //   title: "The Starcatcher",
+  //   image: "/images/Starcatcher.png",
+  //   description: "Book Cover Illustration for 'The Starcatcher'",
+  //   categories: ["art"],
+  // },
 
   // Photos
   {

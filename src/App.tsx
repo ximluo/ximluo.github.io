@@ -4,7 +4,6 @@ import { useEffect, useState, useRef } from "react"
 import { Routes, Route, useLocation, useNavigate, Link } from "react-router-dom"
 import "./App.css"
 import "./components/gradientAnimation.css"
-import CustomCursor from "./components/customCursor"
 import GradientBackground from "./components/GradientBackground"
 import Home from "./pages/Home"
 import Portfolio from "./pages/Portfolio"
@@ -12,7 +11,6 @@ import Creative from "./pages/Creative"
 import ProjectDetail from "./pages/ProjectDetail"
 import Footer from "./components/Footer"
 import NotFound from "./pages/NotFound"
-import { is } from "@react-three/fiber/dist/declarations/src/core/utils"
 
 
 type ThemeType = "bunny" | "water"
@@ -152,45 +150,6 @@ const NavButton = ({
     {label}
   </button>
 )
-
-const CustomCursorWrapper = ({ theme }: { theme: ThemeType }) => {
-  const [isDesktop, setIsDesktop] = useState(false)
-
-  useEffect(() => {
-    // Check if the device is desktop (wider than iPad width)
-    const checkDevice = () => {
-      setIsDesktop(window.innerWidth > 1024)
-    }
-    checkDevice()
-    window.addEventListener("resize", checkDevice)
-
-    return () => window.removeEventListener("resize", checkDevice)
-  }, [])
-
-  useEffect(() => {
-    if (isDesktop) {
-      document.documentElement.style.setProperty(
-        "--cursor-border-color",
-        theme === "bunny" ? themes.bunny["--cursor-color"] : themes.water["--cursor-color"],
-      )
-      document.documentElement.style.setProperty(
-        "--cursor-box-shadow",
-        theme === "bunny" ? themes.bunny["--cursor-glow"] : themes.water["--cursor-glow"],
-      )
-      document.documentElement.style.setProperty(
-        "--cursor-hover-border-color",
-        theme === "bunny" ? themes.bunny["--cursor-hover-color"] : themes.water["--cursor-hover-color"],
-      )
-      document.documentElement.style.setProperty(
-        "--cursor-hover-box-shadow",
-        theme === "bunny" ? themes.bunny["--cursor-hover-glow"] : themes.water["--cursor-hover-glow"],
-      )
-    }
-  }, [theme, isDesktop])
-
-  // Only render the custom cursor on desktop
-  return isDesktop ? <CustomCursor /> : null
-}
 
 // Scramble helper + minimal fade‑in CSS 
 const scrambleSets = {
@@ -373,7 +332,6 @@ function App() {
 
   return (
     <>
-      <CustomCursorWrapper theme={theme} />
       <div
         className={`fade ${phase >= 1 ? "show" : ""}`}
         style={{
@@ -400,118 +358,130 @@ function App() {
           }}
         >
           <GradientBackground theme={theme}>
-            {/* NAV BAR */}
             <div
-              ref={navRef}
-              className={`fade ${phase >= 4 ? "show" : ""}`}
               style={{
-                width: "100%",
-                padding: isMobile ? "18px 0" : "20px 0",
                 display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                position: "relative",
+                flexDirection: "column",
+                width: "100%",
+                height: "100%",
               }}
             >
-              {/* desktop/tablet: name on the left */}
-              {!isMobile && (
-                <div
-                  style={{
-                    position: "absolute",
-                    left: 28,
-                    fontFamily: "monospace",
-                    fontSize: 16,
-                    fontWeight: "bold",
-                    color: theme === "bunny" ? themes.bunny["--color-text"] : themes.water["--color-text"],
-                    display: isTablet ? "none" : "block",
-                  }}
-                >
-                  <Link to="/" style={{ color: "inherit", textDecoration: "none" }}>XIMING LUO</Link>
-                </div>
-              )}
-
-              {/* main row */}
+              {/* NAV BAR */}
               <div
+                ref={navRef}
+                className={`fade ${phase >= 4 ? "show" : ""}`}
                 style={{
-                  display: "flex",
-                  gap: isTablet || isMobile ? 6 : 12,
-                  alignItems: "center",
-                  justifyContent: "center",
                   width: "100%",
+                  padding: isMobile ? "18px 0" : "20px 0",
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  position: "relative",
+                  flexShrink: 0,
                 }}
               >
-                {["HOME", "PORTFOLIO", "CREATIVE"].map((lbl) => (
-                  <NavButton
-                    key={lbl}
-                    label={lbl}
-                    isActive={activeTab === lbl}
-                    theme={theme}
-                    onClick={() => handleNavClick(lbl)}
-                    isMobile={isMobile}
-                  />
-                ))}
+                {/* desktop/tablet: name on the left */}
+                {!isMobile && (
+                  <div
+                    style={{
+                      position: "absolute",
+                      left: 28,
+                      fontFamily: "monospace",
+                      fontSize: 16,
+                      fontWeight: "bold",
+                      color: theme === "bunny" ? themes.bunny["--color-text"] : themes.water["--color-text"],
+                      display: isTablet ? "none" : "block",
+                    }}
+                  >
+                    <Link to="/" style={{ color: "inherit", textDecoration: "none" }}>
+                      XIMING LUO
+                    </Link>
+                  </div>
+                )}
 
-                {/* mobile: theme toggle in the same row; desktop/tablet: far right */}
-                {isMobile ? (
-                  <ThemeToggle
-                    currentTheme={theme}
-                    toggleTheme={toggleTheme}
-                    isMobile={isMobile}
-                  />
-                ) : (
-                  <div style={{ position: "absolute", right: 20 }}>
+                {/* main row */}
+                <div
+                  style={{
+                    display: "flex",
+                    gap: isTablet || isMobile ? 6 : 12,
+                    alignItems: "center",
+                    justifyContent: "center",
+                    width: "100%",
+                  }}
+                >
+                  {["HOME", "PORTFOLIO", "CREATIVE"].map((lbl) => (
+                    <NavButton
+                      key={lbl}
+                      label={lbl}
+                      isActive={activeTab === lbl}
+                      theme={theme}
+                      onClick={() => handleNavClick(lbl)}
+                      isMobile={isMobile}
+                    />
+                  ))}
+
+                  {/* mobile: theme toggle in the same row; desktop/tablet: far right */}
+                  {isMobile ? (
                     <ThemeToggle
                       currentTheme={theme}
                       toggleTheme={toggleTheme}
                       isMobile={isMobile}
                     />
-                  </div>
-                )}
+                  ) : (
+                    <div style={{ position: "absolute", right: 20 }}>
+                      <ThemeToggle
+                        currentTheme={theme}
+                        toggleTheme={toggleTheme}
+                        isMobile={isMobile}
+                      />
+                    </div>
+                  )}
+                </div>
               </div>
-            </div>
 
-            {/* MAIN CONTENT */}
-            <div
-              style={{
-                width: "100%",
-                height: "calc(100% - 80px)",
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                justifyContent: "center",
-                overflow: "auto", // Allow scrolling if content is too tall
-                position: "relative",
-              }}
-            >
-              <Routes>
-                <Route
-                  path="/"
-                  element={
-                    <Home
-                      theme={theme}
-                      phase={phase}
-                      roleTop={roleTop}
-                      roleBot={roleBot}
-                      onScramble={handleHomeScramble}
-                    />
-                  }
-                />
-                <Route path="/portfolio" element={<Portfolio theme={theme} />} />
-                <Route path="/portfolio/:projectId" element={<ProjectDetail theme={theme} />} />
-                <Route path="/creative" element={<Creative theme={theme} />} />
-                <Route path="*" element={<NotFound theme={theme} />} />
-              </Routes>
-
-              {/* Footer */}
+              {/* MAIN CONTENT */}
               <div
-                className={`fade ${phase >= 4 ? "show" : ""}`}
                 style={{
                   width: "100%",
-                  marginTop: "auto",
-                  flexShrink: 0,
+                  flex: 1,
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  overflow: "auto", // Allow scrolling if content is too tall
+                  position: "relative",
                 }}
               >
-                <Footer theme={theme} />
+                <Routes>
+                  <Route
+                    path="/"
+                    element={
+                      <Home
+                        theme={theme}
+                        phase={phase}
+                        roleTop={roleTop}
+                        roleBot={roleBot}
+                        onScramble={handleHomeScramble}
+                      />
+                    }
+                  />
+                  <Route path="/portfolio" element={<Portfolio theme={theme} />} />
+                  <Route path="/portfolio/:projectId" element={<ProjectDetail theme={theme} />} />
+                  <Route path="/creative" element={<Creative theme={theme} />} />
+                  <Route path="*" element={<NotFound theme={theme} />} />
+                </Routes>
+
+                {/* Footer */}
+                <div
+                  className={`fade ${phase >= 4 ? "show" : ""}`}
+                  style={{
+                    width: "100%",
+                    marginTop: "auto",
+                    flexShrink: 0,
+                  }}
+                >
+                  <Footer theme={theme} />
+                </div>
               </div>
             </div>
           </GradientBackground>

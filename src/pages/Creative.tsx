@@ -3,9 +3,6 @@
 import React, {
   useState,
   useEffect,
-  useRef,
-  useCallback,
-  useMemo,
 } from "react";
 import photos from "../data/photos";
 
@@ -177,82 +174,9 @@ PhotoModal.displayName = "PhotoModal";
 
 const Creative: React.FC<CreativeProps> = ({ theme }) => {
   const isMobile = useIsMobile();
-
-  /* --------------------------------------------------
-   *  State + Refs
-   * --------------------------------------------------*/
-  const [activeFilter, setActiveFilter] = useState<string | null>(null);
   const [selectedPhoto, setSelectedPhoto] = useState<(typeof photos)[number] | null>(null);
-  const [carouselRotation, setCarouselRotation] = useState(0);
-  const [isCarouselView, setIsCarouselView] = useState(true);
-  const [isScrolling, setIsScrolling] = useState(false);
 
-  const scrollTimeout = useRef<NodeJS.Timeout | null>(null);
-  const raf = useRef<number | null>(null);
-  const showInstructions = useRef(true);
-
-  /* ---------------------------- filtering ---------------------------- */
-  const filteredPhotos = useMemo(
-    () => (activeFilter ? photos.filter((p) => p.categories.includes(activeFilter)) : photos),
-    [activeFilter],
-  );
-
-  /* ----------------------- auto‑rotation via RAF ---------------------- */
-  const startAutoRotate = useCallback(() => {
-    let lastTime = performance.now();
-    const step = (currentTime: number) => {
-      const deltaTime = currentTime - lastTime;
-      const rotationPerFrame = 0.18 * (deltaTime / 16.67); //speed
-      setCarouselRotation((prev) => prev + rotationPerFrame);
-      lastTime = currentTime;
-      raf.current = requestAnimationFrame(step);
-    };
-    raf.current = requestAnimationFrame(step);
-  }, []);
-
-  const stopAutoRotate = useCallback(() => {
-    if (raf.current) {
-      cancelAnimationFrame(raf.current);
-      raf.current = null;
-    }
-  }, []);
-
-  useEffect(() => {
-    if (!isMobile && isCarouselView && !isScrolling) {
-      startAutoRotate();
-    } else {
-      stopAutoRotate();
-    }
-    return stopAutoRotate;
-  }, [isMobile, isCarouselView, isScrolling, startAutoRotate, stopAutoRotate]);
-
-  /* ----------------------------- scroll ------------------------------ */
-  const handleScroll = useCallback<React.WheelEventHandler>(
-    (e) => {
-      if (isMobile || !isCarouselView) return;
-
-      if (showInstructions.current) showInstructions.current = false;
-      e.preventDefault();
-
-      const sensitivity = 0.15;
-      const normalizedDelta = Math.sign(e.deltaY) * Math.min(Math.abs(e.deltaY) * sensitivity, 3);
-
-      setCarouselRotation((prev) => prev + normalizedDelta);
-
-      if (scrollTimeout.current) {
-        clearTimeout(scrollTimeout.current);
-      }
-
-      setIsScrolling(true);
-      scrollTimeout.current = setTimeout(() => {
-        scrollTimeout.current = null;
-        setIsScrolling(false);
-      }, 160);
-    },
-    [isMobile, isCarouselView],
-  );
-
-  /* -------------------------- dynamic CSS --------------------------- */
+  /* -------------------------- dynamic CSS --------------------------- */
   useEffect(() => {
     const styleId = "creative-custom-styles";
     let styleEl = document.getElementById(styleId) as HTMLStyleElement | null;
@@ -273,11 +197,10 @@ const Creative: React.FC<CreativeProps> = ({ theme }) => {
     };
   }, [theme]);
 
-  /* ---------------------------- handlers ----------------------------- */
-  const handleFilterClick = (filter: string) =>
-    setActiveFilter((prev) => (prev === filter ? null : filter));
-
   const colors = THEMES[theme];
+  const handlePhotoClick = (photo: (typeof photos)[number]) => {
+    setSelectedPhoto(photo);
+  };
 
   /* ----------------------------- render ------------------------------ */
   return (
@@ -285,105 +208,53 @@ const Creative: React.FC<CreativeProps> = ({ theme }) => {
       className="creative-container"
       style={{
         width: "100%",
-        maxWidth: 980,
         height: "100%",
         padding: 20,
-        margin: "0 auto",
-        overflowY: "auto",
-        overflowX: "hidden",
         boxSizing: "border-box",
+        overflow: "auto",
+        overflowX: "hidden",
         display: "flex",
         flexDirection: "column",
-        alignItems: "center",
+        alignItems: "stretch",
         color: colors["--color-text"],
         fontFamily: "monospace",
       }}
     >
-      {/* ------------------------------ header ------------------------------ */}
       <div
         style={{
           width: "100%",
           maxWidth: 940,
-          margin: "0 auto 30px",
-          padding: "0 20px 15px",
+          margin: "0 auto",
+          padding: "0 20px 20px",
           boxSizing: "border-box",
-          borderBottom: `1px solid ${colors["--border-color"]}`,
           display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          flexWrap: "wrap",
-          gap: "10px 20px",
+          flexDirection: "column",
+          flex: 1,
         }}
       >
-        {!isMobile ? (
-          <button
-            onClick={() => setIsCarouselView((v) => !v)}
-            style={{
-              padding: "7px 14px",
-              background: "transparent",
-              color: colors["--color-text"],
-              border: `1px solid ${colors["--color-text"]}`,
-              borderRadius: 20,
-              fontFamily: "monospace",
-              cursor: "pointer",
-              opacity: 0.8,
-              transition: "opacity 0.3s",
-            }}
-            onMouseEnter={(e) => (e.currentTarget.style.opacity = "1")}
-            onMouseLeave={(e) => (e.currentTarget.style.opacity = "0.8")}
-          >
-            {isCarouselView ? "Grid View" : "Carousel View"}
-          </button>
-        ) : (
-          <h3 style={{ margin: 0, fontFamily: "monospace" }}>Creative</h3>
-        )}
+        {/* ------------------------------ header ------------------------------ */}
+        <div
+          style={{
+            width: "100%",
+            borderBottom: `1px solid ${colors["--border-color"]}`,
+            paddingBottom: 15,
+            marginBottom: 20,
+            display: "flex",
+            alignItems: "center",
+          }}
+        >
+          <h3 style={{ margin: 0, fontFamily: "monospace", color: colors["--color-text"] }}>Creative Work</h3>
+        </div>
 
-        <div style={{ display: "flex", gap: "8px" }}>
-          {[
-            "art",
-            "photos",
-          ].map((filter) => (
-            <button
-              key={filter}
-              onClick={() => handleFilterClick(filter)}
-              style={{
-                padding: "7px 14px",
-                backgroundColor:
-                  activeFilter === filter
-                    ? colors["--button-bg"]
-                    : colors["--button-bg-light"],
-                color:
-                  activeFilter === filter
-                    ? colors["--button-text"]
-                    : colors["--color-text"],
-                border: "none",
-                borderRadius: "20px",
-                fontFamily: "monospace",
-                cursor: "pointer",
-                textTransform: "lowercase",
-              }}
-            >
-              {activeFilter === filter ? `${filter} ×` : filter}
-            </button>
-          ))}
+        {/* ----------------------------- content ----------------------------- */}
+        <div style={{ flex: 1, display: "flex", flexDirection: "column" }}>
+          {isMobile ? (
+            <MobileList photos={photos} theme={theme} onPhotoClick={handlePhotoClick} />
+          ) : (
+            <Grid photos={photos} theme={theme} onPhotoClick={handlePhotoClick} />
+          )}
         </div>
       </div>
-
-      {/* ----------------------------- content ----------------------------- */}
-      {isMobile ? (
-        <MobileList photos={filteredPhotos} theme={theme} onPhotoClick={setSelectedPhoto} />
-      ) : isCarouselView ? (
-        <Carousel
-          photos={filteredPhotos}
-          theme={theme}
-          rotation={carouselRotation}
-          onPhotoClick={setSelectedPhoto}
-          onWheel={handleScroll}
-          showInstructions={showInstructions.current}
-        />
-      ) : (
-        <Grid photos={filteredPhotos} theme={theme} onPhotoClick={setSelectedPhoto} />
-      )}
 
       {selectedPhoto && (
         <PhotoModal photo={selectedPhoto} onClose={() => setSelectedPhoto(null)} theme={theme} />
@@ -402,16 +273,13 @@ interface ListProps {
   onPhotoClick: (p: typeof photos[number]) => void;
 }
 
-const AspectImage: React.FC<{ photo: typeof photos[number]; isCarousel?: boolean }> = ({
-  photo,
-  isCarousel,
-}) => (
+const AspectImage: React.FC<{ photo: typeof photos[number] }> = ({ photo }) => (
   <div
     style={{
       width: "100%",
       position: "relative",
-      paddingBottom: isCarousel ? "0" : "100%",
-      height: isCarousel ? "100%" : "auto",
+      paddingBottom: "100%",
+      height: "auto",
       overflow: "hidden",
     }}
   >
@@ -420,12 +288,11 @@ const AspectImage: React.FC<{ photo: typeof photos[number]; isCarousel?: boolean
       srcSet={photo.image ? `${photo.image} 1x, ${photo.image} 2x` : undefined}
       alt={photo.title}
       style={{
-        position: isCarousel ? "relative" : "absolute",
+        position: "absolute",
         width: "100%",
         height: "100%",
         objectFit: "cover",
         display: "block",
-        willChange: isCarousel ? "transform" : "auto",
       }}
       loading="lazy"
       decoding="async"
@@ -433,7 +300,11 @@ const AspectImage: React.FC<{ photo: typeof photos[number]; isCarousel?: boolean
   </div>
 );
 
-const TitleOverlay: React.FC<{ title: string; heightPct: number }> = ({ title, heightPct }) => (
+const TitleOverlay: React.FC<{ title: string; heightPct: number; isVisible?: boolean }> = ({
+  title,
+  heightPct,
+  isVisible = true,
+}) => (
   <div
     style={{
       position: "absolute",
@@ -447,6 +318,10 @@ const TitleOverlay: React.FC<{ title: string; heightPct: number }> = ({ title, h
       flexDirection: "column",
       justifyContent: "center",
       padding: "0 15px",
+      opacity: isVisible ? 1 : 0,
+      transform: isVisible ? "translateY(0)" : "translateY(12px)",
+      transition: "opacity 0.2s ease, transform 0.2s ease",
+      pointerEvents: "none",
     }}
   >
     <h3
@@ -472,7 +347,7 @@ const MobileList: React.FC<ListProps> = ({ photos, theme, onPhotoClick }) => (
       gap: 20,
       width: "100%",
       maxWidth: 500,
-      padding: "0 20px",
+      margin: "0 auto",
     }}
   >
     {photos.map((photo) => (
@@ -498,117 +373,45 @@ const MobileList: React.FC<ListProps> = ({ photos, theme, onPhotoClick }) => (
 );
 
 /* --------------------------------------------------
- *  Carousel
+ *  Grid
  * --------------------------------------------------*/
 
-interface CarouselProps extends ListProps {
-  rotation: number;
-  onWheel: React.WheelEventHandler;
-  showInstructions: boolean;
-}
-
-const Carousel: React.FC<CarouselProps> = ({
-  photos,
+const GridCard: React.FC<{ photo: (typeof photos)[number]; theme: Theme; onPhotoClick: (p: typeof photos[number]) => void; }> = ({
+  photo,
   theme,
-  rotation,
   onPhotoClick,
-  onWheel,
-  showInstructions,
-}) => (
-  <div style={{ width: "100%", maxWidth: 980, margin: "0 auto", position: "relative" }}>
+}) => {
+  const [isHovered, setIsHovered] = useState(false);
+  const background = theme === "bunny" ? "rgba(121,85,189,0.1)" : "rgba(8,34,163,0.1)";
+
+  return (
     <div
-      className="banner"
+      onClick={() => onPhotoClick(photo)}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
       style={{
-        width: "100%",
-        height: "60vh",
-        minHeight: 400,
-        textAlign: "center",
+        borderRadius: 12,
         overflow: "hidden",
+        backgroundColor: background,
+        cursor: "pointer",
+        boxShadow: isHovered ? "0 8px 24px rgba(0,0,0,0.2)" : "0 4px 20px rgba(0,0,0,0.1)",
         position: "relative",
+        transform: isHovered ? "scale(1.04)" : "scale(1)",
+        transformOrigin: "center",
+        transition: "transform 0.2s ease, box-shadow 0.2s ease",
+        willChange: "transform",
       }}
-      onWheel={onWheel}
     >
-      <div
-        style={{
-          position: "absolute",
-          width: 150,
-          height: 200,
-          top: "10%",
-          left: "calc(50% - 75px)",
-          transformStyle: "preserve-3d",
-          transform: `perspective(1000px) rotateX(-10deg) rotateY(${rotation}deg)`,
-          zIndex: 1,
-          willChange: "transform",
-        }}
-      >
-        {photos.map((photo, index) => (
-          <div
-            key={photo.id}
-            onClick={() => onPhotoClick(photo)}
-            style={{
-              position: "absolute",
-              inset: 0,
-              transform: `rotateY(${(index * 360) / photos.length}deg) translateZ(450px)`,
-              borderRadius: 12,
-              overflow: "hidden",
-              boxShadow: "0 4px 20px rgba(0,0,0,0.3)",
-              cursor: "pointer",
-              height: "100%",
-            }}
-          >
-            <AspectImage photo={photo} isCarousel={true} />
-            <TitleOverlay title={photo.title} heightPct={15} />
-          </div>
-        ))}
-      </div>
-
-      {showInstructions && (
-        <div
-          style={{
-            position: "absolute",
-            bottom: 0,
-            left: "50%",
-            transform: "translateX(-50%)",
-            background: "rgba(0,0,0,0.6)",
-            color: "#fff",
-            padding: "8px 16px",
-            borderRadius: 20,
-            fontSize: 12,
-            fontFamily: "monospace",
-            backdropFilter: "blur(2px)",
-            zIndex: 2,
-          }}
-        >
-          Scroll to rotate carousel. Click to view.
-        </div>
-      )}
+      <AspectImage photo={photo} />
+      <TitleOverlay title={photo.title} heightPct={20} isVisible={isHovered} />
     </div>
-  </div>
-);
-
-/* --------------------------------------------------
- *  Grid
- * --------------------------------------------------*/
+  );
+};
 
 const Grid: React.FC<ListProps> = ({ photos, theme, onPhotoClick }) => (
   <div className="photo-grid" style={{ width: "100%" }}>
     {photos.map((photo) => (
-      <div
-        key={photo.id}
-        onClick={() => onPhotoClick(photo)}
-        style={{
-          borderRadius: 12,
-          overflow: "hidden",
-          backgroundColor:
-            theme === "bunny" ? "rgba(121,85,189,0.1)" : "rgba(8,34,163,0.1)",
-          cursor: "pointer",
-          boxShadow: "0 4px 20px rgba(0,0,0,0.1)",
-          position: "relative",
-        }}
-      >
-        <AspectImage photo={photo} />
-        <TitleOverlay title={photo.title} heightPct={20} />
-      </div>
+      <GridCard key={photo.id} photo={photo} theme={theme} onPhotoClick={onPhotoClick} />
     ))}
   </div>
 );
