@@ -90,12 +90,14 @@ const NavButton = ({
   theme,
   onClick,
   isMobile,
+  isSuppressed = false,
 }: {
   label: string
   isActive: boolean
   theme: ThemeType
   onClick: () => void
   isMobile: boolean
+  isSuppressed?: boolean
 }) => (
   <button
     onClick={onClick}
@@ -125,20 +127,24 @@ const NavButton = ({
       borderRadius: 20,
       cursor: "pointer",
       margin: isMobile ? "0 2px" : "0 5px",
-      transition: "all 0.2s ease",
+      transition: "all 0.2s ease, opacity 0.3s ease",
       boxShadow: isActive
         ? theme === "bunny"
           ? "0 0 15px rgba(223, 30, 155, 0.4)"
           : "0 0 15px rgba(134, 196, 240, 0.4)"
-        : "none"
+        : "none",
+      opacity: isSuppressed ? 0 : 1,
+      pointerEvents: isSuppressed ? "none" : "auto",
     }}
     onMouseEnter={(e) => {
+      if (isSuppressed) return
       e.currentTarget.style.transform = "scale(1.05)"
       e.currentTarget.style.boxShadow = theme === "bunny"
         ? "0 0 20px rgba(223, 30, 155, 0.6)"
         : "0 0 20px rgba(134, 196, 240, 0.6)"
     }}
     onMouseLeave={(e) => {
+      if (isSuppressed) return
       e.currentTarget.style.transform = "scale(1)"
       e.currentTarget.style.boxShadow = isActive
         ? theme === "bunny"
@@ -209,6 +215,7 @@ function App() {
   const location = useLocation()
   const navigate = useNavigate()
   const navRef = useRef<HTMLDivElement>(null)
+  const [navSuppressed, setNavSuppressed] = useState(false)
 
   // Determine active tab based on current path
   const getActiveTab = () => {
@@ -313,6 +320,9 @@ function App() {
 
   // Handle navigation
   const handleNavClick = (tab: string) => {
+    if (tab === "HOME" && typeof window !== "undefined") {
+      window.dispatchEvent(new CustomEvent("home-flower-temporary-hide"))
+    }
     let path = "/"
     if (tab === "PORTFOLIO") path = "/portfolio"
     if (tab === "CREATIVE") path = "/creative"
@@ -329,6 +339,19 @@ function App() {
       scramble(originalBot, botSet, 30, setBot).then(() => { })
     }
   }
+
+  // Listen for home flower overlay toggling navigation buttons
+  useEffect(() => {
+    const handler = (event: Event) => {
+      const detail = (event as CustomEvent<{ hidden: boolean }>).detail
+      setNavSuppressed(Boolean(detail?.hidden))
+    }
+    window.addEventListener("home-flower-nav-visibility", handler as EventListener)
+    return () => {
+      window.removeEventListener("home-flower-nav-visibility", handler as EventListener)
+      setNavSuppressed(false)
+    }
+  }, [])
 
   return (
     <>
@@ -378,6 +401,7 @@ function App() {
                   alignItems: "center",
                   position: "relative",
                   flexShrink: 0,
+                  zIndex: 60,
                 }}
               >
                 {/* desktop/tablet: name on the left */}
@@ -393,7 +417,15 @@ function App() {
                       display: isTablet ? "none" : "block",
                     }}
                   >
-                    <Link to="/" style={{ color: "inherit", textDecoration: "none" }}>
+                    <Link
+                      to="/"
+                      style={{ color: "inherit", textDecoration: "none" }}
+                      onClick={() => {
+                        if (typeof window !== "undefined") {
+                          window.dispatchEvent(new CustomEvent("home-flower-temporary-hide"))
+                        }
+                      }}
+                    >
                       XIMING LUO
                     </Link>
                   </div>
@@ -417,6 +449,7 @@ function App() {
                       theme={theme}
                       onClick={() => handleNavClick(lbl)}
                       isMobile={isMobile}
+                      isSuppressed={navSuppressed}
                     />
                   ))}
 
@@ -478,6 +511,8 @@ function App() {
                     width: "100%",
                     marginTop: "auto",
                     flexShrink: 0,
+                    position: "relative",
+                    zIndex: 60,
                   }}
                 >
                   <Footer theme={theme} />

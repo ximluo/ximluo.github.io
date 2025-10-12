@@ -5,7 +5,8 @@
   "private": true,
   "dependencies": {
     "@fontsource/jetbrains-mono": "^5.2.5",
-    "@react-three/fiber": "^9.1.2",
+    "@react-three/drei": "^10.7.6",
+    "@react-three/fiber": "^9.3.0",
     "@react-three/postprocessing": "^3.0.4",
     "@testing-library/dom": "^10.4.0",
     "@testing-library/jest-dom": "^6.6.3",
@@ -56,6 +57,7 @@
   },
   "devDependencies": {
     "@types/gsap": "^1.20.2",
+    "@types/three": "^0.180.0",
     "gh-pages": "^6.3.0",
     "gsap": "^3.13.0"
   }

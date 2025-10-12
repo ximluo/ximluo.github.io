@@ -2,6 +2,7 @@
 
 import type React from "react"
 import { useEffect, useRef, useState } from "react"
+import { createPortal } from "react-dom"
 import { Canvas, useFrame, useThree } from "@react-three/fiber"
 import * as THREE from "three"
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js"
@@ -12,6 +13,8 @@ interface BunnyModalProps {
   onClose: () => void
   theme: "bunny" | "water"
 }
+
+const MODAL_ROOT_ID = "bunny-modal-root"
 
 // Custom shader materials
 const createOutlineMaterial = () => {
@@ -675,6 +678,37 @@ const BunnyScene = () => {
 }
 
 const BunnyModal: React.FC<BunnyModalProps> = ({ onClose, theme }) => {
+  const portalRef = useRef<HTMLDivElement | null>(null)
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    if (typeof document === "undefined") {
+      return
+    }
+
+    let host = document.getElementById(MODAL_ROOT_ID)
+    if (!host) {
+      host = document.createElement("div")
+      host.id = MODAL_ROOT_ID
+      document.body.appendChild(host)
+    }
+
+    const container = document.createElement("div")
+    host.appendChild(container)
+    portalRef.current = container
+    setMounted(true)
+
+    return () => {
+      if (portalRef.current && host?.contains(portalRef.current)) {
+        host.removeChild(portalRef.current)
+      }
+      if (host && host.childNodes.length === 0) {
+        host.remove()
+      }
+      portalRef.current = null
+    }
+  }, [])
+
   const themes = {
     bunny: {
       "--color-text": "rgb(121, 85, 189)",
@@ -695,7 +729,11 @@ const BunnyModal: React.FC<BunnyModalProps> = ({ onClose, theme }) => {
     },
   }
 
-  return (
+  if (!mounted || !portalRef.current) {
+    return null
+  }
+
+  return createPortal(
     <div
       style={{
         position: "fixed",
@@ -727,8 +765,8 @@ const BunnyModal: React.FC<BunnyModalProps> = ({ onClose, theme }) => {
             antialias: true,
             preserveDrawingBuffer: true,
             alpha: false,
-            pixelRatio: window.devicePixelRatio,
           }}
+          dpr={window.devicePixelRatio}
           style={{
             position: "absolute",
             top: 0,
@@ -804,7 +842,8 @@ const BunnyModal: React.FC<BunnyModalProps> = ({ onClose, theme }) => {
           ×
         </button>
       </div>
-    </div>
+    </div>,
+    portalRef.current,
   )
 }
 

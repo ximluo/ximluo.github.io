@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useMemo } from "react";
+import React, { useEffect, useRef, useMemo, useState } from "react";
 
 type ThemeType = "bunny" | "water";
 interface GradientBackgroundProps {
@@ -33,11 +33,13 @@ const themeStyles = {
   },
 } as const;
 
+const LAPTOP_BREAKPOINT = 1024;
+
 const GradientBackground: React.FC<GradientBackgroundProps> = ({
   theme,
   children,
 }) => {
-  /* UA CHECK (client‑only) */
+  /* UA CHECK (client-only) */
   const isSafari = useMemo(() => {
     if (typeof navigator === "undefined") return false;
     const ua = navigator.userAgent;
@@ -47,19 +49,12 @@ const GradientBackground: React.FC<GradientBackgroundProps> = ({
   const isMobileOrTablet = useMemo(() => {
     if (typeof navigator === "undefined") return false;
     const ua = navigator.userAgent;
-    // Check for mobile/tablet
+    const hasTouch =
+      (typeof window !== "undefined" && "ontouchstart" in window) ||
+      (navigator as any).maxTouchPoints > 0;
     return (
-      /Android/i.test(ua) ||
-      /webOS/i.test(ua) ||
-      /iPhone/i.test(ua) ||
-      /iPad/i.test(ua) ||
-      /iPod/i.test(ua) ||
-      /BlackBerry/i.test(ua) ||
-      /Windows Phone/i.test(ua) ||
-      /Tablet/i.test(ua) ||
-      // Check for touch screen devices
-      ('ontouchstart' in window) ||
-      (navigator.maxTouchPoints > 0)
+      /Android|webOS|iPhone|iPad|iPod|BlackBerry|Windows Phone|Tablet/i.test(ua) ||
+      !!hasTouch
     );
   }, []);
 
@@ -70,16 +65,61 @@ const GradientBackground: React.FC<GradientBackgroundProps> = ({
   const interBubbleRef = useRef<HTMLDivElement>(null);
   const noiseCanvasRef = useRef<HTMLCanvasElement>(null);
 
-  /* apply theme vars*/
+  /* Theme vars */
   useEffect(() => {
     const t = themeStyles[theme];
     const el = containerRef.current;
     if (!el) return;
-    Object.entries(t).forEach(([k, v]) => el.style.setProperty(k, v));
+    Object.entries(t).forEach(([k, v]) => el.style.setProperty(k, v as string));
     el.style.backgroundColor = t["--color-bg1"] as string;
   }, [theme]);
 
-  /* mouse‑follow bubble & noise */
+  /* Header height detection for right-edge overlay (fixed to viewport, minus header) */
+  const [headerOffset, setHeaderOffset] = useState(0);
+  useEffect(() => {
+    if (typeof window === "undefined" || typeof document === "undefined") return;
+
+    const candidates = [
+      "[data-top-header]",
+      "header.site-header",
+      "header",
+      ".site-header",
+      "[data-header]",
+    ];
+    const headerEl = document.querySelector<HTMLElement>(candidates.join(", "));
+
+    const measure = () => {
+      const h = headerEl ? Math.round(headerEl.getBoundingClientRect().height) : 0;
+      setHeaderOffset(h);
+    };
+
+    measure();
+    window.addEventListener("resize", measure);
+    const ro = headerEl ? new ResizeObserver(measure) : null;
+    if (ro && headerEl) ro.observe(headerEl);
+
+    return () => {
+      window.removeEventListener("resize", measure);
+      if (ro) ro.disconnect();
+    };
+  }, []);
+
+  /* Track viewport width to decide when we are at “laptop” size or larger */
+  const [isLaptopViewport, setIsLaptopViewport] = useState(() => {
+    if (typeof window === "undefined") return true;
+    return window.innerWidth >= LAPTOP_BREAKPOINT;
+  });
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const updateViewport = () => {
+      setIsLaptopViewport(window.innerWidth >= LAPTOP_BREAKPOINT);
+    };
+    updateViewport();
+    window.addEventListener("resize", updateViewport);
+    return () => window.removeEventListener("resize", updateViewport);
+  }, []);
+
+  /* Mouse-follow bubble & noise */
   useEffect(() => {
     // Skip mouse tracking on mobile/tablet
     if (isMobileOrTablet) {
@@ -104,9 +144,10 @@ const GradientBackground: React.FC<GradientBackgroundProps> = ({
           ctx.putImageData(img, 0, 0);
         };
         paint();
-        window.addEventListener("resize", paint);
+        const onResize = () => paint();
+        window.addEventListener("resize", onResize);
         return () => {
-          window.removeEventListener("resize", paint);
+          window.removeEventListener("resize", onResize);
         };
       }
       return;
@@ -117,6 +158,7 @@ const GradientBackground: React.FC<GradientBackgroundProps> = ({
       curY = 0,
       tgX = 0,
       tgY = 0;
+    let rafId = 0;
     const move = () => {
       if (interBubbleRef.current) {
         curX += (tgX - curX) / 20;
@@ -125,7 +167,7 @@ const GradientBackground: React.FC<GradientBackgroundProps> = ({
           curX
         )}px, ${Math.round(curY)}px)`;
       }
-      requestAnimationFrame(move);
+      rafId = requestAnimationFrame(move);
     };
     const onMouse = (e: MouseEvent) => {
       tgX = e.clientX;
@@ -155,24 +197,24 @@ const GradientBackground: React.FC<GradientBackgroundProps> = ({
         ctx.putImageData(img, 0, 0);
       };
       paint();
-      window.addEventListener("resize", paint);
+      const onResize = () => paint();
+      window.addEventListener("resize", onResize);
       return () => {
         window.removeEventListener("mousemove", onMouse);
-        window.removeEventListener("resize", paint);
+        window.removeEventListener("resize", onResize);
+        cancelAnimationFrame(rafId);
       };
     }
-    return () => window.removeEventListener("mousemove", onMouse);
+    return () => {
+      window.removeEventListener("mousemove", onMouse);
+      cancelAnimationFrame(rafId);
+    };
   }, [isMobileOrTablet]);
 
-  /* helper to make circles */
+  /* Helper to make circles */
   const circle = (
     className: string,
-    varName:
-      | "--color1"
-      | "--color2"
-      | "--color3"
-      | "--color4"
-      | "--color5",
+    varName: "--color1" | "--color2" | "--color3" | "--color4" | "--color5",
     extra: React.CSSProperties
   ) => (
     <div
@@ -183,12 +225,87 @@ const GradientBackground: React.FC<GradientBackgroundProps> = ({
         height: "var(--circle-size)",
         background: `radial-gradient(circle at center, rgba(var(${varName}),0.6) 0%, rgba(var(${varName}),0) 50%) no-repeat`,
         mixBlendMode: "var(--blending)" as React.CSSProperties["mixBlendMode"],
-        /* Safari/Mobile/Tablet needs blur on each circle, Chrome desktop uses wrapper filter */
         filter: useSafariMode ? "blur(40px)" : "none",
         ...extra,
       }}
     />
   );
+
+  /* Home page detection & edge visibility based on scroll direction */
+  const isHomePage = useMemo(() => {
+    if (typeof window === "undefined") return false;
+    return window.location?.pathname === "/";
+  }, []);
+  const [edgeVisible, setEdgeVisible] = useState(true);
+  const [homeFlowerOpacity, setHomeFlowerOpacity] = useState<number | null>(null);
+  const [overlaySuppressed, setOverlaySuppressed] = useState(false);
+
+  useEffect(() => {
+    if (!isHomePage) return;
+
+    let lastY = window.scrollY;
+    let ticking = false;
+
+    const onScroll = () => {
+      const y = window.scrollY;
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          const scrollingDown = y > lastY;
+          const atTop = y <= 0;
+          // Hide on scroll down; show on scroll up or when at top
+          setEdgeVisible(!scrollingDown || atTop);
+          lastY = y;
+          ticking = false;
+        });
+        ticking = true;
+      }
+    };
+
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, [isHomePage]);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const handleOpacity = (event: Event) => {
+      const custom = event as CustomEvent<{ value: number | null }>;
+      const next = custom.detail.value;
+      setHomeFlowerOpacity(next == null ? null : Math.max(0, Math.min(next, 1)));
+    };
+    window.addEventListener("home-flower-opacity", handleOpacity as EventListener);
+    return () => window.removeEventListener("home-flower-opacity", handleOpacity as EventListener);
+  }, []);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    let hideTimeout: ReturnType<typeof setTimeout> | null = null;
+    const handleHide = () => {
+      if (hideTimeout) clearTimeout(hideTimeout);
+      setOverlaySuppressed(true);
+      hideTimeout = setTimeout(() => {
+        setOverlaySuppressed(false);
+        hideTimeout = null;
+      }, 3000);
+    };
+    window.addEventListener("home-flower-temporary-hide", handleHide);
+    return () => {
+      if (hideTimeout) clearTimeout(hideTimeout);
+      window.removeEventListener("home-flower-temporary-hide", handleHide);
+    };
+  }, []);
+
+  /* Initial 3s opacity = 0, then allow it to appear */
+  const [pastIntroDelay, setPastIntroDelay] = useState(false);
+  useEffect(() => {
+    const t = setTimeout(() => setPastIntroDelay(true), 3000);
+    return () => clearTimeout(t);
+  }, []);
+
+  const baseOverlayOpacity = useMemo(() => {
+    const raw = !pastIntroDelay ? 0 : homeFlowerOpacity ?? (edgeVisible ? 1 : 0);
+    return Math.max(0, Math.min(raw, 1));
+  }, [pastIntroDelay, homeFlowerOpacity, edgeVisible]);
+  const overlayOpacity = overlaySuppressed ? 0 : baseOverlayOpacity;
 
   return (
     <div
@@ -238,7 +355,6 @@ const GradientBackground: React.FC<GradientBackgroundProps> = ({
         style={{
           position: "absolute",
           inset: 0,
-          /* Chrome desktop gets big gooey filter; Safari/mobile/tablet keeps none */
           filter: useSafariMode ? "none" : "url(#goo) blur(40px)",
           zIndex: 1,
         }}
@@ -281,7 +397,7 @@ const GradientBackground: React.FC<GradientBackgroundProps> = ({
           opacity: 0.5,
         })}
 
-        {/* mouse‑tracked bubble - only render on desktop */}
+        {/* mouse-tracked bubble - only render on desktop */}
         {!isMobileOrTablet && (
           <div
             ref={interBubbleRef}
@@ -300,7 +416,78 @@ const GradientBackground: React.FC<GradientBackgroundProps> = ({
         )}
       </div>
 
-      <div style={{ position: "relative", zIndex: 2, height: "100%" }}>
+      {/* === RIGHT-EDGE WHITE SVG ANIMATION OVERLAY (pinned to right edge) === */}
+      {(() => {
+        const pathname =
+          typeof window === "undefined" ? "" : window.location.pathname ?? "";
+        const isPortfolioOrCreativePage =
+          pathname.startsWith("/portfolio") || pathname.startsWith("/creative");
+        const hideForNarrowViewport =
+          isPortfolioOrCreativePage && !isLaptopViewport;
+        const effectiveOpacity = hideForNarrowViewport ? 0 : overlayOpacity;
+        if (effectiveOpacity <= 0) {
+          return null;
+        }
+
+        return (
+          <div
+            aria-hidden
+            style={{
+              position: "absolute",
+              top: `${headerOffset}px`,
+              right: 0,
+              bottom: 0,
+              width: "min(420px, 28vw)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "flex-end",
+              pointerEvents: "none",
+              zIndex: 5,
+              paddingRight: 8,
+              opacity: effectiveOpacity,
+              transition: "opacity 200ms ease",
+              willChange: "opacity",
+            }}
+          >
+            {/* Scoped styles */}
+            <style>{`
+              @keyframes gbgGrow {
+                to { stroke-dashoffset: 0; }
+              }
+              .gbg-svg { height: 100%; width: auto; }
+              .gbg-path {
+                stroke: rgba(255,255,255,0.5); /* 50% opacity */
+                stroke-width: 3;
+                stroke-dasharray: 1100;
+                stroke-dashoffset: 2200;
+                animation: gbgGrow 12s linear infinite;
+                animation-delay: -6s;           /* wait before drawing */
+                animation-fill-mode: both;     /* keep initial state during delay */
+              }
+            `}</style>
+
+            <svg
+              className="gbg-svg"
+              version="1.1"
+              viewBox="0 0 123 246"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <title>Path</title>
+              <desc>Animated stroke path</desc>
+              <g fill="none" fillRule="evenodd">
+                <path
+                  className="gbg-path"
+                  d="m9.9062 245.43c13.174-137.4 46.685-178.94 100.53-124.63-28.198 6.2083-45.074-1.5234-50.629-23.195s-25.401-29.307-59.539-22.906c36.723 27.034 64.646 16.445 83.77-31.766 28.686-72.316-34.465-37.046 0 0 50.863 54.672 50.863 0 0 0-83.77 0-24.23-35.594 0 0 24.23 35.594-19.03 74.584 0 0 18.324-71.816 49.922 7 0 0-54.872-7.6942-24.23 48.168 0 0"
+                  fill="none"
+                />
+              </g>
+            </svg>
+          </div>
+        );
+      })()}
+
+      {/* content layer stays above everything */}
+      <div style={{ position: "relative", zIndex: 10, height: "100%" }}>
         {children}
       </div>
     </div>

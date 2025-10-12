@@ -2,6 +2,13 @@
 
 import type React from "react"
 import { useState, useEffect, useRef, useMemo, useCallback } from "react"
+import { useNavigate } from "react-router-dom"
+
+// 3D deps
+import { Canvas, useThree } from "@react-three/fiber"
+import { useGLTF, useAnimations, Environment } from "@react-three/drei"
+import * as THREE from "three"
+
 import AwardsModal from "../components/AwardsModal"
 import AsciiImage from "../components/AsciiImage"
 
@@ -14,6 +21,150 @@ interface HomeProps {
   isNavigatingFromPage?: boolean
 }
 
+/* ----------------------------- 3D Components ----------------------------- */
+
+function FlowerModel({
+  url = "/models/blue_flower.glb",
+  onReady,
+  // Rotate 90° to fix Z-up exports (common from DCC tools) so it's right-side up in Three (Y-up).
+  uprightRotation = [1, 0, 0] as [number, number, number],
+}: {
+  url?: string
+  onReady?: (group: THREE.Group) => void
+  uprightRotation?: [number, number, number]
+}) {
+  const group = useRef<THREE.Group>(null!)
+  const inner = useRef<THREE.Group>(null!)
+  const { scene, animations } = useGLTF(url) as unknown as {
+    scene: THREE.Group
+    animations: THREE.AnimationClip[]
+  }
+  const { actions, names } = useAnimations(animations, group)
+
+  // Play all clips if available
+  useEffect(() => {
+    names.forEach((n) => {
+      const action = actions[n]
+      if (!action) return
+      action.reset()
+      action.setLoop(THREE.LoopRepeat, Infinity)
+      action.play()
+    })
+    return () => {
+      names.forEach((n) => actions[n]?.stop())
+    }
+  }, [actions, names])
+
+  // Notify parent when the model is mounted
+  useEffect(() => {
+    if (group.current) onReady?.(group.current)
+  }, [onReady])
+
+  return (
+    <group ref={group} dispose={null}>
+      {/* Apply a 90° rotation to make the flower upright */}
+      <group ref={inner} rotation={uprightRotation}>
+        <primitive object={scene} />
+      </group>
+    </group>
+  )
+}
+
+function FlowerScene({
+  layout: { isMobile, windowWidth },
+}: {
+  layout: { isMobile: boolean; isSmallScreen: boolean; windowWidth: number }
+}) {
+  const modelRef = useRef<THREE.Group | null>(null)
+  const { camera, size } = useThree()
+  const sizeMultiplier = useMemo(() => {
+    if (windowWidth >= 768) return 3.20
+    return 1.65
+  }, [windowWidth])
+
+  // Center the model on the page and make it big.
+  const frameCentered = useCallback(() => {
+    if (!modelRef.current) return
+    const obj = modelRef.current
+
+    const box = new THREE.Box3().setFromObject(obj)
+    if (!box || !isFinite(box.min.x)) return
+
+    const width = box.max.x - box.min.x
+    const height = box.max.y - box.min.y
+    const depth = box.max.z - box.min.z
+
+    const targetCenter = new THREE.Vector3(
+      (box.min.x + box.max.x) * 0.5,
+      (box.min.y + box.max.y) * 0.5,
+      (box.min.z + box.max.z) * 0.5,
+    )
+
+    const baseFit = isMobile ? 0.65 : 0.55
+    const fit = baseFit * sizeMultiplier
+
+    const persp = camera as THREE.PerspectiveCamera
+    const fov = THREE.MathUtils.degToRad(persp.fov)
+    const viewAspect = size.width / size.height
+    const neededHalfHeight = Math.max(height * 0.5, (width * 0.5) / viewAspect)
+    const distance = neededHalfHeight / (Math.tan(fov / 2) * fit)
+
+    let camPos = targetCenter.clone().add(new THREE.Vector3(-0.28, -0.55, 0).normalize().multiplyScalar(distance))
+
+    const viewDir = targetCenter.clone().sub(camPos).normalize()
+    const cameraUp = (camera as THREE.PerspectiveCamera).up.clone().normalize()
+    const right = new THREE.Vector3().crossVectors(viewDir, cameraUp).normalize()
+    const trueUp = new THREE.Vector3().crossVectors(right, viewDir).normalize()
+
+    const cameraDistance = camPos.distanceTo(targetCenter)
+    const viewportHalfHeight = Math.tan(fov / 2) * cameraDistance
+    const viewportHalfWidth = viewportHalfHeight * viewAspect
+
+    const verticalFactor = isMobile ? 1.75 : 2.95
+    const verticalOffset = viewportHalfHeight * verticalFactor
+    const horizontalOffset = isMobile ? 0 : viewportHalfWidth * 0.002
+
+    const panOffset = new THREE.Vector3()
+      .add(right.clone().multiplyScalar(horizontalOffset))
+      .add(trueUp.clone().multiplyScalar(verticalOffset))
+
+    camPos.add(panOffset)
+    const newTarget = targetCenter.clone().add(panOffset)
+
+    persp.position.copy(camPos)
+    persp.near = Math.max(0.001, cameraDistance / 100)
+    persp.far = cameraDistance * 100 + depth
+    persp.updateProjectionMatrix()
+    persp.lookAt(newTarget)
+  }, [camera, isMobile, size.height, size.width, sizeMultiplier])
+
+  // When model loads or on resize, reframe
+  const handleReady = useCallback(
+    (g: THREE.Group) => {
+      modelRef.current = g
+      requestAnimationFrame(() => frameCentered())
+    },
+    [frameCentered],
+  )
+
+  useEffect(() => {
+    frameCentered()
+  }, [size.width, size.height, frameCentered])
+
+  return (
+    <>
+      {/* Keep background transparent; subtle lighting */}
+      <ambientLight intensity={0.9} />
+      <directionalLight position={[5, 10, 5]} intensity={1.1} />
+      <Environment preset="studio" />
+
+      <FlowerModel onReady={handleReady} />
+    </>
+  )
+}
+
+/* --------------------------------- Page --------------------------------- */
+
 const Home: React.FC<HomeProps> = ({
   theme,
   phase,
@@ -22,9 +173,11 @@ const Home: React.FC<HomeProps> = ({
   onScramble,
   isNavigatingFromPage = false,
 }) => {
+  const navigate = useNavigate()
   // state + refs
   const [showAwards, setShowAwards] = useState(false)
   const [windowWidth, setWindowWidth] = useState(() => window.innerWidth)
+  const [windowHeight, setWindowHeight] = useState(() => window.innerHeight)
   const [isMobile, setIsMobile] = useState(() => window.innerWidth <= 768)
   const [isSmallScreen, setIsSmallScreen] = useState(() => window.innerHeight <= 700)
   const [typingText, setTypingText] = useState("")
@@ -33,11 +186,16 @@ const Home: React.FC<HomeProps> = ({
   const [isImageLoaded, setIsImageLoaded] = useState(false)
   const [isAnimationComplete, setIsAnimationComplete] = useState(false)
   const [shouldScramble, setShouldScramble] = useState(false)
+  const [isFlowerRevealed, setIsFlowerRevealed] = useState(false)
+  const [virtualScroll, setVirtualScroll] = useState(0)
 
   const typingRef = useRef<HTMLDivElement>(null)
   const headingRef = useRef<HTMLHeadingElement>(null)
   const animationRunningRef = useRef(false)
   const resizeRaf = useRef<number | undefined>(undefined)
+  const lastTouchYRef = useRef<number | null>(null)
+
+  const revealThreshold = useMemo(() => Math.max(windowHeight * 0.6, 240), [windowHeight])
 
   // responsive handler
   const handleResize = useCallback(() => {
@@ -47,6 +205,7 @@ const Home: React.FC<HomeProps> = ({
     resizeRaf.current = requestAnimationFrame(() => {
       const width = window.innerWidth
       setWindowWidth(width)
+      setWindowHeight(window.innerHeight)
       setIsMobile(width <= 768)
       setIsSmallScreen(window.innerHeight <= 700)
     })
@@ -56,6 +215,89 @@ const Home: React.FC<HomeProps> = ({
     window.addEventListener("resize", handleResize)
     return () => window.removeEventListener("resize", handleResize)
   }, [handleResize])
+
+  useEffect(() => {
+    setVirtualScroll((prev) => Math.min(prev, revealThreshold))
+  }, [revealThreshold])
+
+  const handleVirtualDelta = useCallback(
+    (delta: number) => {
+      if (!delta) return
+      setVirtualScroll((prev) => THREE.MathUtils.clamp(prev + delta, 0, revealThreshold))
+    },
+    [revealThreshold],
+  )
+
+  const handleWheelGesture = useCallback(
+    (event: React.WheelEvent<HTMLDivElement>) => {
+      handleVirtualDelta(event.deltaY)
+      if (event.cancelable) event.preventDefault()
+    },
+    [handleVirtualDelta],
+  )
+
+  const handleTouchStart = useCallback((event: React.TouchEvent<HTMLDivElement>) => {
+    lastTouchYRef.current = event.touches[0]?.clientY ?? null
+  }, [])
+
+  const handleTouchMove = useCallback(
+    (event: React.TouchEvent<HTMLDivElement>) => {
+      if (lastTouchYRef.current == null) return
+      const currentY = event.touches[0]?.clientY
+      if (currentY == null) return
+      const delta = lastTouchYRef.current - currentY
+      handleVirtualDelta(delta)
+      lastTouchYRef.current = currentY
+      event.preventDefault()
+    },
+    [handleVirtualDelta],
+  )
+
+  const handleTouchEnd = useCallback(() => {
+    lastTouchYRef.current = null
+  }, [])
+
+  useEffect(() => {
+    const shouldReveal = virtualScroll >= revealThreshold * 0.6
+    setIsFlowerRevealed((prev) => (prev === shouldReveal ? prev : shouldReveal))
+  }, [virtualScroll, revealThreshold])
+
+  useEffect(() => {
+    if (typeof window === "undefined") return
+    const event = new CustomEvent<{ hidden: boolean }>("home-flower-nav-visibility", {
+      detail: { hidden: isFlowerRevealed },
+    })
+    window.dispatchEvent(event)
+    return () => {
+      const reset = new CustomEvent<{ hidden: boolean }>("home-flower-nav-visibility", {
+        detail: { hidden: false },
+      })
+      window.dispatchEvent(reset)
+    }
+  }, [isFlowerRevealed])
+
+  const flowerSvgOpacity = useMemo(() => {
+    const progress = revealThreshold === 0 ? 0 : Math.min(virtualScroll / revealThreshold, 1)
+    return 0.5 * (1 - progress)
+  }, [virtualScroll, revealThreshold])
+
+  useEffect(() => {
+    if (typeof window === "undefined") return
+    const event = new CustomEvent<{ value: number | null }>("home-flower-opacity", {
+      detail: { value: Number.isFinite(flowerSvgOpacity) ? flowerSvgOpacity : 0 },
+    })
+    window.dispatchEvent(event)
+  }, [flowerSvgOpacity])
+
+  useEffect(() => {
+    if (typeof window === "undefined") return
+    return () => {
+      const resetEvent = new CustomEvent<{ value: number | null }>("home-flower-opacity", {
+        detail: { value: null },
+      })
+      window.dispatchEvent(resetEvent)
+    }
+  }, [])
 
   // typing effect
   useEffect(() => {
@@ -73,7 +315,7 @@ const Home: React.FC<HomeProps> = ({
     let index = 0
     let lastTime = 0
     const typeNext = (currentTime: number) => {
-      if (currentTime - lastTime >= 50) { // More reliable interval
+      if (currentTime - lastTime >= 50) {
         index += 1
         setTypingText(fullText.slice(0, index))
         lastTime = currentTime
@@ -164,7 +406,7 @@ const Home: React.FC<HomeProps> = ({
 
     return `
       html, body { margin: 0; padding: 0; overflow: hidden; }
-      .home-container { overflow: auto; height: 100vh; }
+      .home-container { overflow: hidden; height: 100vh; }
       .home-container::-webkit-scrollbar { width: 8px; }
       .home-container::-webkit-scrollbar-track { background: transparent; }
       .home-container::-webkit-scrollbar-thumb {
@@ -184,6 +426,23 @@ const Home: React.FC<HomeProps> = ({
         vertical-align: text-bottom;
         animation: blink 0.7s infinite;
       }
+      /* 3D canvas behind content */
+      .three-wrapper {
+        position: fixed;
+        inset: 0;               /* full viewport */
+        z-index: 0;             /* behind your text */
+        pointer-events: none;   /* clicks pass through */
+      }
+      .three-canvas {
+        width: 100%;
+        height: 100%;
+        display: block;
+        background: transparent; /* ensure alpha shows */
+      }
+      .content-layer {
+        position: relative;
+        z-index: 1;             /* above the canvas */
+      }
     `
   }, [theme, themes])
 
@@ -198,6 +457,14 @@ const Home: React.FC<HomeProps> = ({
   }, [windowWidth, isMobile])
 
   const contentHeight = isSmallScreen ? "auto" : "100vh"
+  const bubblePalette = useMemo(() => {
+    const base = theme === "bunny" ? "rgba(255, 255, 255, 0.18)" : "rgba(10, 40, 90, 0.28)"
+    const hover = theme === "bunny" ? "rgba(255, 255, 255, 0.28)" : "rgba(20, 70, 130, 0.35)"
+    const border = theme === "bunny" ? "rgba(255, 255, 255, 0.55)" : "rgba(255, 255, 255, 0.35)"
+    const text = theme === "bunny" ? themes.bunny["--color-text"] : themes.water["--color-text"]
+    const glow = theme === "bunny" ? "rgba(223, 30, 155, 0.35)" : "rgba(134, 196, 240, 0.3)"
+    return { base, hover, border, text, glow }
+  }, [theme, themes])
 
   return (
     <>
@@ -215,13 +482,115 @@ const Home: React.FC<HomeProps> = ({
           boxSizing: "border-box",
           position: "relative",
           padding,
+          touchAction: "none",
         }}
+        onWheel={handleWheelGesture}
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
         onClick={() => {
           if (isAnimationComplete) onScramble()
         }}
       >
+        {/* ---- THREE.JS BACKDROP (transparent, full height) ---- */}
+        <div
+          className="three-wrapper"
+          aria-hidden
+          style={{
+            opacity: isFlowerRevealed ? 1 : 0,
+            visibility: isFlowerRevealed ? "visible" : "hidden",
+            transition: "opacity 0.6s ease, visibility 0.6s ease",
+          }}
+        >
+          <Canvas
+            className="three-canvas"
+            gl={{ alpha: true, antialias: true, preserveDrawingBuffer: false }}
+            dpr={[1, 2]}
+            camera={{ fov: 35, near: 0.1, far: 1000, position: [0, 0, 3] }}
+          >
+            <FlowerScene layout={{ isMobile, isSmallScreen, windowWidth }} />
+          </Canvas>
+        </div>
+
+        {/* Floating glass navigation bubbles */}
+        <div
+          aria-hidden={!isFlowerRevealed}
+          style={{
+            position: "fixed",
+            inset: 0,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            pointerEvents: "none",
+            opacity: isFlowerRevealed ? 1 : 0,
+            transition: "opacity 0.5s ease",
+            zIndex: 40,
+          }}
+        >
+          <div
+            style={{
+              display: "flex",
+              flexDirection: isMobile ? "column" : "row",
+              gap: isMobile ? 16 : 24,
+              transform: `translateY(${isMobile ? "-28vh" : "-24vh"})`,
+              alignItems: "center",
+              pointerEvents: isFlowerRevealed ? "auto" : "none",
+            }}
+          >
+            {[
+              {
+                label: "Portfolio",
+                onClick: () => navigate("/portfolio"),
+              },
+              {
+                label: "Creative",
+                onClick: () => navigate("/creative"),
+              },
+            ].map((item) => (
+              <button
+                key={item.label}
+                type="button"
+                onClick={(event) => {
+                  event.stopPropagation()
+                  item.onClick()
+                }}
+                onMouseEnter={(event) => {
+                  event.currentTarget.style.background = bubblePalette.hover
+                  event.currentTarget.style.boxShadow = `0 18px 45px ${bubblePalette.glow}`
+                }}
+                onMouseLeave={(event) => {
+                  event.currentTarget.style.background = bubblePalette.base
+                  event.currentTarget.style.boxShadow = `0 12px 30px ${bubblePalette.glow}`
+                }}
+                style={{
+                  background: bubblePalette.base,
+                  border: `1px solid ${bubblePalette.border}`,
+                  borderRadius: 999,
+                  padding: isMobile ? "14px 42px" : "18px 60px",
+                  fontFamily: "monospace",
+                  fontSize: isMobile ? 14 : 16,
+                  letterSpacing: "0.12em",
+                  textTransform: "uppercase",
+                  color: bubblePalette.text,
+                  backdropFilter: "blur(26px)",
+                  WebkitBackdropFilter: "blur(26px)",
+                  boxShadow: `0 12px 30px ${bubblePalette.glow}`,
+                  cursor: "pointer",
+                  transition: "transform 0.25s ease, background 0.25s ease, box-shadow 0.25s ease",
+                  transform: "translateZ(0)",
+                  outline: "none",
+                  pointerEvents: "auto",
+                }}
+              >
+                {item.label}
+              </button>
+            ))}
+          </div>
+        </div>
+
         {/* content */}
         <div
+          className="content-layer"
           style={{
             maxWidth: 980,
             width: "100%",
@@ -232,6 +601,9 @@ const Home: React.FC<HomeProps> = ({
             justifyContent: "center",
             flexGrow: 1,
             position: "relative",
+            opacity: isFlowerRevealed ? 0 : 1,
+            visibility: isFlowerRevealed ? "hidden" : "visible",
+            transition: "opacity 0.5s ease",
           }}
         >
           {/* typing intro */}
@@ -350,41 +722,41 @@ const Home: React.FC<HomeProps> = ({
                 rel="noopener noreferrer"
                 style={{
                   textDecoration: "underline",
-                  color: theme === "bunny"
-                    ? themes.bunny["--link-color"]
-                    : themes.water["--link-color"],
+                  color:
+                    theme === "bunny" ? themes.bunny["--link-color"] : themes.water["--link-color"],
                 }}
               >
-                Computer Graphics
-              </a>) and Economics. I dabble in iOS, graphics, fullstack, product, XR, and AI/ML.
+                Digital Media Design
+              </a>) and Economics. I am also concurrently pursing my MSE in Computer Science. 
             </p>
             <p style={{ marginBottom: isMobile ? 0 : 20 }}>
-              I was previously a summer analyst at <a
+              I dabble in iOS, graphics, fullstack, product, XR, and AI/ML. I was previously a summer analyst at{" "}
+              <a
                 href="https://www.apollo.com/"
                 target="_blank"
                 rel="noopener noreferrer"
                 style={{
                   textDecoration: "underline",
-                  color: theme === "bunny"
-                    ? themes.bunny["--link-color"]
-                    : themes.water["--link-color"],
+                  color:
+                    theme === "bunny" ? themes.bunny["--link-color"] : themes.water["--link-color"],
                 }}
               >
                 Apollo Global Management
-              </a> and a developer at <a
-                href="https://pennlabs.org/"
+              </a>{" "}
+              and I currently teach iOS Programming{" "}
+              <a
+                href="https://www.seas.upenn.edu/~cis1951/25fa/"
                 target="_blank"
                 rel="noopener noreferrer"
                 style={{
                   textDecoration: "underline",
-                  color: theme === "bunny"
-                    ? themes.bunny["--link-color"]
-                    : themes.water["--link-color"],
+                  color:
+                    theme === "bunny" ? themes.bunny["--link-color"] : themes.water["--link-color"],
                 }}
               >
-                Penn Labs
-              </a>. My work has been recognized by Adobe and{' '}
-
+                (CIS 1951)
+              </a>
+              . My work has been recognized by Adobe and{" "}
               <button
                 onClick={(e) => {
                   e.stopPropagation()
@@ -394,37 +766,40 @@ const Home: React.FC<HomeProps> = ({
                   background: "none",
                   border: "none",
                   padding: 0,
-                  color: theme === "bunny" ? themes.bunny["--link-color"] : themes.water["--link-color"],
+                  color:
+                    theme === "bunny" ? themes.bunny["--link-color"] : themes.water["--link-color"],
                   textDecoration: "underline",
                   cursor: "pointer",
                   fontFamily: "inherit",
                   fontSize: "inherit",
                 }}
               >
-                several awards
+                other awards
               </button>
               . Feel free to explore!
             </p>
             <p>
-              Say hello:{' '}
+              Say hello:{" "}
               <a
                 href="mailto:ximluo@upenn.edu"
                 style={{
-                  color: theme === "bunny" ? themes.bunny["--link-color"] : themes.water["--link-color"],
+                  color:
+                    theme === "bunny" ? themes.bunny["--link-color"] : themes.water["--link-color"],
                   textDecoration: "none",
                   marginLeft: 4,
                 }}
                 onClick={(e) => e.stopPropagation()}
               >
                 ximluo@upenn.edu
-              </a>{' '}
-              |{' '}
+              </a>{" "}
+              |{" "}
               <a
                 href="https://linkedin.com/in/ximingluo/"
                 target="_blank"
                 rel="noopener noreferrer"
                 style={{
-                  color: theme === "bunny" ? themes.bunny["--link-color"] : themes.water["--link-color"],
+                  color:
+                    theme === "bunny" ? themes.bunny["--link-color"] : themes.water["--link-color"],
                   textDecoration: "none",
                 }}
                 onClick={(e) => e.stopPropagation()}
@@ -442,4 +817,5 @@ const Home: React.FC<HomeProps> = ({
   )
 }
 
+useGLTF.preload("/models/blue_flower.glb")
 export default Home
