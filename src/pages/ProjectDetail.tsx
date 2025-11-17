@@ -178,119 +178,138 @@ const ProjectDetail: React.FC<ProjectDetailProps> = ({ theme }) => {
 
   return (
     <div
+      className="project-detail-container"
       style={{
-        padding: "20px",
-        maxWidth: "800px",
-        margin: "0 auto",
+        width: "100%",
         height: "100%",
+        padding: "20px",
+        boxSizing: "border-box",
         overflow: "auto",
-        color: themes[theme]["--color-text"],
-        fontFamily: "monospace",
       }}
     >
-      {/* Back Button */}
-      <button
-        onClick={() => navigate("/portfolio")}
+      <div
         style={{
-          padding: "8px 16px",
-          backgroundColor: themes[theme]["--button-bg-light"],
+          maxWidth: "800px",
+          margin: "0 auto",
           color: themes[theme]["--color-text"],
-          border: "none",
-          borderRadius: "20px",
           fontFamily: "monospace",
-          cursor: "pointer",
-          marginBottom: "20px",
-          display: "flex",
-          alignItems: "center",
-          width: "fit-content",
         }}
       >
-        ← Back
-      </button>
-
-      {/* Title */}
-      <h1
-        style={{
-          color: themes[theme]["--color-accent-primary"],
-          marginBottom: "20px",
-        }}
-      >
-        {project.name}
-      </h1>
-
-      {/* Tech Chips */}
-      <LanguageBadges />
-
-      {/* Hero Thumbnail */}
-      {project.image && (
-        <div
-          style={{
-            width: "100%",
-            height: "width * 0.5625",
-            borderRadius: "12px",
-            overflow: "hidden",
-            marginBottom: "30px",
-          }}
-        >
-          <img
-            src={project.image}
-            alt={`${project.name} hero`}
-            style={{ width: "100%", height: "100%", objectFit: "cover" }}
-          />
-        </div>
-      )}
-
-      {/* Overview (short description) */}
-      <div
-        style={{
-          backgroundColor:
-            theme === "bunny"
-              ? "rgba(121, 85, 189, 0.1)"
-              : "rgba(8, 34, 163, 0.1)",
-          padding: "20px",
-          borderRadius: "12px",
-          marginBottom: "30px",
-        }}
-      >
-        <h3
-          style={{
-            color: themes[theme]["--color-accent-primary"],
-            marginTop: 0,
-          }}
-        >
-          Overview
-        </h3>
-        <p style={{ lineHeight: 1.6 }}>{project.description}</p>
-      </div>
-
-      {/* Rich Sections */}
-      {project.sections.map(renderSectionContent)}
-
-      {/* CTA */}
-      <div
-        style={{
-          borderTop: `1px solid ${themes[theme]["--border-color"]}`,
-          paddingTop: "20px",
-          marginTop: "30px",
-          display: "flex",
-          justifyContent: "center",
-        }}
-      >
+        {/* Back Button */}
         <button
           onClick={() => navigate("/portfolio")}
           style={{
-            padding: "10px 20px",
-            backgroundColor: themes[theme]["--button-bg"],
-            color: themes[theme]["--button-text"],
+            padding: "8px 16px",
+            backgroundColor: themes[theme]["--button-bg-light"],
+            color: themes[theme]["--color-text"],
             border: "none",
             borderRadius: "20px",
             fontFamily: "monospace",
             cursor: "pointer",
+            marginBottom: "20px",
+            display: "flex",
+            alignItems: "center",
+            width: "fit-content",
           }}
         >
-          View More Projects
+          ← Back
         </button>
+
+        {/* Title */}
+        <h1
+          style={{
+            color: themes[theme]["--color-accent-primary"],
+            marginBottom: "20px",
+          }}
+        >
+          {project.name}
+        </h1>
+
+        {/* Tech Chips */}
+        <LanguageBadges />
+
+        {/* Hero Thumbnail */}
+        {project.image && (
+          <div
+            style={{
+              width: "100%",
+              height: "width * 0.5625",
+              borderRadius: "12px",
+              overflow: "hidden",
+              marginBottom: "30px",
+            }}
+          >
+            <img
+              src={project.image}
+              alt={`${project.name} hero`}
+              style={{ width: "100%", height: "100%", objectFit: "cover" }}
+            />
+          </div>
+        )}
+
+        {/* Overview (short description) */}
+        <div
+          style={{
+            backgroundColor:
+              theme === "bunny"
+                ? "rgba(121, 85, 189, 0.1)"
+                : "rgba(8, 34, 163, 0.1)",
+            padding: "20px",
+            borderRadius: "12px",
+            marginBottom: "30px",
+          }}
+        >
+          <h3
+            style={{
+              color: themes[theme]["--color-accent-primary"],
+              marginTop: 0,
+            }}
+          >
+            Overview
+          </h3>
+          <p style={{ lineHeight: 1.6 }}>{project.description}</p>
+        </div>
+
+        {/* Rich Sections */}
+        {project.sections.map(renderSectionContent)}
+
+        {/* CTA */}
+        <div
+          style={{
+            borderTop: `1px solid ${themes[theme]["--border-color"]}`,
+            paddingTop: "20px",
+            marginTop: "30px",
+            display: "flex",
+            justifyContent: "center",
+          }}
+        >
+          <button
+            onClick={() => navigate("/portfolio")}
+            style={{
+              padding: "10px 20px",
+              backgroundColor: themes[theme]["--button-bg"],
+              color: themes[theme]["--button-text"],
+              border: "none",
+              borderRadius: "20px",
+              fontFamily: "monospace",
+              cursor: "pointer",
+            }}
+          >
+            View More Projects
+          </button>
+        </div>
       </div>
+
+      <style>
+        {`
+        .project-detail-container::-webkit-scrollbar{width:8px}
+        .project-detail-container::-webkit-scrollbar-track{background:transparent}
+        .project-detail-container::-webkit-scrollbar-thumb{
+          border-radius:4px;
+          background:${themes[theme]["--button-bg"]};
+        }
+        `}
+      </style>
     </div>
   );
 };

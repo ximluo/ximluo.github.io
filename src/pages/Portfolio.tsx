@@ -43,7 +43,7 @@ const LazyImage: React.FC<{
     <div ref={setImgRef} style={style}>
       {isInView && (
         <>
-          {/* Placeholder while loading */}
+          {}
           {!isLoaded && (
             <div
               style={{
@@ -156,7 +156,7 @@ const Portfolio: React.FC<PortfolioProps> = ({ theme }) => {
         boxSizing: "border-box",
       }}
     >
-      {/* Filter Section */}
+      {}
       <div
         style={{
           width: "100%",
@@ -208,7 +208,7 @@ const Portfolio: React.FC<PortfolioProps> = ({ theme }) => {
         </div>
       </div>
 
-      {/* Projects Grid */}
+      {}
       <div
         style={{
           display: "grid",
@@ -240,7 +240,7 @@ const Portfolio: React.FC<PortfolioProps> = ({ theme }) => {
             }}
             className="project-card"
           >
-            {/* Project Image with lazy loading */}
+            {}
             <div
               style={{
                 width: "100%",
@@ -261,7 +261,7 @@ const Portfolio: React.FC<PortfolioProps> = ({ theme }) => {
               />
             </div>
 
-            {/* Project Info */}
+            {}
             <div
               style={{
                 padding: "15px",
@@ -270,7 +270,7 @@ const Portfolio: React.FC<PortfolioProps> = ({ theme }) => {
                 overflow: "hidden",
               }}
             >
-              {/* Title + stack + arrow row */}
+              {}
               <div
                 style={{
                   display: "flex",
@@ -342,7 +342,7 @@ const Portfolio: React.FC<PortfolioProps> = ({ theme }) => {
         ))}
       </div>
 
-      {/* Optimized CSS with GPU acceleration */}
+      {}
       <style>
         {`
         .portfolio-container::-webkit-scrollbar{width:8px}

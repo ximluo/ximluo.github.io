@@ -12,6 +12,15 @@ import * as THREE from "three"
 import AwardsModal from "../components/AwardsModal"
 import AsciiImage from "../components/AsciiImage"
 
+const getEstTimeString = () =>
+  new Intl.DateTimeFormat("en-US", {
+    timeZone: "America/New_York",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+    hour12: true,
+  }).format(new Date())
+
 interface HomeProps {
   theme: "bunny" | "water"
   phase: number
@@ -188,6 +197,8 @@ const Home: React.FC<HomeProps> = ({
   const [shouldScramble, setShouldScramble] = useState(false)
   const [isFlowerRevealed, setIsFlowerRevealed] = useState(false)
   const [virtualScroll, setVirtualScroll] = useState(0)
+  const [footerHeight, setFooterHeight] = useState(0)
+  const [estTime, setEstTime] = useState(() => getEstTimeString())
 
   const typingRef = useRef<HTMLDivElement>(null)
   const headingRef = useRef<HTMLHeadingElement>(null)
@@ -215,6 +226,23 @@ const Home: React.FC<HomeProps> = ({
     window.addEventListener("resize", handleResize)
     return () => window.removeEventListener("resize", handleResize)
   }, [handleResize])
+
+  useEffect(() => {
+    if (typeof window === "undefined") return
+    const measureFooter = () => {
+      const footer = document.querySelector("footer")
+      if (!footer) return
+      setFooterHeight(footer.getBoundingClientRect().height || 0)
+    }
+    measureFooter()
+    window.addEventListener("resize", measureFooter)
+    return () => window.removeEventListener("resize", measureFooter)
+  }, [])
+
+  useEffect(() => {
+    const id = window.setInterval(() => setEstTime(getEstTimeString()), 1000)
+    return () => window.clearInterval(id)
+  }, [])
 
   useEffect(() => {
     setVirtualScroll((prev) => Math.min(prev, revealThreshold))
@@ -405,13 +433,15 @@ const Home: React.FC<HomeProps> = ({
         : themes.water["--color-accent-primary"]
 
     return `
+      @import url('https://fonts.googleapis.com/css2?family=Dosis:wght@700&display=swap');
       html, body { margin: 0; padding: 0; overflow: hidden; }
-      .home-container { overflow: hidden; height: 100vh; }
-      .home-container::-webkit-scrollbar { width: 8px; }
-      .home-container::-webkit-scrollbar-track { background: transparent; }
-      .home-container::-webkit-scrollbar-thumb {
-        border-radius: 4px;
-        background-color: ${scrollbarColor};
+      .home-container {
+        overflow: hidden;
+        height: 100vh;
+        scrollbar-width: none;
+      }
+      .home-container::-webkit-scrollbar {
+        display: none;
       }
       @keyframes blink {
         0%, 100% { opacity: 1; }
@@ -443,6 +473,95 @@ const Home: React.FC<HomeProps> = ({
         position: relative;
         z-index: 1;             /* above the canvas */
       }
+      .fade {
+        opacity: 0;
+        transform: translateY(8px);
+        transition: opacity 0.6s ease, transform 0.6s ease;
+      }
+      .fade.show {
+        opacity: 1;
+        transform: translateY(0);
+      }
+      .home-scroll-indicator {
+        width: 12px;
+        position: relative;
+        margin: 0 auto;
+        opacity: 0.6;
+      }
+      .home-scroll-indicator::before,
+      .home-scroll-indicator::after,
+      .home-scroll-dots::before,
+      .home-scroll-dots::after {
+        content: "";
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+      }
+      .home-scroll-indicator::before {
+        width: 12px;
+        height: 12px;
+        border-radius: 10px;
+        border: 1px solid currentColor;
+        animation: home-dot 3s infinite ease-in-out;
+      }
+      .home-scroll-indicator::after {
+        width: 7px;
+        height: 7px;
+        border-right: 1px solid currentColor;
+        border-bottom: 1px solid currentColor;
+        transform: rotate(45deg);
+        animation: home-arrow 3s infinite ease-in-out;
+        animation-delay: 0.75s;
+        opacity: 0.25;
+        margin-top: 6px;
+      }
+      .home-scroll-dots::before,
+      .home-scroll-dots::after {
+        border-radius: 10px;
+        border: 1px solid currentColor;
+        animation: home-dot 3s infinite ease-in-out;
+      }
+      .home-scroll-dots::before {
+        width: 8px;
+        height: 8px;
+        animation-delay: 0.25s;
+        margin: 5px auto;
+      }
+      .home-scroll-dots::after {
+        width: 6px;
+        height: 6px;
+        animation-delay: 0.5s;
+        margin: 5px auto;
+      }
+      @keyframes home-dot {
+        0% { transform: scale(0.75); opacity: 0.25; }
+        25% { transform: scale(1); opacity: 1; }
+        100% { transform: scale(0.75); opacity: 0.25; }
+      }
+      @keyframes home-arrow {
+        0% { transform: scale(0.75) rotate(45deg); opacity: 0.25; }
+        25% { transform: scale(1) rotate(45deg); opacity: 1; }
+        100% { transform: scale(0.75) rotate(45deg); opacity: 0.25; }
+      }
+      .home-center-scroll {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-transform: uppercase;
+        font-family: 'Dosis', sans-serif;
+        letter-spacing: 0.3em;
+      }
+      .home-center-scroll-text {
+        margin-bottom: 8px;
+        font-size: 0.75rem;
+        opacity: 0.65;
+      }
+      .home-center-scroll-line {
+        width: 1px;
+        height: 60px;
+        background-color: currentColor;
+        opacity: 0.65;
+      }
     `
   }, [theme, themes])
 
@@ -465,6 +584,13 @@ const Home: React.FC<HomeProps> = ({
     const glow = theme === "bunny" ? "rgba(223, 30, 155, 0.35)" : "rgba(134, 196, 240, 0.3)"
     return { base, hover, border, text, glow }
   }, [theme, themes])
+  const navButtonsEnabled = isFlowerRevealed
+  const scrollIndicatorColor = "rgba(255, 255, 255, 0.85)"
+  const scrollCueOpacity = useMemo(() => {
+    if (!revealThreshold) return 1
+    const progress = Math.min(virtualScroll / Math.max(revealThreshold * 0.6, 1), 1)
+    return 1 - progress
+  }, [virtualScroll, revealThreshold])
 
   return (
     <>
@@ -492,6 +618,28 @@ const Home: React.FC<HomeProps> = ({
           if (isAnimationComplete) onScramble()
         }}
       >
+        <div
+          className={`fade ${phase >= 4 && isAnimationComplete ? "show" : ""}`}
+          aria-hidden={!isAnimationComplete}
+          style={{
+            position: "fixed",
+            left: isMobile ? 40 : 55,
+            top: "50%",
+            transform: "translate(-50%, -50%) rotate(-90deg)",
+            transformOrigin: "center",
+            fontFamily: "monospace",
+            fontSize: isMobile ? 11 : 13,
+            letterSpacing: "0.2em",
+            color:
+              theme === "bunny" ? themes.bunny["--color-text"] : themes.water["--color-text"],
+            textTransform: "uppercase",
+            pointerEvents: "none",
+            zIndex: 45,
+          }}
+        >
+          est • {estTime}
+        </div>
+
         {/* ---- THREE.JS BACKDROP (transparent, full height) ---- */}
         <div
           className="three-wrapper"
@@ -546,19 +694,27 @@ const Home: React.FC<HomeProps> = ({
                 label: "Creative",
                 onClick: () => navigate("/creative"),
               },
+              {
+                label: "Awards",
+                onClick: () => setShowAwards(true),
+              },
             ].map((item) => (
               <button
                 key={item.label}
+                disabled={!navButtonsEnabled}
                 type="button"
                 onClick={(event) => {
                   event.stopPropagation()
+                  if (!navButtonsEnabled) return
                   item.onClick()
                 }}
                 onMouseEnter={(event) => {
+                  if (!navButtonsEnabled) return
                   event.currentTarget.style.background = bubblePalette.hover
                   event.currentTarget.style.boxShadow = `0 18px 45px ${bubblePalette.glow}`
                 }}
                 onMouseLeave={(event) => {
+                  if (!navButtonsEnabled) return
                   event.currentTarget.style.background = bubblePalette.base
                   event.currentTarget.style.boxShadow = `0 12px 30px ${bubblePalette.glow}`
                 }}
@@ -575,11 +731,12 @@ const Home: React.FC<HomeProps> = ({
                   backdropFilter: "blur(26px)",
                   WebkitBackdropFilter: "blur(26px)",
                   boxShadow: `0 12px 30px ${bubblePalette.glow}`,
-                  cursor: "pointer",
+                  cursor: navButtonsEnabled ? "pointer" : "default",
                   transition: "transform 0.25s ease, background 0.25s ease, box-shadow 0.25s ease",
                   transform: "translateZ(0)",
                   outline: "none",
-                  pointerEvents: "auto",
+                  pointerEvents: navButtonsEnabled ? "auto" : "none",
+                  opacity: navButtonsEnabled ? 1 : 0.6,
                 }}
               >
                 {item.label}
@@ -705,7 +862,7 @@ const Home: React.FC<HomeProps> = ({
               maxWidth: 700,
               textAlign: "center",
               fontFamily: "monospace",
-              fontSize: isMobile ? 11 : 13,
+              fontSize: isMobile ? 12 : 14,
               lineHeight: isMobile ? 1.1 : 1.4,
               opacity: phase >= 4 && isAnimationComplete ? 1 : 0,
               transform: `translateY(${phase >= 4 && isAnimationComplete ? 0 : 20}px)`,
@@ -717,7 +874,7 @@ const Home: React.FC<HomeProps> = ({
           >
             <p style={{ marginBottom: isMobile ? 0 : 20 }}>
               I'm a student at the University of Pennsylvania, studying Computer Science (<a
-                href="http://www.cg.cis.upenn.edu/dmd.html"
+                href="http://cg.cis.upenn.edu/dmd.html"
                 target="_blank"
                 rel="noopener noreferrer"
                 style={{
@@ -807,6 +964,57 @@ const Home: React.FC<HomeProps> = ({
                 LinkedIn
               </a>
             </p>
+          </div>
+        </div>
+
+        {!isFlowerRevealed && !isMobile && (
+          <div
+            className={`fade ${phase >= 4 && isAnimationComplete ? "show" : ""}`}
+            aria-hidden
+            style={{
+              position: "fixed",
+              bottom: (footerHeight || 70) + 20,
+              left: 45,
+              zIndex: 45,
+              pointerEvents: "none",
+            }}
+          >
+            <div className="home-scroll-indicator" style={{ color: scrollIndicatorColor }}>
+              <div className="home-scroll-dots" />
+            </div>
+          </div>
+        )}
+
+        <div
+          className={`fade ${phase >= 4 && isAnimationComplete ? "show" : ""}`}
+          aria-hidden={!isAnimationComplete}
+          style={{
+            position: "fixed",
+            bottom: (footerHeight || (isMobile ? 90 : 70)) + 10,
+            left: "50%",
+            transform: "translateX(-50%)",
+            zIndex: 45,
+            pointerEvents: "none",
+          }}
+        >
+          <div
+            style={{
+              opacity: scrollCueOpacity,
+              transition: "opacity 0.3s ease",
+            }}
+          >
+            <div
+              className="home-center-scroll"
+              style={{
+                color:
+                  theme === "bunny"
+                    ? themes.bunny["--color-accent-primary"]
+                    : themes.water["--color-accent-primary"],
+              }}
+            >
+              <span className="home-center-scroll-text">Scroll</span>
+              <span className="home-center-scroll-line" />
+            </div>
           </div>
         </div>
 

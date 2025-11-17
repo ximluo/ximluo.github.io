@@ -123,8 +123,8 @@ const projects: Project[] = [
 
   // monte carlo path tracer
   {
-    id: "cpu-path-tracer",
-    name: "CPU-Based Monte Carlo Path Tracer",
+    id: "gpu-path-tracer",
+    name: "Monte Carlo Path Tracer",
     image: "/images/monte-carlo.png",
     description:
       "An offline Monte Carlo path tracer implemented in C++. Supports multiple integrators, area and point lights, BxDF models, depth of field, and a custom ray intersection engine.",
@@ -133,7 +133,7 @@ const projects: Project[] = [
     sections: [
       {
         text:
-          "This path tracer solves the light transport equation on the CPU using Monte Carlo integration, with a flexible framework for different sampling strategies and material models."
+          "This path tracer solves the light transport equation on the GPU using Monte Carlo integration, with a flexible framework for different sampling strategies and material models."
       },
       {
         text:

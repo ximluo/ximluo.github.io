@@ -1,7 +1,7 @@
 "use client"
 
 import type React from "react"
-import { useEffect, useRef, useState } from "react"
+import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { createPortal } from "react-dom"
 import { Canvas, useFrame, useThree } from "@react-three/fiber"
 import * as THREE from "three"
@@ -14,7 +14,33 @@ interface BunnyModalProps {
   theme: "bunny" | "water"
 }
 
+interface BunnySceneColors {
+  floor: string
+  fog: string
+  bunnyPrimary: string
+  bunnySecondary: string
+  carrotBody: string
+  carrotLeaf: string
+  outline: string
+}
+
+interface BunnySceneProps {
+  colors: BunnySceneColors
+  onCarrotCollected: () => void
+  isMobile: boolean
+}
+
 const MODAL_ROOT_ID = "bunny-modal-root"
+const HIGH_CARROT_HEIGHT_THRESHOLD = 0.85
+const CARROT_MARKER_Y_OFFSET = 0.01
+const CARROT_COUNT_STORAGE_KEY = "bunny-carrot-count"
+
+const parseStoredCarrotCount = (value: string | null) => {
+  if (value === null) return 0
+  const parsed = parseInt(value, 10)
+  if (Number.isNaN(parsed) || parsed < 0) return 0
+  return parsed
+}
 
 // Custom shader materials
 const createOutlineMaterial = () => {
@@ -92,7 +118,7 @@ class BufferSim {
 }
 
 // Main BunnyScene component
-const BunnyScene = () => {
+const BunnyScene: React.FC<BunnySceneProps> = ({ colors, onCarrotCollected, isMobile }) => {
   const { scene, gl, camera } = useThree()
   const [modelLoaded, setModelLoaded] = useState(false)
   const [isJumping, setIsJumping] = useState(false)
@@ -103,6 +129,8 @@ const BunnyScene = () => {
   const earLeftRef = useRef<THREE.Object3D>(null)
   const earRightRef = useRef<THREE.Object3D>(null)
   const carrotRef = useRef<THREE.Object3D>(null)
+  const carrotMarkerRef = useRef<THREE.Mesh | null>(null)
+  const carrotMarkerDotRef = useRef<THREE.Mesh | null>(null)
   const floorRef = useRef<Reflector>(null)
   const lineRef = useRef<THREE.Line>(null)
   const bufferSimRef = useRef<BufferSim | null>(null)
@@ -126,15 +154,41 @@ const BunnyScene = () => {
   const timeRef = useRef(0)
 
   // Materials
-  const primMatRef = useRef<THREE.MeshToonMaterial>(new THREE.MeshToonMaterial({ color: 0x7beeff }))
-  const secMatRef = useRef<THREE.MeshToonMaterial>(new THREE.MeshToonMaterial({ color: 0x332e2e }))
-  const bonusMatRef = useRef<THREE.MeshToonMaterial>(new THREE.MeshToonMaterial({ color: 0xff3434 }))
+  const primMatRef = useRef<THREE.MeshToonMaterial>(new THREE.MeshToonMaterial({ color: new THREE.Color(colors.bunnyPrimary) }))
+  const secMatRef = useRef<THREE.MeshToonMaterial>(new THREE.MeshToonMaterial({ color: new THREE.Color(colors.bunnySecondary) }))
+  const bonusMatRef = useRef<THREE.MeshToonMaterial>(new THREE.MeshToonMaterial({ color: new THREE.Color(colors.carrotBody) }))
+  const leafMatRef = useRef<THREE.MeshToonMaterial>(new THREE.MeshToonMaterial({ color: new THREE.Color(colors.carrotLeaf) }))
   const outlineMatRef = useRef<THREE.ShaderMaterial>(createOutlineMaterial())
 
   // Setup scene
   useEffect(() => {
+    primMatRef.current.color.set(colors.bunnyPrimary)
+    secMatRef.current.color.set(colors.bunnySecondary)
+    bonusMatRef.current.color.set(colors.carrotBody)
+    leafMatRef.current.color.set(colors.carrotLeaf)
+    outlineMatRef.current.uniforms.color.value = new THREE.Color(colors.outline)
+    scene.fog = new THREE.Fog(new THREE.Color(colors.fog).getHex(), 13, 20)
+    if (floorRef.current) {
+      const mat = floorRef.current.material as THREE.Material & {
+        color?: THREE.Color
+        uniforms?: Record<string, { value: THREE.Color }>
+      }
+      if (mat?.color) mat.color.set(colors.floor)
+      else if (mat?.uniforms?.color) mat.uniforms.color.value.set(new THREE.Color(colors.floor))
+    }
+    if (carrotMarkerRef.current) {
+      const markerMat = carrotMarkerRef.current.material as THREE.MeshBasicMaterial
+      markerMat.color.set(colors.carrotBody)
+    }
+    if (carrotMarkerDotRef.current) {
+      const markerDotMat = carrotMarkerDotRef.current.material as THREE.MeshBasicMaterial
+      markerDotMat.color.set(colors.carrotLeaf)
+    }
+  }, [colors, scene])
+
+  useEffect(() => {
     // Scene setup
-    scene.fog = new THREE.Fog(0x332e2e, 13, 20)
+    scene.fog = new THREE.Fog(new THREE.Color(colors.fog).getHex(), 13, 20)
     camera.position.set(0, 4, 8)
     camera.lookAt(0, 0, 0)
 
@@ -306,8 +360,8 @@ const BunnyScene = () => {
         eyeLeft.material = secMatRef.current
         eyeRight.material = secMatRef.current
         carrot.material = bonusMatRef.current
-        carrotLeaf.material = primMatRef.current
-        carrotLeaf2.material = primMatRef.current
+        carrotLeaf.material = leafMatRef.current
+        carrotLeaf2.material = leafMatRef.current
 
         // Add outlines
         const addOutline = (obj: THREE.Object3D) => {
@@ -359,7 +413,7 @@ const BunnyScene = () => {
 
     // Create reflective floor
     const floor = new Reflector(new THREE.PlaneGeometry(floorSizeRef.current, floorSizeRef.current), {
-      color: new THREE.Color(0x332e2e),
+      color: new THREE.Color(colors.floor),
       textureWidth: 1024,
       textureHeight: 1024,
     })
@@ -367,6 +421,27 @@ const BunnyScene = () => {
     floor.receiveShadow = true
     scene.add(floor)
     floorRef.current = floor
+
+    // Carrot ground marker
+    const carrotMarker = new THREE.Mesh(
+      new THREE.RingGeometry(0.25, 0.35, 32),
+      new THREE.MeshBasicMaterial({ color: new THREE.Color(colors.carrotBody), transparent: true, opacity: 0.65, side: THREE.DoubleSide }),
+    )
+    carrotMarker.rotation.x = -Math.PI / 2
+    carrotMarker.position.y = CARROT_MARKER_Y_OFFSET
+    carrotMarker.visible = false
+    scene.add(carrotMarker)
+    carrotMarkerRef.current = carrotMarker
+
+    const carrotMarkerDot = new THREE.Mesh(
+      new THREE.CircleGeometry(0.07, 24),
+      new THREE.MeshBasicMaterial({ color: new THREE.Color(colors.carrotLeaf), side: THREE.DoubleSide }),
+    )
+    carrotMarkerDot.rotation.x = -Math.PI / 2
+    carrotMarkerDot.position.y = CARROT_MARKER_Y_OFFSET + 0.005
+    carrotMarkerDot.visible = false
+    scene.add(carrotMarkerDot)
+    carrotMarkerDotRef.current = carrotMarkerDot
 
     // Event listeners
     const handleMouseMove = (event: MouseEvent) => {
@@ -399,7 +474,7 @@ const BunnyScene = () => {
       window.removeEventListener("mousedown", handleClick)
       window.removeEventListener("touchstart", handleClick)
     }
-  }, [scene, camera, gl])
+  }, [scene, camera, gl, colors.floor, colors.fog])
 
   // Helper functions
   const getShortestAngle = (v: number) => {
@@ -424,6 +499,15 @@ const BunnyScene = () => {
       targetHeroUVPosRef.current.y = intersects[0].uv.y
     }
   }
+
+  const hideCarrotMarker = useCallback(() => {
+    if (carrotMarkerRef.current) {
+      carrotMarkerRef.current.visible = false
+    }
+    if (carrotMarkerDotRef.current) {
+      carrotMarkerDotRef.current.visible = false
+    }
+  }, [])
 
   const jump = () => {
     if (!rabbitRef.current || !rabbitBodyRef.current || !earLeftRef.current || !earRightRef.current) return
@@ -492,9 +576,11 @@ const BunnyScene = () => {
     distVec.sub(carrotRef.current.position)
     const l = distVec.length()
 
-    if (l <= 1) {
+    if (l <= 1 && carrotRef.current.visible) {
       carrotRef.current.visible = false
+      hideCarrotMarker()
       explode(carrotRef.current.position.clone())
+      onCarrotCollected()
     }
   }
 
@@ -560,16 +646,48 @@ const BunnyScene = () => {
   const spawnCarrot = () => {
     if (!carrotRef.current) return
 
-    const px = (Math.random() - 0.5) * 0.3
-    const py = (Math.random() - 0.5) * 0.3
-    const h = 0.2 + Math.random() * 1
+    hideCarrotMarker()
 
-    carrotRef.current.position.x = px * floorSizeRef.current
-    carrotRef.current.position.z = py * floorSizeRef.current
+    const spawnRange = isMobile ? 0.24 : 0.3
+    const px = (Math.random() - 0.5) * spawnRange
+    const py = (Math.random() - 0.5) * spawnRange
+    const h = 0.2 + Math.random() * 1
+    const spawnX = px * floorSizeRef.current
+    const spawnZ = py * floorSizeRef.current
+
+    carrotRef.current.position.x = spawnX
+    carrotRef.current.position.z = spawnZ
     carrotRef.current.position.y = -1
 
     carrotRef.current.scale.set(0, 0, 0)
     carrotRef.current.visible = true
+
+    const shouldShowMarker = h > HIGH_CARROT_HEIGHT_THRESHOLD
+
+    if (shouldShowMarker && carrotMarkerRef.current && carrotMarkerDotRef.current) {
+      carrotMarkerRef.current.visible = true
+      carrotMarkerDotRef.current.visible = true
+      carrotMarkerRef.current.position.set(spawnX, CARROT_MARKER_Y_OFFSET, spawnZ)
+      carrotMarkerDotRef.current.position.set(spawnX, CARROT_MARKER_Y_OFFSET + 0.005, spawnZ)
+      carrotMarkerRef.current.scale.set(0.4, 0.4, 0.4)
+      carrotMarkerDotRef.current.scale.set(0, 0, 0)
+
+      gsap.to(carrotMarkerRef.current.scale, {
+        duration: 0.8,
+        ease: "elastic.out",
+        x: 1,
+        y: 1,
+        z: 1,
+      })
+
+      gsap.to(carrotMarkerDotRef.current.scale, {
+        duration: 0.6,
+        ease: "back.out(1.7)",
+        x: 1,
+        y: 1,
+        z: 1,
+      })
+    }
 
     gsap.to(carrotRef.current.scale, {
       duration: 1.5,
@@ -602,8 +720,9 @@ const BunnyScene = () => {
       raycast()
 
       // Elastic string simulation
-      const constrainUVPosX = constrain(targetHeroUVPosRef.current.x - 0.5, -0.3, 0.3)
-      const constrainUVPosY = constrain(targetHeroUVPosRef.current.y - 0.5, -0.3, 0.3)
+      const clampRange = isMobile ? 0.22 : 0.3
+      const constrainUVPosX = constrain(targetHeroUVPosRef.current.x - 0.5, -clampRange, clampRange)
+      const constrainUVPosY = constrain(targetHeroUVPosRef.current.y - 0.5, -clampRange, clampRange)
       targetHeroAbsPosRef.current.x = constrainUVPosX * floorSizeRef.current
       targetHeroAbsPosRef.current.y = -constrainUVPosY * floorSizeRef.current
 
@@ -612,8 +731,8 @@ const BunnyScene = () => {
 
       const angle = Math.atan2(dy, dx)
       const heroDistance = Math.sqrt(dx * dx + dy * dy)
-      const ax = dx * dt * 0.5
-      const ay = dy * dt * 0.5
+      const ax = dx * dt * 0.3
+      const ay = dy * dt * 0.3
 
       heroSpeedRef.current.x += ax
       heroSpeedRef.current.y += ay
@@ -680,6 +799,15 @@ const BunnyScene = () => {
 const BunnyModal: React.FC<BunnyModalProps> = ({ onClose, theme }) => {
   const portalRef = useRef<HTMLDivElement | null>(null)
   const [mounted, setMounted] = useState(false)
+  const [carrotCount, setCarrotCount] = useState(() => {
+    if (typeof window === "undefined") return 0
+    return parseStoredCarrotCount(window.sessionStorage.getItem(CARROT_COUNT_STORAGE_KEY))
+  })
+  const [isMobile, setIsMobile] = useState(() => {
+    if (typeof window === "undefined") return false
+    return window.innerWidth <= 768
+  })
+  const carrotStorageWriteSkipRef = useRef(false)
 
   useEffect(() => {
     if (typeof document === "undefined") {
@@ -709,6 +837,39 @@ const BunnyModal: React.FC<BunnyModalProps> = ({ onClose, theme }) => {
     }
   }, [])
 
+  useEffect(() => {
+    if (typeof window === "undefined") return
+    const handleResize = () => setIsMobile(window.innerWidth <= 768)
+    window.addEventListener("resize", handleResize)
+    return () => window.removeEventListener("resize", handleResize)
+  }, [])
+
+  useEffect(() => {
+    if (typeof window === "undefined") return
+    const handleStorage = (event: StorageEvent) => {
+      if (event.key !== CARROT_COUNT_STORAGE_KEY) return
+      const next = parseStoredCarrotCount(event.newValue)
+      setCarrotCount((prev) => {
+        if (prev === next) {
+          return prev
+        }
+        carrotStorageWriteSkipRef.current = true
+        return next
+      })
+    }
+    window.addEventListener("storage", handleStorage)
+    return () => window.removeEventListener("storage", handleStorage)
+  }, [])
+
+  useEffect(() => {
+    if (typeof window === "undefined") return
+    if (carrotStorageWriteSkipRef.current) {
+      carrotStorageWriteSkipRef.current = false
+      return
+    }
+    window.sessionStorage.setItem(CARROT_COUNT_STORAGE_KEY, carrotCount.toString())
+  }, [carrotCount])
+
   const themes = {
     bunny: {
       "--color-text": "rgb(121, 85, 189)",
@@ -718,6 +879,15 @@ const BunnyModal: React.FC<BunnyModalProps> = ({ onClose, theme }) => {
       "--button-bg-light": "rgba(223, 30, 155, 0.2)",
       "--button-text": "rgba(249, 240, 251, 1)",
       "--border-color": "rgb(152, 128, 220)",
+      "--game-border": "rgba(223, 30, 155, 0.6)",
+      "--game-shadow": "rgba(223, 30, 155, 0.35)",
+      "--game-floor": "#2a0b25",
+      "--game-fog": "#1b0318",
+      "--bunny-primary": "#ffd7f3",
+      "--bunny-secondary": "#4f2065",
+      "--carrot-body": "#ff70ff",
+      "--carrot-leaf": "#ffd2ff",
+      "--game-outline": "#2b0320",
     },
     water: {
       "--color-text": "rgb(191, 229, 249)",
@@ -726,8 +896,34 @@ const BunnyModal: React.FC<BunnyModalProps> = ({ onClose, theme }) => {
       "--button-bg-light": "rgba(214, 220, 251, 0.2)",
       "--button-text": "rgb(46, 80, 192)",
       "--border-color": "rgba(8, 34, 163, 1)",
+      "--game-border": "rgba(134, 196, 240, 0.6)",
+      "--game-shadow": "rgba(7, 36, 102, 0.35)",
+      "--game-floor": "#041c2f",
+      "--game-fog": "#052a41",
+      "--bunny-primary": "#c7f2ff",
+      "--bunny-secondary": "#113d60",
+      "--carrot-body": "#ff66ff",
+      "--carrot-leaf": "#41d6ff",
+      "--game-outline": "#031525",
     },
-  }
+  } as const
+
+  const palette = useMemo(() => themes[theme], [theme])
+  const sceneColors = useMemo<BunnySceneColors>(
+    () => ({
+      floor: palette["--game-floor"],
+      fog: palette["--game-fog"],
+      bunnyPrimary: palette["--bunny-primary"],
+      bunnySecondary: palette["--bunny-secondary"],
+      carrotBody: palette["--carrot-body"],
+      carrotLeaf: palette["--carrot-leaf"],
+      outline: palette["--game-outline"],
+    }),
+    [palette],
+  )
+  const handleCarrotCollected = useCallback(() => {
+    setCarrotCount((prev) => prev + 1)
+  }, [])
 
   if (!mounted || !portalRef.current) {
     return null
@@ -756,6 +952,10 @@ const BunnyModal: React.FC<BunnyModalProps> = ({ onClose, theme }) => {
           width: "100%",
           height: "100%",
           overflow: "hidden",
+          border: `8px solid ${palette["--game-border"]}`,
+          borderRadius: isMobile ? "18px" : "26px",
+          boxSizing: "border-box",
+          boxShadow: `0 0 35px ${palette["--game-shadow"]}`,
         }}
         onClick={(e) => e.stopPropagation()}
       >
@@ -766,7 +966,7 @@ const BunnyModal: React.FC<BunnyModalProps> = ({ onClose, theme }) => {
             preserveDrawingBuffer: true,
             alpha: false,
           }}
-          dpr={window.devicePixelRatio}
+          dpr={typeof window !== "undefined" ? window.devicePixelRatio : 1}
           style={{
             position: "absolute",
             top: 0,
@@ -777,8 +977,27 @@ const BunnyModal: React.FC<BunnyModalProps> = ({ onClose, theme }) => {
             cursor: "grabbing",
           }}
         >
-          <BunnyScene />
+          <BunnyScene colors={sceneColors} onCarrotCollected={handleCarrotCollected} isMobile={isMobile} />
         </Canvas>
+
+        <div
+          style={{
+            position: "absolute",
+            top: isMobile ? "16px" : "26px",
+            left: isMobile ? "16px" : "30px",
+            padding: "8px 16px",
+            borderRadius: 999,
+            fontFamily: "monospace",
+            fontSize: isMobile ? "0.65rem" : "0.8rem",
+            letterSpacing: "0.1em",
+            color: palette["--color-text"],
+            backgroundColor: palette["--button-bg-light"],
+            border: `1px solid ${palette["--game-border"]}`,
+            zIndex: 1000,
+          }}
+        >
+          CARROTS · {carrotCount}
+        </div>
 
         <div
           style={{
@@ -786,10 +1005,11 @@ const BunnyModal: React.FC<BunnyModalProps> = ({ onClose, theme }) => {
             width: "100%",
             bottom: "60px",
             fontFamily: "'Open Sans', sans-serif",
-            color: "#ff3434",
-            fontSize: "0.7em",
+            color: palette["--color-accent-primary"],
+            fontSize: "0.75em",
             textTransform: "uppercase",
             textAlign: "center",
+            letterSpacing: "0.3em",
           }}
         >
           - Press to jump -
@@ -801,7 +1021,7 @@ const BunnyModal: React.FC<BunnyModalProps> = ({ onClose, theme }) => {
             width: "100%",
             bottom: "20px",
             fontFamily: "'Open Sans', sans-serif",
-            color: "#544027",
+            color: palette["--color-text"],
             fontSize: "0.7em",
             textTransform: "uppercase",
             textAlign: "center",
@@ -809,7 +1029,7 @@ const BunnyModal: React.FC<BunnyModalProps> = ({ onClose, theme }) => {
         >
           <a
             href="#"
-            style={{ color: "#7beeff" }}
+            style={{ color: palette["--color-accent-primary"] }}
             onClick={(e) => {
               e.preventDefault()
               onClose()
@@ -828,8 +1048,8 @@ const BunnyModal: React.FC<BunnyModalProps> = ({ onClose, theme }) => {
             width: "36px",
             height: "36px",
             borderRadius: "50%",
-            backgroundColor: theme === "bunny" ? themes.bunny["--button-bg-light"] : themes.water["--button-bg-light"],
-            color: theme === "bunny" ? themes.bunny["--color-text"] : themes.water["--color-text"],
+            backgroundColor: palette["--button-bg-light"],
+            color: palette["--color-text"],
             border: "none",
             display: "flex",
             alignItems: "center",

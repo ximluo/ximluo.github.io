@@ -21,3 +21,13 @@
 .App-link {
   color: #61dafb;
 }
+
+.main-content-scroll {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.main-content-scroll::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+}

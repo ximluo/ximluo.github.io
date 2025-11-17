@@ -6,10 +6,6 @@ import React, {
 } from "react";
 import photos from "../data/photos";
 
-/* --------------------------------------------------
- *  Theme constants
- * --------------------------------------------------*/
-
 type Theme = "bunny" | "water";
 
 const THEMES = {
@@ -32,10 +28,6 @@ const THEMES = {
   },
 } as const;
 
-/* --------------------------------------------------
- *  Type declarations
- * --------------------------------------------------*/
-
 interface CreativeProps {
   theme: Theme;
 }
@@ -45,10 +37,6 @@ interface ModalProps {
   onClose: () => void;
   theme: Theme;
 }
-
-/* --------------------------------------------------
- *  Hooks
- * --------------------------------------------------*/
 
 const useIsMobile = () => {
   const [isMobile, setIsMobile] = useState(
@@ -64,17 +52,12 @@ const useIsMobile = () => {
   return isMobile;
 };
 
-/* --------------------------------------------------
- *  Photo Modal
- * --------------------------------------------------*/
-
 const PhotoModal = React.memo<ModalProps>(({ photo, onClose, theme }) => {
   if (!photo) return null;
   const colors = THEMES[theme];
 
   return (
     <div
-      /* dark backdrop */
       style={{
         position: "fixed",
         inset: 0,
@@ -88,7 +71,6 @@ const PhotoModal = React.memo<ModalProps>(({ photo, onClose, theme }) => {
       onClick={onClose}
     >
       <div
-        /* modal card */
         style={{
           position: "relative",
           width: "100%",
@@ -107,7 +89,7 @@ const PhotoModal = React.memo<ModalProps>(({ photo, onClose, theme }) => {
         }}
         onClick={(e) => e.stopPropagation()}
       >
-        {/* ------------ IMAGE ------------ */}
+        {}
         <img
           src={photo.image || "/placeholder.svg"}
           alt={photo.title}
@@ -120,7 +102,7 @@ const PhotoModal = React.memo<ModalProps>(({ photo, onClose, theme }) => {
           }}
         />
 
-        {/* ---------- DESCRIPTION ---------- */}
+        {}
         <div
           style={{
             flexShrink: 0,
@@ -141,7 +123,7 @@ const PhotoModal = React.memo<ModalProps>(({ photo, onClose, theme }) => {
           <p style={{ margin: 0, lineHeight: 1.5 }}>{photo.description}</p>
         </div>
 
-        {/* ------------ CLOSE  ×  ------------ */}
+        {}
         <button
           onClick={onClose}
           style={{
@@ -168,15 +150,10 @@ const PhotoModal = React.memo<ModalProps>(({ photo, onClose, theme }) => {
 PhotoModal.displayName = "PhotoModal";
 
 
-/* --------------------------------------------------
- *  Creative Page
- * --------------------------------------------------*/
-
 const Creative: React.FC<CreativeProps> = ({ theme }) => {
   const isMobile = useIsMobile();
   const [selectedPhoto, setSelectedPhoto] = useState<(typeof photos)[number] | null>(null);
 
-  /* -------------------------- dynamic CSS --------------------------- */
   useEffect(() => {
     const styleId = "creative-custom-styles";
     let styleEl = document.getElementById(styleId) as HTMLStyleElement | null;
@@ -202,7 +179,6 @@ const Creative: React.FC<CreativeProps> = ({ theme }) => {
     setSelectedPhoto(photo);
   };
 
-  /* ----------------------------- render ------------------------------ */
   return (
     <div
       className="creative-container"
@@ -232,7 +208,7 @@ const Creative: React.FC<CreativeProps> = ({ theme }) => {
           flex: 1,
         }}
       >
-        {/* ------------------------------ header ------------------------------ */}
+        {}
         <div
           style={{
             width: "100%",
@@ -246,7 +222,7 @@ const Creative: React.FC<CreativeProps> = ({ theme }) => {
           <h3 style={{ margin: 0, fontFamily: "monospace", color: colors["--color-text"] }}>Creative Work</h3>
         </div>
 
-        {/* ----------------------------- content ----------------------------- */}
+        {}
         <div style={{ flex: 1, display: "flex", flexDirection: "column" }}>
           {isMobile ? (
             <MobileList photos={photos} theme={theme} onPhotoClick={handlePhotoClick} />
@@ -262,10 +238,6 @@ const Creative: React.FC<CreativeProps> = ({ theme }) => {
     </div>
   );
 };
-
-/* --------------------------------------------------
- *  Shared components
- * --------------------------------------------------*/
 
 interface ListProps {
   photos: typeof photos;
@@ -371,10 +343,6 @@ const MobileList: React.FC<ListProps> = ({ photos, theme, onPhotoClick }) => (
     ))}
   </div>
 );
-
-/* --------------------------------------------------
- *  Grid
- * --------------------------------------------------*/
 
 const GridCard: React.FC<{ photo: (typeof photos)[number]; theme: Theme; onPhotoClick: (p: typeof photos[number]) => void; }> = ({
   photo,

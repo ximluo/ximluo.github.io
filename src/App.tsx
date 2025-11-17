@@ -225,6 +225,7 @@ function App() {
     return "HOME"
   }
   const activeTab = getActiveTab()
+  const isHomeRoute = location.pathname === "/"
 
   // phased reveal: 0-4 
   const [phase, setPhase] = useState(0)
@@ -474,6 +475,7 @@ function App() {
 
               {/* MAIN CONTENT */}
               <div
+                className="main-content-scroll"
                 style={{
                   width: "100%",
                   flex: 1,
@@ -481,7 +483,8 @@ function App() {
                   flexDirection: "column",
                   alignItems: "center",
                   justifyContent: "center",
-                  overflow: "auto", // Allow scrolling if content is too tall
+                  // Keep the Home route scroll-free while allowing other pages to scroll normally
+                  overflow: isHomeRoute ? "hidden" : "auto",
                   position: "relative",
                 }}
               >
