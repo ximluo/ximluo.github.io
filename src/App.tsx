@@ -220,8 +220,8 @@ function App() {
   // Determine active tab based on current path
   const getActiveTab = () => {
     const path = location.pathname
-    if (path.includes("/portfolio")) return "PORTFOLIO"
-    if (path.includes("/creative")) return "CREATIVE"
+    if (path.includes("/portfolio")) return "PROJECTS"
+    if (path.includes("/creative")) return "ARTWORK"
     return "HOME"
   }
   const activeTab = getActiveTab()
@@ -325,8 +325,8 @@ function App() {
       window.dispatchEvent(new CustomEvent("home-flower-temporary-hide"))
     }
     let path = "/"
-    if (tab === "PORTFOLIO") path = "/portfolio"
-    if (tab === "CREATIVE") path = "/creative"
+    if (tab === "PROJECTS") path = "/portfolio"
+    if (tab === "ARTWORK") path = "/creative"
     navigate(path)
   }
 
@@ -442,7 +442,7 @@ function App() {
                     width: "100%",
                   }}
                 >
-                  {["HOME", "PORTFOLIO", "CREATIVE"].map((lbl) => (
+                  {["HOME", "PROJECTS", "ARTWORK"].map((lbl) => (
                     <NavButton
                       key={lbl}
                       label={lbl}

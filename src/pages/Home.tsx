@@ -258,10 +258,11 @@ const Home: React.FC<HomeProps> = ({
 
   const handleWheelGesture = useCallback(
     (event: React.WheelEvent<HTMLDivElement>) => {
-      handleVirtualDelta(event.deltaY)
+      const multiplier = isMobile ? 1.35 : 1
+      handleVirtualDelta(event.deltaY * multiplier)
       if (event.cancelable) event.preventDefault()
     },
-    [handleVirtualDelta],
+    [handleVirtualDelta, isMobile],
   )
 
   const handleTouchStart = useCallback((event: React.TouchEvent<HTMLDivElement>) => {
@@ -274,11 +275,12 @@ const Home: React.FC<HomeProps> = ({
       const currentY = event.touches[0]?.clientY
       if (currentY == null) return
       const delta = lastTouchYRef.current - currentY
-      handleVirtualDelta(delta)
+      const multiplier = isMobile ? 1.35 : 1
+      handleVirtualDelta(delta * multiplier)
       lastTouchYRef.current = currentY
       event.preventDefault()
     },
-    [handleVirtualDelta],
+    [handleVirtualDelta, isMobile],
   )
 
   const handleTouchEnd = useCallback(() => {
@@ -576,6 +578,16 @@ const Home: React.FC<HomeProps> = ({
   }, [windowWidth, isMobile])
 
   const contentHeight = isSmallScreen ? "auto" : "100vh"
+  const contentMaxWidth = useMemo(() => {
+    const desiredGuard = isMobile ? 120 : 160 // space reserved for the vertical timestamp
+    const minWidth = isMobile ? 200 : 600
+    const maxWidth = isMobile ? 700 : 980
+    const maxGuard = Math.max(windowWidth - minWidth, 0)
+    const guard = Math.min(desiredGuard, maxGuard)
+    const candidateWidth = Math.max(windowWidth - guard, 0)
+    const limitedWidth = Math.min(maxWidth, candidateWidth)
+    return limitedWidth
+  }, [isMobile, windowWidth])
   const bubblePalette = useMemo(() => {
     const base = theme === "bunny" ? "rgba(255, 255, 255, 0.18)" : "rgba(10, 40, 90, 0.28)"
     const hover = theme === "bunny" ? "rgba(255, 255, 255, 0.28)" : "rgba(20, 70, 130, 0.35)"
@@ -591,6 +603,11 @@ const Home: React.FC<HomeProps> = ({
     const progress = Math.min(virtualScroll / Math.max(revealThreshold * 0.6, 1), 1)
     return 1 - progress
   }, [virtualScroll, revealThreshold])
+  const scrollCueBottom = useMemo(() => {
+    const base = footerHeight || (isMobile ? 90 : 70)
+    const adjustment = isMobile ? -20 : 10
+    return Math.max(16, base + adjustment)
+  }, [footerHeight, isMobile])
 
   return (
     <>
@@ -687,11 +704,11 @@ const Home: React.FC<HomeProps> = ({
           >
             {[
               {
-                label: "Portfolio",
+                label: "Projects",
                 onClick: () => navigate("/portfolio"),
               },
               {
-                label: "Creative",
+                label: "Artwork",
                 onClick: () => navigate("/creative"),
               },
               {
@@ -723,6 +740,8 @@ const Home: React.FC<HomeProps> = ({
                   border: `1px solid ${bubblePalette.border}`,
                   borderRadius: 999,
                   padding: isMobile ? "14px 42px" : "18px 60px",
+                  width: isMobile ? "min(260px, 85vw)" : "auto",
+                  boxSizing: "border-box",
                   fontFamily: "monospace",
                   fontSize: isMobile ? 14 : 16,
                   letterSpacing: "0.12em",
@@ -749,7 +768,7 @@ const Home: React.FC<HomeProps> = ({
         <div
           className="content-layer"
           style={{
-            maxWidth: 980,
+            maxWidth: contentMaxWidth,
             width: "100%",
             margin: "0 auto",
             display: "flex",
@@ -884,10 +903,10 @@ const Home: React.FC<HomeProps> = ({
                 }}
               >
                 Digital Media Design
-              </a>) and Economics. I am also concurrently pursing my MSE in Computer Science. 
+              </a>) and Economics.
             </p>
             <p style={{ marginBottom: isMobile ? 0 : 20 }}>
-              I dabble in iOS, graphics, fullstack, product, XR, and AI/ML. I was previously a summer analyst at{" "}
+              I have experience in iOS, graphics, fullstack, XR, and AI/ML. I was a summer analyst at{" "}
               <a
                 href="https://www.apollo.com/"
                 target="_blank"
@@ -948,20 +967,6 @@ const Home: React.FC<HomeProps> = ({
                 onClick={(e) => e.stopPropagation()}
               >
                 ximluo@upenn.edu
-              </a>{" "}
-              |{" "}
-              <a
-                href="https://linkedin.com/in/ximingluo/"
-                target="_blank"
-                rel="noopener noreferrer"
-                style={{
-                  color:
-                    theme === "bunny" ? themes.bunny["--link-color"] : themes.water["--link-color"],
-                  textDecoration: "none",
-                }}
-                onClick={(e) => e.stopPropagation()}
-              >
-                LinkedIn
               </a>
             </p>
           </div>
@@ -990,7 +995,7 @@ const Home: React.FC<HomeProps> = ({
           aria-hidden={!isAnimationComplete}
           style={{
             position: "fixed",
-            bottom: (footerHeight || (isMobile ? 90 : 70)) + 10,
+            bottom: scrollCueBottom,
             left: "50%",
             transform: "translateX(-50%)",
             zIndex: 45,
@@ -1012,8 +1017,16 @@ const Home: React.FC<HomeProps> = ({
                     : themes.water["--color-accent-primary"],
               }}
             >
-              <span className="home-center-scroll-text">Scroll</span>
-              <span className="home-center-scroll-line" />
+              <span
+                className="home-center-scroll-text"
+                style={{
+                  padding: isMobile ? "0 12px" : undefined,
+                  marginBottom: isMobile ? 30 : undefined,
+                }}
+              >
+                Scroll
+              </span>
+              {!isMobile && <span className="home-center-scroll-line" />}
             </div>
           </div>
         </div>

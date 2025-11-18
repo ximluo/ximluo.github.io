@@ -219,7 +219,7 @@ const Creative: React.FC<CreativeProps> = ({ theme }) => {
             alignItems: "center",
           }}
         >
-          <h3 style={{ margin: 0, fontFamily: "monospace", color: colors["--color-text"] }}>Creative Work</h3>
+          <h3 style={{ margin: 0, fontFamily: "monospace", color: colors["--color-text"] }}>Artwork</h3>
         </div>
 
         {}
