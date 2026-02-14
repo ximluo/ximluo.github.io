@@ -24,6 +24,7 @@ const SCROLL_LOCK_KEYS = new Set([
   " ",
   "Spacebar",
 ])
+const LOCKED_GESTURE_COOLDOWN_MS = 350
 
 const getEstTimeString = () =>
   new Intl.DateTimeFormat("en-US", {
@@ -76,9 +77,10 @@ const Home: React.FC<HomeProps> = ({
   const animationRunningRef = useRef(false)
   const resizeRaf = useRef<number | undefined>(undefined)
   const lastTouchYRef = useRef<number | null>(null)
+  const sawScrollWhileLockedRef = useRef(false)
+  const ignoreGesturesUntilRef = useRef(0)
 
   const revealThreshold = useMemo(() => Math.max(windowHeight * 0.6, 240), [windowHeight])
-  const introComplete = isNavigatingFromPage || isTypingComplete
 
   // responsive handler
   const handleResize = useCallback(() => {
@@ -121,12 +123,14 @@ const Home: React.FC<HomeProps> = ({
   }, [revealThreshold])
 
   useEffect(() => {
-    if (typeof window === "undefined" || introComplete) return
+    if (typeof window === "undefined" || isAnimationComplete) return
 
     const preventWheel = (event: WheelEvent) => {
+      sawScrollWhileLockedRef.current = true
       if (event.cancelable) event.preventDefault()
     }
     const preventTouchMove = (event: TouchEvent) => {
+      sawScrollWhileLockedRef.current = true
       if (event.cancelable) event.preventDefault()
     }
     const preventKeyboardScroll = (event: KeyboardEvent) => {
@@ -143,6 +147,7 @@ const Home: React.FC<HomeProps> = ({
         }
       }
       if (SCROLL_LOCK_KEYS.has(event.key) || event.code === "Space") {
+        sawScrollWhileLockedRef.current = true
         event.preventDefault()
       }
     }
@@ -155,7 +160,15 @@ const Home: React.FC<HomeProps> = ({
       window.removeEventListener("touchmove", preventTouchMove)
       window.removeEventListener("keydown", preventKeyboardScroll)
     }
-  }, [introComplete])
+  }, [isAnimationComplete])
+
+  useEffect(() => {
+    if (!isAnimationComplete) return
+    if (sawScrollWhileLockedRef.current) {
+      ignoreGesturesUntilRef.current = performance.now() + LOCKED_GESTURE_COOLDOWN_MS
+      sawScrollWhileLockedRef.current = false
+    }
+  }, [isAnimationComplete])
 
   const handleVirtualDelta = useCallback(
     (delta: number) => {
@@ -167,7 +180,9 @@ const Home: React.FC<HomeProps> = ({
 
   const handleWheelGesture = useCallback(
     (event: React.WheelEvent<HTMLDivElement>) => {
-      if (!introComplete) {
+      const isCoolingDown = performance.now() < ignoreGesturesUntilRef.current
+      if (!isAnimationComplete || isCoolingDown) {
+        if (!isAnimationComplete) sawScrollWhileLockedRef.current = true
         if (event.cancelable) event.preventDefault()
         return
       }
@@ -175,24 +190,28 @@ const Home: React.FC<HomeProps> = ({
       handleVirtualDelta(event.deltaY * multiplier)
       if (event.cancelable) event.preventDefault()
     },
-    [handleVirtualDelta, introComplete, isMobile],
+    [handleVirtualDelta, isAnimationComplete, isMobile],
   )
 
   const handleTouchStart = useCallback(
     (event: React.TouchEvent<HTMLDivElement>) => {
-      if (!introComplete) {
+      const isCoolingDown = performance.now() < ignoreGesturesUntilRef.current
+      if (!isAnimationComplete || isCoolingDown) {
+        if (!isAnimationComplete) sawScrollWhileLockedRef.current = true
         lastTouchYRef.current = null
         event.preventDefault()
         return
       }
       lastTouchYRef.current = event.touches[0]?.clientY ?? null
     },
-    [introComplete],
+    [isAnimationComplete],
   )
 
   const handleTouchMove = useCallback(
     (event: React.TouchEvent<HTMLDivElement>) => {
-      if (!introComplete) {
+      const isCoolingDown = performance.now() < ignoreGesturesUntilRef.current
+      if (!isAnimationComplete || isCoolingDown) {
+        if (!isAnimationComplete) sawScrollWhileLockedRef.current = true
         event.preventDefault()
         return
       }
@@ -205,7 +224,7 @@ const Home: React.FC<HomeProps> = ({
       lastTouchYRef.current = currentY
       event.preventDefault()
     },
-    [handleVirtualDelta, introComplete, isMobile],
+    [handleVirtualDelta, isAnimationComplete, isMobile],
   )
 
   const handleTouchEnd = useCallback(() => {
@@ -213,9 +232,13 @@ const Home: React.FC<HomeProps> = ({
   }, [])
 
   useEffect(() => {
+    if (!isAnimationComplete) {
+      setIsFlowerRevealed((prev) => (prev ? false : prev))
+      return
+    }
     const shouldReveal = virtualScroll >= revealThreshold * 0.6
     setIsFlowerRevealed((prev) => (prev === shouldReveal ? prev : shouldReveal))
-  }, [virtualScroll, revealThreshold])
+  }, [isAnimationComplete, virtualScroll, revealThreshold])
 
   useEffect(() => {
     if (typeof window === "undefined") return

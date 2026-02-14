@@ -7,6 +7,7 @@ import photos from "../../data/photos";
 import "./Creative.css";
 import { CONTENT_THEME_TOKENS, type ThemeType } from "../../theme/tokens";
 import useIsMobile from "../../hooks/useIsMobile";
+import OptimizedImage from "../../components/ui/OptimizedImage";
 
 interface CreativeProps {
   theme: ThemeType;
@@ -56,10 +57,10 @@ const PhotoModal = React.memo<ModalProps>(({ photo, onClose, theme }) => {
         onClick={(e) => e.stopPropagation()}
       >
         {}
-        <img
+        <OptimizedImage
           src={photo.image || "/placeholder.svg"}
           alt={photo.title}
-          loading="lazy"
+          priority
           style={{
             width: "100%",
             height: "auto",
@@ -202,9 +203,8 @@ const AspectImage: React.FC<{ photo: typeof photos[number] }> = ({ photo }) => (
       overflow: "hidden",
     }}
   >
-    <img
+    <OptimizedImage
       src={photo.image || "/placeholder.svg"}
-      srcSet={photo.image ? `${photo.image} 1x, ${photo.image} 2x` : undefined}
       alt={photo.title}
       style={{
         position: "absolute",
@@ -213,8 +213,6 @@ const AspectImage: React.FC<{ photo: typeof photos[number] }> = ({ photo }) => (
         objectFit: "cover",
         display: "block",
       }}
-      loading="lazy"
-      decoding="async"
     />
   </div>
 );

@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom"
 import "./Portfolio.css"
 import projects from "../../data/projects"
 import { CONTENT_THEME_TOKENS, type ThemeType } from "../../theme/tokens"
+import OptimizedImage from "../../components/ui/OptimizedImage"
 
 interface PortfolioProps {
   theme: ThemeType
@@ -66,11 +67,9 @@ const LazyImage: React.FC<{
               Loading...
             </div>
           )}
-          <img
+          <OptimizedImage
             src={src}
             alt={alt}
-            loading="lazy"
-            decoding="async"
             fetchPriority="low"
             onLoad={() => setIsLoaded(true)}
             style={{

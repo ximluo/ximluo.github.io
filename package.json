@@ -27,8 +27,10 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
+    "prebuild": "npm run optimize-images",
     "predeploy": "npm run build",
     "deploy": "gh-pages -d build",
+    "optimize-images": "node scripts/optimize-images.js",
     "postbuild": "cp build/index.html build/404.html",
     "start": "react-scripts start",
     "build": "react-scripts build",
@@ -57,6 +59,7 @@
     "@types/gsap": "^1.20.2",
     "@types/three": "^0.180.0",
     "gh-pages": "^6.3.0",
-    "gsap": "^3.13.0"
+    "gsap": "^3.13.0",
+    "sharp": "^0.34.5"
   }
 }

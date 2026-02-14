@@ -8,6 +8,7 @@ import "./ProjectDetail.css";
 import projects from "../../data/projects";
 import NotFound from "../not-found/NotFoundPage";
 import { CONTENT_THEME_TOKENS, type ThemeType } from "../../theme/tokens";
+import OptimizedImage from "../../components/ui/OptimizedImage";
 
 interface ProjectDetailProps {
   theme: ThemeType;
@@ -147,11 +148,9 @@ const ProjectDetail: React.FC<ProjectDetailProps> = ({ theme }) => {
             margin: "30px 0",
           }}
         >
-          <img
+          <OptimizedImage
             src={section.image}
             alt={`${project.name} screenshot ${idx + 1}`}
-            loading="lazy"
-            decoding="async"
             style={{ width: "100%", height: "100%", objectFit: "cover" }}
           />
         </div>
@@ -224,11 +223,9 @@ const ProjectDetail: React.FC<ProjectDetailProps> = ({ theme }) => {
               marginBottom: "30px",
             }}
           >
-            <img
+            <OptimizedImage
               src={project.image}
               alt={`${project.name} hero`}
-              loading="lazy"
-              decoding="async"
               style={{ width: "100%", height: "100%", objectFit: "cover" }}
             />
           </div>

@@ -186,7 +186,7 @@ const Footer: React.FC<FooterProps> = ({ theme }) => {
             order: isDesktopNonHomePage ? 1 : 2,
           }}
         >
-          © 2025 Ximing Luo •{" "}
+          © 2026 Ximing Luo •{" "}
           <a
             href="https://github.com/ximluo/ximluo.github.io"
             target="_blank"
