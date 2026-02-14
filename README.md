@@ -30,8 +30,3 @@ React + TypeScript portfolio deployed to GitHub Pages with `gh-pages`.
 2. Run `npm run optimize-images` (or just `npm run build`).
 3. Use `OptimizedImage` for image rendering to reuse `srcSet`, intrinsic dimensions, lazy-loading.
 4. For heavy GIF thumbnails in card grids, set `preferPosterForGif` to use generated lightweight posters.
-
-Notes:
-- Original files remain addressable at their existing URLs.
-- Optimized variants are generated incrementally (skips up-to-date outputs).
-- Large GIFs are not auto-converted to video in this pass; poster images are generated instead.
