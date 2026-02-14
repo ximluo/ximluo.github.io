@@ -29,6 +29,7 @@ interface OptimizedImageProps
   src: string
   alt: string
   priority?: boolean
+  preferPosterForGif?: boolean
 }
 
 const imageManifest = manifest as ImageManifest
@@ -58,6 +59,7 @@ const OptimizedImage: React.FC<OptimizedImageProps> = ({
   src,
   alt,
   priority = false,
+  preferPosterForGif = false,
   sizes,
   width,
   height,
@@ -66,6 +68,7 @@ const OptimizedImage: React.FC<OptimizedImageProps> = ({
   ...imgProps
 }) => {
   const normalizedSource = normalizeSourcePath(src)
+  const isGifSource = normalizedSource.toLowerCase().endsWith(".gif")
 
   const optimized = useMemo(() => {
     const entry = imageManifest.images[normalizedSource]
@@ -81,13 +84,18 @@ const OptimizedImage: React.FC<OptimizedImageProps> = ({
     }
   }, [normalizedSource])
 
+  const shouldUsePoster = Boolean(preferPosterForGif && isGifSource && optimized?.entry.poster?.src)
+  const resolvedSrc = shouldUsePoster ? optimized?.entry.poster?.src ?? src : src
+  const resolvedSrcSet = shouldUsePoster ? undefined : optimized?.srcSet
+  const resolvedSizes = shouldUsePoster ? undefined : sizes ?? (resolvedSrcSet ? "100vw" : undefined)
+
   return (
     <img
       {...imgProps}
-      src={src}
+      src={resolvedSrc}
       alt={alt}
-      srcSet={optimized?.srcSet}
-      sizes={sizes ?? (optimized?.srcSet ? "100vw" : undefined)}
+      srcSet={resolvedSrcSet}
+      sizes={resolvedSizes}
       width={width ?? (optimized?.entry.width ?? undefined)}
       height={height ?? (optimized?.entry.height ?? undefined)}
       loading={priority ? "eager" : "lazy"}

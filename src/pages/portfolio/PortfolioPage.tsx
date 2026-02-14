@@ -33,8 +33,8 @@ const LazyImage: React.FC<{
         }
       },
       {
-        rootMargin: "50px", // Start loading 50px before it comes into view
-        threshold: 0.1
+        rootMargin: "350px",
+        threshold: 0.01,
       }
     )
 
@@ -70,6 +70,8 @@ const LazyImage: React.FC<{
           <OptimizedImage
             src={src}
             alt={alt}
+            preferPosterForGif
+            sizes="(max-width: 960px) 100vw, 460px"
             fetchPriority="low"
             onLoad={() => setIsLoaded(true)}
             style={{

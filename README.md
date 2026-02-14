@@ -1,17 +1,37 @@
-Personal Website
+# Ximing Luo Personal Website
 
-## Structure
-- `src/app/`: app-level route composition (`routes.tsx`) with lazy-loaded pages.
-- `src/pages/`: page folders with colocated implementations/styles:
-  `home/`, `portfolio/`, `creative/`, `project-detail/`, `not-found/`.
-- `src/components/`: shared UI and visual components.
-- `src/features/`: feature-isolated code that is loaded on demand (`features/bunny`).
-- `src/theme/`: centralized theme token maps.
-- `src/hooks/`: reusable hooks (`useMediaQuery`, `useIsMobile`).
-- `src/utils/`: framework-agnostic helpers (`scramble`).
+React + TypeScript portfolio deployed to GitHub Pages with `gh-pages`.
 
-## Conventions
-- Keep visuals and behavior unchanged during refactors unless explicitly requested.
-- Prefer shared tokens/hooks/utils over redefining logic inside pages.
-- Lazy-load heavy routes/features to reduce initial bundle size.
-- Keep page-specific logic in pages, cross-cutting behavior in hooks/utils/theme.
+## Tech Stack
+- Create React App (`react-scripts@5`)
+- React 19 + TypeScript
+- React Router
+- Three.js / React Three Fiber
+
+## Run Commands
+- `npm start`: local dev server
+- `npm run optimize-images`: generate optimized image variants + manifests
+- `npm run build`: production build (runs image optimization first)
+- `npm run deploy`: publish `build/` to GitHub Pages
+
+## Project Structure
+- `src/app/`: route composition and app-level wiring
+- `src/pages/`: page modules (`home`, `portfolio`, `creative`, `project-detail`, `not-found`)
+- `src/components/`: shared UI and site components
+- `src/components/ui/OptimizedImage.tsx`: shared responsive image component
+- `src/data/`: project and artwork content
+- `src/theme/`: tokenized theme values
+- `scripts/optimize-images.js`: build-time image optimizer
+- `public/optimized/images/`: generated responsive assets
+- `src/generated/imageManifest.json`: runtime manifest consumed by `OptimizedImage`
+
+## Image Performance Workflow
+1. Add originals to `public/images/...` and keep URLs in content as `/images/...`.
+2. Run `npm run optimize-images` (or just `npm run build`).
+3. Use `OptimizedImage` for image rendering to reuse `srcSet`, intrinsic dimensions, lazy-loading.
+4. For heavy GIF thumbnails in card grids, set `preferPosterForGif` to use generated lightweight posters.
+
+Notes:
+- Original files remain addressable at their existing URLs.
+- Optimized variants are generated incrementally (skips up-to-date outputs).
+- Large GIFs are not auto-converted to video in this pass; poster images are generated instead.
