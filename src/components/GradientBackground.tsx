@@ -449,23 +449,6 @@ const GradientBackground: React.FC<GradientBackgroundProps> = ({
               willChange: "opacity",
             }}
           >
-            {/* Scoped styles */}
-            <style>{`
-              @keyframes gbgGrow {
-                to { stroke-dashoffset: 0; }
-              }
-              .gbg-svg { height: 100%; width: auto; }
-              .gbg-path {
-                stroke: rgba(255,255,255,0.5); /* 50% opacity */
-                stroke-width: 3;
-                stroke-dasharray: 1100;
-                stroke-dashoffset: 2200;
-                animation: gbgGrow 12s linear infinite;
-                animation-delay: -6s;           /* wait before drawing */
-                animation-fill-mode: both;     /* keep initial state during delay */
-              }
-            `}</style>
-
             <svg
               className="gbg-svg"
               version="1.1"

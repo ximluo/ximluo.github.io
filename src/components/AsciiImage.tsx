@@ -1,16 +1,34 @@
 "use client"
 
 import type React from "react"
-import { useState, useEffect, useRef } from "react"
+import { useState, useEffect, useRef, useCallback } from "react"
+import useIsMobile from "../hooks/useIsMobile"
+import { type ThemeType } from "../theme/tokens"
 
 interface AsciiImageProps {
   src: string
   alt: string
   size: string
-  theme: "bunny" | "water"
+  theme: ThemeType
   borderWidth?: string
   className?: string
 }
+
+const ASCII_CHARS = " .,:;i1tfLCG08@"
+const GLYPH_ASPECT = 0.55
+const THEMES = {
+  bunny: {
+    glow: "rgba(223, 30, 155, 0.5)",
+    border: "rgba(223, 30, 155, 1)",
+    text: "rgba(223, 30, 155, 1)",
+  },
+  water: {
+    glow: "rgba(134, 196, 240, 0.5)",
+    border: "rgb(134, 196, 240)",
+    text: "rgb(134, 196, 240)",
+  },
+} as const
+
 const AsciiImage: React.FC<AsciiImageProps> = ({
   src,
   alt,
@@ -25,7 +43,7 @@ const AsciiImage: React.FC<AsciiImageProps> = ({
   const [isHovered, setIsHovered] = useState(false)
   const [isTapped, setIsTapped] = useState(false)
   const [isTransitioning, setIsTransitioning] = useState(false)
-  const [isMobile, setIsMobile] = useState(false)
+  const isMobile = useIsMobile(768)
 
   // refs
   const containerRef = useRef<HTMLDivElement>(null)
@@ -33,28 +51,8 @@ const AsciiImage: React.FC<AsciiImageProps> = ({
   const animFrameRef = useRef<number>(0)
   const imgRef = useRef<HTMLImageElement | null>(null)
 
-  // Constants 
-  // Dark -> light
-  const ASCII_CHARS = " .,:;i1tfLCG08@"
-  // colour palette
-  const THEMES = {
-    bunny: {
-      glow: "rgba(223, 30, 155, 0.5)",
-      border: "rgba(223, 30, 155, 1)",
-      text: "rgba(223, 30, 155, 1)",
-    },
-    water: {
-      glow: "rgba(134, 196, 240, 0.5)",
-      border: "rgb(134, 196, 240)",
-      text: "rgb(134, 196, 240)",
-    },
-  } as const
-
-  // True width/height of a monospace glyph 
-  const GLYPH_ASPECT = 0.55
-
   // Convert the given image to ASCII.
-  const convertToAscii = (
+  const convertToAscii = useCallback((
     img: HTMLImageElement,
     W: number,
     H: number,
@@ -82,10 +80,10 @@ const AsciiImage: React.FC<AsciiImageProps> = ({
       ascii.push(line)
     }
     return ascii
-  }
+  }, [])
 
   // Calculate ASCII art based on current container size
-  const calculateAsciiArt = () => {
+  const calculateAsciiArt = useCallback(() => {
     if (!imgRef.current || !containerRef.current) return
 
     const box = containerRef.current.getBoundingClientRect()
@@ -96,15 +94,7 @@ const AsciiImage: React.FC<AsciiImageProps> = ({
     const ascii = convertToAscii(imgRef.current, dim, dim, step)
     setBaseAscii(ascii)
     setAsciiData(ascii)
-  }
-
-  // Detect mobile (skip hover on small screens)
-  useEffect(() => {
-    const onResize = () => setIsMobile(window.innerWidth <= 768)
-    onResize()
-    window.addEventListener("resize", onResize)
-    return () => window.removeEventListener("resize", onResize)
-  }, [])
+  }, [convertToAscii])
 
   // Set up resize observer
   useEffect(() => {
@@ -118,7 +108,7 @@ const AsciiImage: React.FC<AsciiImageProps> = ({
 
     resizeObserver.observe(containerRef.current)
     return () => resizeObserver.disconnect()
-  }, [])
+  }, [calculateAsciiArt])
 
   // Load + preprocess once
   useEffect(() => {
@@ -132,7 +122,7 @@ const AsciiImage: React.FC<AsciiImageProps> = ({
       imgRef.current = img
       calculateAsciiArt()
     }
-  }, [src])
+  }, [calculateAsciiArt, src])
 
   // Hover/tap handlers
   const startScramble = () => {

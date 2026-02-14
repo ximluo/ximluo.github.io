@@ -1,0 +1,24 @@
+.creative-container {
+  scrollbar-width: thin;
+  scrollbar-color: var(--creative-scrollbar-thumb) transparent;
+}
+
+.creative-container::-webkit-scrollbar {
+  width: 8px;
+}
+
+.creative-container::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.creative-container::-webkit-scrollbar-thumb {
+  border-radius: 4px;
+  background: var(--creative-scrollbar-thumb);
+}
+
+.photo-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+  width: 100%;
+}

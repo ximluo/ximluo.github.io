@@ -1,19 +1,20 @@
 "use client"
 
 import type React from "react"
-import { useState, useEffect } from "react"
-import { useLocation } from "react-router-dom"
+import { lazy, Suspense, useState } from "react"
 import { Github, Mail, Linkedin } from "lucide-react"
-import BunnyModal from "./BunnyModal"
+import { FOOTER_THEME_TOKENS, type ThemeType } from "../theme/tokens"
+import useIsMobile from "../hooks/useIsMobile"
+
+const BunnyModal = lazy(() => import("../features/bunny"))
 
 interface FooterProps {
-  theme: "bunny" | "water"
+  theme: ThemeType
 }
 
 const Footer: React.FC<FooterProps> = ({ theme }) => {
   const [showBunny, setShowBunny] = useState(false)
-  const [isMobile, setIsMobile] = useState(false)
-  const location = useLocation()
+  const isMobile = useIsMobile(768)
 
   // hover states
   const [bunnyHover, setBunnyHover] = useState(false)
@@ -22,27 +23,7 @@ const Footer: React.FC<FooterProps> = ({ theme }) => {
   const [linkedinHover, setLinkedinHover] = useState(false)
   const [madeHover, setMadeHover] = useState(false)
 
-  useEffect(() => {
-    const handleResize = () => setIsMobile(window.innerWidth <= 768)
-    handleResize()
-    window.addEventListener("resize", handleResize)
-    return () => window.removeEventListener("resize", handleResize)
-  }, [])
-
-  const themes = {
-    bunny: {
-      "--color-text": "rgb(121, 85, 189)",
-      "--color-accent-primary": "rgba(223, 30, 155, 1)",
-      "--button-bg-light": "rgba(223, 30, 155, 0.2)",
-      "--button-bg": "rgba(223, 30, 155, 0.8)",
-    },
-    water: {
-      "--color-text": "rgb(191, 229, 249)",
-      "--color-accent-primary": "rgb(134, 196, 240)",
-      "--button-bg-light": "rgba(214, 220, 251, 0.2)",
-      "--button-bg": "rgba(214, 235, 251, 0.8)",
-    },
-  } as const
+  const themes = FOOTER_THEME_TOKENS
 
   const baseTextColor = theme === "bunny" ? themes.bunny["--color-text"] : themes.water["--color-text"]
   const accentColor =
@@ -223,7 +204,11 @@ const Footer: React.FC<FooterProps> = ({ theme }) => {
           </a>
         </div>
 
-      {showBunny && <BunnyModal onClose={() => setShowBunny(false)} theme={theme} />}
+      {showBunny && (
+        <Suspense fallback={null}>
+          <BunnyModal onClose={() => setShowBunny(false)} theme={theme} />
+        </Suspense>
+      )}
     </footer>
   )
 }

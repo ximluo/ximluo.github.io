@@ -1,0 +1,17 @@
+.project-detail-container {
+  scrollbar-width: thin;
+  scrollbar-color: var(--project-detail-scrollbar-thumb) transparent;
+}
+
+.project-detail-container::-webkit-scrollbar {
+  width: 8px;
+}
+
+.project-detail-container::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.project-detail-container::-webkit-scrollbar-thumb {
+  border-radius: 4px;
+  background: var(--project-detail-scrollbar-thumb);
+}

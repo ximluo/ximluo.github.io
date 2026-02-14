@@ -4,34 +4,14 @@
 
 import React, { JSX } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import projects from "../data/projects";
-import NotFound from "./NotFound";
+import "./ProjectDetail.css";
+import projects from "../../data/projects";
+import NotFound from "../not-found/NotFoundPage";
+import { CONTENT_THEME_TOKENS, type ThemeType } from "../../theme/tokens";
 
 interface ProjectDetailProps {
-  theme: "bunny" | "water";
+  theme: ThemeType;
 }
-
-// Themes
-const themes = {
-  bunny: {
-    "--color-text": "rgb(121, 85, 189)",
-    "--color-text-secondary": "rgba(249, 240, 251, 1)",
-    "--color-accent-primary": "rgba(223, 30, 155, 1)",
-    "--button-bg": "rgba(223, 30, 155, 0.8)",
-    "--button-bg-light": "rgba(223, 30, 155, 0.2)",
-    "--button-text": "rgba(249, 240, 251, 1)",
-    "--border-color": "rgb(152, 128, 220)",
-  },
-  water: {
-    "--color-text": "rgb(191, 229, 249)",
-    "--color-text-secondary": "rgba(249, 240, 251, 1)",
-    "--color-accent-primary": "rgb(134, 196, 240)",
-    "--button-bg": "rgba(214, 235, 251, 0.8)",
-    "--button-bg-light": "rgba(214, 220, 251, 0.2)",
-    "--button-text": "rgb(46, 80, 192)",
-    "--border-color": "rgba(8, 34, 163, 1)",
-  },
-} as const;
 
 // Helper to turn Markdown-style [label](url) and raw URLs into <a> tags
 function parseTextWithLinks(text: string) {
@@ -81,6 +61,7 @@ function parseTextWithLinks(text: string) {
 const ProjectDetail: React.FC<ProjectDetailProps> = ({ theme }) => {
   const { projectId } = useParams<{ projectId: string }>();
   const navigate = useNavigate();
+  const themes = CONTENT_THEME_TOKENS;
 
   const project = projects.find((p) => p.id === projectId);
 
@@ -142,6 +123,7 @@ const ProjectDetail: React.FC<ProjectDetailProps> = ({ theme }) => {
             width="100%"
             height="100%"
             src={section.video}
+            loading="lazy"
             title={`${project.name} demo video`}
             frameBorder={0}
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
@@ -159,7 +141,7 @@ const ProjectDetail: React.FC<ProjectDetailProps> = ({ theme }) => {
           key={`img-${idx}`}
           style={{
             width: "100%",
-            height: "width * 0.5625", // 16:9 aspect ratio
+            aspectRatio: "16 / 9",
             borderRadius: "12px",
             overflow: "hidden",
             margin: "30px 0",
@@ -168,6 +150,8 @@ const ProjectDetail: React.FC<ProjectDetailProps> = ({ theme }) => {
           <img
             src={section.image}
             alt={`${project.name} screenshot ${idx + 1}`}
+            loading="lazy"
+            decoding="async"
             style={{ width: "100%", height: "100%", objectFit: "cover" }}
           />
         </div>
@@ -185,6 +169,7 @@ const ProjectDetail: React.FC<ProjectDetailProps> = ({ theme }) => {
         padding: "20px",
         boxSizing: "border-box",
         overflow: "auto",
+        ["--project-detail-scrollbar-thumb" as string]: themes[theme]["--button-bg"],
       }}
     >
       <div
@@ -233,7 +218,7 @@ const ProjectDetail: React.FC<ProjectDetailProps> = ({ theme }) => {
           <div
             style={{
               width: "100%",
-              height: "width * 0.5625",
+              aspectRatio: "16 / 9",
               borderRadius: "12px",
               overflow: "hidden",
               marginBottom: "30px",
@@ -242,6 +227,8 @@ const ProjectDetail: React.FC<ProjectDetailProps> = ({ theme }) => {
             <img
               src={project.image}
               alt={`${project.name} hero`}
+              loading="lazy"
+              decoding="async"
               style={{ width: "100%", height: "100%", objectFit: "cover" }}
             />
           </div>
@@ -300,16 +287,6 @@ const ProjectDetail: React.FC<ProjectDetailProps> = ({ theme }) => {
         </div>
       </div>
 
-      <style>
-        {`
-        .project-detail-container::-webkit-scrollbar{width:8px}
-        .project-detail-container::-webkit-scrollbar-track{background:transparent}
-        .project-detail-container::-webkit-scrollbar-thumb{
-          border-radius:4px;
-          background:${themes[theme]["--button-bg"]};
-        }
-        `}
-      </style>
     </div>
   );
 };

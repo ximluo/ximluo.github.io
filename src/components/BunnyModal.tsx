@@ -8,10 +8,12 @@ import * as THREE from "three"
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js"
 import { Reflector } from "three/examples/jsm/objects/Reflector.js"
 import gsap from "gsap"
+import { BUNNY_MODAL_THEME_TOKENS, type ThemeType } from "../theme/tokens"
+import useIsMobile from "../hooks/useIsMobile"
 
 interface BunnyModalProps {
   onClose: () => void
-  theme: "bunny" | "water"
+  theme: ThemeType
 }
 
 interface BunnySceneColors {
@@ -186,6 +188,8 @@ const BunnyScene: React.FC<BunnySceneProps> = ({ colors, onCarrotCollected, isMo
     }
   }, [colors, scene])
 
+  // This effect intentionally excludes transient values to avoid reinitializing the entire scene graph.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     // Scene setup
     scene.fog = new THREE.Fog(new THREE.Color(colors.fog).getHex(), 13, 20)
@@ -474,6 +478,7 @@ const BunnyScene: React.FC<BunnySceneProps> = ({ colors, onCarrotCollected, isMo
       window.removeEventListener("mousedown", handleClick)
       window.removeEventListener("touchstart", handleClick)
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [scene, camera, gl, colors.floor, colors.fog])
 
   // Helper functions
@@ -803,10 +808,7 @@ const BunnyModal: React.FC<BunnyModalProps> = ({ onClose, theme }) => {
     if (typeof window === "undefined") return 0
     return parseStoredCarrotCount(window.sessionStorage.getItem(CARROT_COUNT_STORAGE_KEY))
   })
-  const [isMobile, setIsMobile] = useState(() => {
-    if (typeof window === "undefined") return false
-    return window.innerWidth <= 768
-  })
+  const isMobile = useIsMobile(768)
   const carrotStorageWriteSkipRef = useRef(false)
 
   useEffect(() => {
@@ -839,13 +841,6 @@ const BunnyModal: React.FC<BunnyModalProps> = ({ onClose, theme }) => {
 
   useEffect(() => {
     if (typeof window === "undefined") return
-    const handleResize = () => setIsMobile(window.innerWidth <= 768)
-    window.addEventListener("resize", handleResize)
-    return () => window.removeEventListener("resize", handleResize)
-  }, [])
-
-  useEffect(() => {
-    if (typeof window === "undefined") return
     const handleStorage = (event: StorageEvent) => {
       if (event.key !== CARROT_COUNT_STORAGE_KEY) return
       const next = parseStoredCarrotCount(event.newValue)
@@ -870,45 +865,7 @@ const BunnyModal: React.FC<BunnyModalProps> = ({ onClose, theme }) => {
     window.sessionStorage.setItem(CARROT_COUNT_STORAGE_KEY, carrotCount.toString())
   }, [carrotCount])
 
-  const themes = {
-    bunny: {
-      "--color-text": "rgb(121, 85, 189)",
-      "--color-text-secondary": "rgba(249, 240, 251, 1)",
-      "--color-accent-primary": "rgba(223, 30, 155, 1)",
-      "--button-bg": "rgba(223, 30, 155, 0.8)",
-      "--button-bg-light": "rgba(223, 30, 155, 0.2)",
-      "--button-text": "rgba(249, 240, 251, 1)",
-      "--border-color": "rgb(152, 128, 220)",
-      "--game-border": "rgba(223, 30, 155, 0.6)",
-      "--game-shadow": "rgba(223, 30, 155, 0.35)",
-      "--game-floor": "#2a0b25",
-      "--game-fog": "#1b0318",
-      "--bunny-primary": "#ffd7f3",
-      "--bunny-secondary": "#4f2065",
-      "--carrot-body": "#ff70ff",
-      "--carrot-leaf": "#ffd2ff",
-      "--game-outline": "#2b0320",
-    },
-    water: {
-      "--color-text": "rgb(191, 229, 249)",
-      "--color-accent-primary": "rgb(134, 196, 240)",
-      "--button-bg": "rgba(214, 235, 251, 0.8)",
-      "--button-bg-light": "rgba(214, 220, 251, 0.2)",
-      "--button-text": "rgb(46, 80, 192)",
-      "--border-color": "rgba(8, 34, 163, 1)",
-      "--game-border": "rgba(134, 196, 240, 0.6)",
-      "--game-shadow": "rgba(7, 36, 102, 0.35)",
-      "--game-floor": "#041c2f",
-      "--game-fog": "#052a41",
-      "--bunny-primary": "#c7f2ff",
-      "--bunny-secondary": "#113d60",
-      "--carrot-body": "#ff66ff",
-      "--carrot-leaf": "#41d6ff",
-      "--game-outline": "#031525",
-    },
-  } as const
-
-  const palette = useMemo(() => themes[theme], [theme])
+  const palette = BUNNY_MODAL_THEME_TOKENS[theme]
   const sceneColors = useMemo<BunnySceneColors>(
     () => ({
       floor: palette["--game-floor"],
@@ -1027,16 +984,22 @@ const BunnyModal: React.FC<BunnyModalProps> = ({ onClose, theme }) => {
             textAlign: "center",
           }}
         >
-          <a
-            href="#"
-            style={{ color: palette["--color-accent-primary"] }}
-            onClick={(e) => {
-              e.preventDefault()
-              onClose()
+          <button
+            type="button"
+            style={{
+              color: palette["--color-accent-primary"],
+              background: "none",
+              border: "none",
+              padding: 0,
+              cursor: "pointer",
+              fontFamily: "inherit",
+              fontSize: "inherit",
+              textTransform: "inherit",
             }}
+            onClick={onClose}
           >
             close
-          </a>
+          </button>
         </div>
 
         <button

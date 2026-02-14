@@ -2,59 +2,25 @@
 
 import React, {
   useState,
-  useEffect,
 } from "react";
-import photos from "../data/photos";
-
-type Theme = "bunny" | "water";
-
-const THEMES = {
-  bunny: {
-    "--color-text": "rgb(121, 85, 189)",
-    "--color-text-secondary": "rgba(249, 240, 251, 1)",
-    "--color-accent-primary": "rgba(223, 30, 155, 1)",
-    "--button-bg": "rgba(223, 30, 155, 0.8)",
-    "--button-bg-light": "rgba(223, 30, 155, 0.2)",
-    "--button-text": "rgba(249, 240, 251, 1)",
-    "--border-color": "rgb(152, 128, 220)",
-  },
-  water: {
-    "--color-text": "rgb(191, 229, 249)",
-    "--color-accent-primary": "rgb(134, 196, 240)",
-    "--button-bg": "rgba(214, 235, 251, 0.8)",
-    "--button-bg-light": "rgba(214, 220, 251, 0.2)",
-    "--button-text": "rgb(46, 80, 192)",
-    "--border-color": "rgba(8, 34, 163, 1)",
-  },
-} as const;
+import photos from "../../data/photos";
+import "./Creative.css";
+import { CONTENT_THEME_TOKENS, type ThemeType } from "../../theme/tokens";
+import useIsMobile from "../../hooks/useIsMobile";
 
 interface CreativeProps {
-  theme: Theme;
+  theme: ThemeType;
 }
 
 interface ModalProps {
   photo: (typeof photos)[number] | null;
   onClose: () => void;
-  theme: Theme;
+  theme: ThemeType;
 }
-
-const useIsMobile = () => {
-  const [isMobile, setIsMobile] = useState(
-    typeof window !== "undefined" && window.innerWidth <= 768,
-  );
-
-  useEffect(() => {
-    const handleResize = () => setIsMobile(window.innerWidth <= 768);
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
-
-  return isMobile;
-};
 
 const PhotoModal = React.memo<ModalProps>(({ photo, onClose, theme }) => {
   if (!photo) return null;
-  const colors = THEMES[theme];
+  const colors = CONTENT_THEME_TOKENS[theme];
 
   return (
     <div
@@ -154,27 +120,7 @@ const Creative: React.FC<CreativeProps> = ({ theme }) => {
   const isMobile = useIsMobile();
   const [selectedPhoto, setSelectedPhoto] = useState<(typeof photos)[number] | null>(null);
 
-  useEffect(() => {
-    const styleId = "creative-custom-styles";
-    let styleEl = document.getElementById(styleId) as HTMLStyleElement | null;
-    if (!styleEl) {
-      styleEl = document.createElement("style");
-      styleEl.id = styleId;
-      document.head.appendChild(styleEl);
-    }
-    const colors = THEMES[theme];
-    styleEl.innerHTML = `
-      .creative-container::-webkit-scrollbar{width:8px}
-      .creative-container::-webkit-scrollbar-track{background:transparent}
-      .creative-container::-webkit-scrollbar-thumb{border-radius:4px;background:${colors["--button-bg"]};}
-      .photo-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:20px;width:100%;}
-    `;
-    return () => {
-      if (styleEl) styleEl.remove();
-    };
-  }, [theme]);
-
-  const colors = THEMES[theme];
+  const colors = CONTENT_THEME_TOKENS[theme];
   const handlePhotoClick = (photo: (typeof photos)[number]) => {
     setSelectedPhoto(photo);
   };
@@ -194,6 +140,7 @@ const Creative: React.FC<CreativeProps> = ({ theme }) => {
         alignItems: "stretch",
         color: colors["--color-text"],
         fontFamily: "monospace",
+        ["--creative-scrollbar-thumb" as string]: colors["--button-bg"],
       }}
     >
       <div
@@ -241,7 +188,7 @@ const Creative: React.FC<CreativeProps> = ({ theme }) => {
 
 interface ListProps {
   photos: typeof photos;
-  theme: Theme;
+  theme: ThemeType;
   onPhotoClick: (p: typeof photos[number]) => void;
 }
 
@@ -344,7 +291,7 @@ const MobileList: React.FC<ListProps> = ({ photos, theme, onPhotoClick }) => (
   </div>
 );
 
-const GridCard: React.FC<{ photo: (typeof photos)[number]; theme: Theme; onPhotoClick: (p: typeof photos[number]) => void; }> = ({
+const GridCard: React.FC<{ photo: (typeof photos)[number]; theme: ThemeType; onPhotoClick: (p: typeof photos[number]) => void; }> = ({
   photo,
   theme,
   onPhotoClick,

@@ -1,49 +1,16 @@
 "use client"
 
 import { useEffect, useState, useRef } from "react"
-import { Routes, Route, useLocation, useNavigate, Link } from "react-router-dom"
+import { useLocation, useNavigate, Link } from "react-router-dom"
 import "./App.css"
 import "./components/gradientAnimation.css"
 import GradientBackground from "./components/GradientBackground"
-import Home from "./pages/Home"
-import Portfolio from "./pages/Portfolio"
-import Creative from "./pages/Creative"
-import ProjectDetail from "./pages/ProjectDetail"
 import Footer from "./components/Footer"
-import NotFound from "./pages/NotFound"
+import AppRoutes from "./app/routes"
+import { APP_THEME_TOKENS, type ThemeType } from "./theme/tokens"
+import { scrambleText } from "./utils/scramble"
 
-
-type ThemeType = "bunny" | "water"
-
-const themes = {
-  bunny: {
-    "--color-text": "rgb(121, 85, 189)",
-    "--color-text-secondary": "rgba(249, 240, 251, 1)",
-    "--color-accent-primary": "rgba(223, 30, 155, 1)",
-    "--button-bg": "rgba(223, 30, 155, 0.8)",
-    "--button-bg-light": "rgba(223, 30, 155, 0.2)",
-    "--button-text": "rgba(249, 240, 251, 1)",
-    "--border-color": "rgb(152, 128, 220)",
-    "--outer-bg": "#a892e7",
-    "--cursor-color": "rgba(223, 30, 155, 0.7)",
-    "--cursor-glow": "0 0 8px rgba(223, 30, 155, 0.6)",
-    "--cursor-hover-color": "rgba(223, 30, 155, 0.6)",
-    "--cursor-hover-glow": "0 0 12px rgba(223, 30, 155, 0.6)",
-  },
-  water: {
-    "--color-text": "rgb(191, 229, 249)",
-    "--color-accent-primary": "rgb(134, 196, 240)",
-    "--button-bg": "rgba(214, 235, 251, 0.8)",
-    "--button-bg-light": "rgba(214, 220, 251, 0.2)",
-    "--button-text": "rgb(46, 80, 192)",
-    "--border-color": "rgba(8, 34, 163, 1)",
-    "--outer-bg": "#1d0298",
-    "--cursor-color": "rgba(230, 214, 251, 0.7)",
-    "--cursor-glow": "0 0 8px rgba(230, 214, 251, 0.6)",
-    "--cursor-hover-color": "rgba(230, 214, 251, 0.6)",
-    "--cursor-hover-glow": "0 0 12px rgba(230, 214, 251, 0.6)",
-  },
-}
+const themes = APP_THEME_TOKENS
 
 const ThemeToggle = ({
   currentTheme,
@@ -157,57 +124,7 @@ const NavButton = ({
   </button>
 )
 
-// Scramble helper + minimal fade‑in CSS 
-const scrambleSets = {
-  japanese: "!@#$%^&*?<>/",
-  binary: "01",
-  symbols: "!<>-_\\/[]{}=+*^?#",
-  matrix: "!@#$%^&*?<>/",
-  code: "{([/\\])}@#$%^&*<>+=",
-}
-
-function scramble(
-  target: string,
-  set: keyof typeof scrambleSets,
-  steps = 15,
-  updateFn: (text: string) => void,
-): Promise<string> {
-  return new Promise((res) => {
-    let frame = 0
-    const chars = scrambleSets[set]
-    let out = Array.from(target)
-
-    const tick = () => {
-      out = out.map((c, i) =>
-        frame >= steps
-          ? target[i]
-          : Math.random() < frame / steps
-            ? target[i]
-            : chars[Math.floor(Math.random() * chars.length)],
-      )
-
-      // Update the state with the current scrambled text
-      updateFn(out.join(""))
-
-      frame++
-      if (frame <= steps) requestAnimationFrame(tick)
-      else res(target)
-    }
-
-    tick()
-  })
-}
-
-const fadeCSS = `
-.fade { opacity: 0; transition: opacity .8s ease; }
-.fade.show { opacity: 1; }
-`
-if (!document.getElementById("fade-css")) {
-  const style = document.createElement("style")
-  style.id = "fade-css"
-  style.innerHTML = fadeCSS
-  document.head.appendChild(style)
-}
+// Minimal fade-in CSS
 
 function App() {
   // theme + nav 
@@ -242,7 +159,6 @@ function App() {
 
   // track safe area top and bottom 
   const [safeAreaTop, setSafeAreaTop] = useState("15px")
-  const [safeAreaBottom, setSafeAreaBottom] = useState("15px")
 
   // check device type and safe area 
   useEffect(() => {
@@ -257,11 +173,9 @@ function App() {
       if (mobile) {
         // Use safe area inset for mobile devices
         setSafeAreaTop("max(15px, env(safe-area-inset-top))")
-        setSafeAreaBottom("max(15px, env(safe-area-inset-bottom))")
       } else {
         // Standard padding for desktop
         setSafeAreaTop("15px")
-        setSafeAreaBottom("15px")
       }
     }
 
@@ -289,8 +203,8 @@ function App() {
     const t1 = setTimeout(() => setPhase(2), 600) // greeting
     const t2 = setTimeout(() => {
       // scramble roles
-      scramble(originalTop, "code", 45, setTop)
-      scramble(originalBot, "japanese", 45, setBot)
+      scrambleText(originalTop, "code", setTop, 45)
+      scrambleText(originalBot, "japanese", setBot, 45)
       setPhase(3)
     }, 1200)
     const t3 = setTimeout(() => setPhase(4), 2450) // nav + image + footer
@@ -312,8 +226,8 @@ function App() {
       const botSet = newTheme === "bunny" ? "japanese" : "symbols"
 
       // Apply scramble effect to role texts
-      scramble(originalTop, topSet, 30, setTop).then(() => { })
-      scramble(originalBot, botSet, 30, setBot).then(() => { })
+      scrambleText(originalTop, topSet, setTop, 30).then(() => { })
+      scrambleText(originalBot, botSet, setBot, 30).then(() => { })
 
       return newTheme
     })
@@ -336,8 +250,8 @@ function App() {
       const topSet = theme === "bunny" ? "code" : "matrix"
       const botSet = theme === "bunny" ? "japanese" : "symbols"
 
-      scramble(originalTop, topSet, 30, setTop).then(() => { })
-      scramble(originalBot, botSet, 30, setBot).then(() => { })
+      scrambleText(originalTop, topSet, setTop, 30).then(() => { })
+      scrambleText(originalBot, botSet, setBot, 30).then(() => { })
     }
   }
 
@@ -488,24 +402,13 @@ function App() {
                   position: "relative",
                 }}
               >
-                <Routes>
-                  <Route
-                    path="/"
-                    element={
-                      <Home
-                        theme={theme}
-                        phase={phase}
-                        roleTop={roleTop}
-                        roleBot={roleBot}
-                        onScramble={handleHomeScramble}
-                      />
-                    }
-                  />
-                  <Route path="/portfolio" element={<Portfolio theme={theme} />} />
-                  <Route path="/portfolio/:projectId" element={<ProjectDetail theme={theme} />} />
-                  <Route path="/creative" element={<Creative theme={theme} />} />
-                  <Route path="*" element={<NotFound theme={theme} />} />
-                </Routes>
+                <AppRoutes
+                  theme={theme}
+                  phase={phase}
+                  roleTop={roleTop}
+                  roleBot={roleBot}
+                  onScramble={handleHomeScramble}
+                />
 
                 {/* Footer */}
                 <div

@@ -1,0 +1,28 @@
+.portfolio-container {
+  scrollbar-width: thin;
+  scrollbar-color: var(--portfolio-scrollbar-thumb) transparent;
+}
+
+.portfolio-container::-webkit-scrollbar {
+  width: 8px;
+}
+
+.portfolio-container::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.portfolio-container::-webkit-scrollbar-thumb {
+  border-radius: 4px;
+  background-color: var(--portfolio-scrollbar-thumb);
+}
+
+@media (min-width: 1025px) {
+  .project-card:hover {
+    transform: scale(1.05) translateZ(0);
+    z-index: 2;
+  }
+
+  .project-card:hover img {
+    transform: scale(1.08) translateZ(0);
+  }
+}

@@ -1,16 +1,18 @@
 "use client"
 
 import type React from "react"
-import { useState, useEffect, useRef, useMemo, useCallback } from "react"
+import { Suspense, useState, useEffect, useRef, useMemo, useCallback } from "react"
 import { useNavigate } from "react-router-dom"
+import "./Home.css"
 
 // 3D deps
-import { Canvas, useThree } from "@react-three/fiber"
-import { useGLTF, useAnimations, Environment } from "@react-three/drei"
+import { Canvas } from "@react-three/fiber"
 import * as THREE from "three"
 
-import AwardsModal from "../components/AwardsModal"
-import AsciiImage from "../components/AsciiImage"
+import AwardsModal from "../../components/AwardsModal"
+import AsciiImage from "../../components/AsciiImage"
+import { HOME_THEME_TOKENS, type ThemeType } from "../../theme/tokens"
+import FlowerScene from "./FlowerScene"
 
 const getEstTimeString = () =>
   new Intl.DateTimeFormat("en-US", {
@@ -22,154 +24,12 @@ const getEstTimeString = () =>
   }).format(new Date())
 
 interface HomeProps {
-  theme: "bunny" | "water"
+  theme: ThemeType
   phase: number
   roleTop: string
   roleBot: string
   onScramble: () => void
   isNavigatingFromPage?: boolean
-}
-
-/* ----------------------------- 3D Components ----------------------------- */
-
-function FlowerModel({
-  url = "/models/blue_flower.glb",
-  onReady,
-  // Rotate 90° to fix Z-up exports (common from DCC tools) so it's right-side up in Three (Y-up).
-  uprightRotation = [1, 0, 0] as [number, number, number],
-}: {
-  url?: string
-  onReady?: (group: THREE.Group) => void
-  uprightRotation?: [number, number, number]
-}) {
-  const group = useRef<THREE.Group>(null!)
-  const inner = useRef<THREE.Group>(null!)
-  const { scene, animations } = useGLTF(url) as unknown as {
-    scene: THREE.Group
-    animations: THREE.AnimationClip[]
-  }
-  const { actions, names } = useAnimations(animations, group)
-
-  // Play all clips if available
-  useEffect(() => {
-    names.forEach((n) => {
-      const action = actions[n]
-      if (!action) return
-      action.reset()
-      action.setLoop(THREE.LoopRepeat, Infinity)
-      action.play()
-    })
-    return () => {
-      names.forEach((n) => actions[n]?.stop())
-    }
-  }, [actions, names])
-
-  // Notify parent when the model is mounted
-  useEffect(() => {
-    if (group.current) onReady?.(group.current)
-  }, [onReady])
-
-  return (
-    <group ref={group} dispose={null}>
-      {/* Apply a 90° rotation to make the flower upright */}
-      <group ref={inner} rotation={uprightRotation}>
-        <primitive object={scene} />
-      </group>
-    </group>
-  )
-}
-
-function FlowerScene({
-  layout: { isMobile, windowWidth },
-}: {
-  layout: { isMobile: boolean; isSmallScreen: boolean; windowWidth: number }
-}) {
-  const modelRef = useRef<THREE.Group | null>(null)
-  const { camera, size } = useThree()
-  const sizeMultiplier = useMemo(() => {
-    if (windowWidth >= 768) return 3.20
-    return 1.65
-  }, [windowWidth])
-
-  // Center the model on the page and make it big.
-  const frameCentered = useCallback(() => {
-    if (!modelRef.current) return
-    const obj = modelRef.current
-
-    const box = new THREE.Box3().setFromObject(obj)
-    if (!box || !isFinite(box.min.x)) return
-
-    const width = box.max.x - box.min.x
-    const height = box.max.y - box.min.y
-    const depth = box.max.z - box.min.z
-
-    const targetCenter = new THREE.Vector3(
-      (box.min.x + box.max.x) * 0.5,
-      (box.min.y + box.max.y) * 0.5,
-      (box.min.z + box.max.z) * 0.5,
-    )
-
-    const baseFit = isMobile ? 0.65 : 0.55
-    const fit = baseFit * sizeMultiplier
-
-    const persp = camera as THREE.PerspectiveCamera
-    const fov = THREE.MathUtils.degToRad(persp.fov)
-    const viewAspect = size.width / size.height
-    const neededHalfHeight = Math.max(height * 0.5, (width * 0.5) / viewAspect)
-    const distance = neededHalfHeight / (Math.tan(fov / 2) * fit)
-
-    let camPos = targetCenter.clone().add(new THREE.Vector3(-0.28, -0.55, 0).normalize().multiplyScalar(distance))
-
-    const viewDir = targetCenter.clone().sub(camPos).normalize()
-    const cameraUp = (camera as THREE.PerspectiveCamera).up.clone().normalize()
-    const right = new THREE.Vector3().crossVectors(viewDir, cameraUp).normalize()
-    const trueUp = new THREE.Vector3().crossVectors(right, viewDir).normalize()
-
-    const cameraDistance = camPos.distanceTo(targetCenter)
-    const viewportHalfHeight = Math.tan(fov / 2) * cameraDistance
-    const viewportHalfWidth = viewportHalfHeight * viewAspect
-
-    const verticalFactor = isMobile ? 1.75 : 2.95
-    const verticalOffset = viewportHalfHeight * verticalFactor
-    const horizontalOffset = isMobile ? 0 : viewportHalfWidth * 0.002
-
-    const panOffset = new THREE.Vector3()
-      .add(right.clone().multiplyScalar(horizontalOffset))
-      .add(trueUp.clone().multiplyScalar(verticalOffset))
-
-    camPos.add(panOffset)
-    const newTarget = targetCenter.clone().add(panOffset)
-
-    persp.position.copy(camPos)
-    persp.near = Math.max(0.001, cameraDistance / 100)
-    persp.far = cameraDistance * 100 + depth
-    persp.updateProjectionMatrix()
-    persp.lookAt(newTarget)
-  }, [camera, isMobile, size.height, size.width, sizeMultiplier])
-
-  // When model loads or on resize, reframe
-  const handleReady = useCallback(
-    (g: THREE.Group) => {
-      modelRef.current = g
-      requestAnimationFrame(() => frameCentered())
-    },
-    [frameCentered],
-  )
-
-  useEffect(() => {
-    frameCentered()
-  }, [size.width, size.height, frameCentered])
-
-  return (
-    <>
-      {/* Keep background transparent; subtle lighting */}
-      <ambientLight intensity={0.9} />
-      <directionalLight position={[5, 10, 5]} intensity={1.1} />
-      <Environment preset="studio" />
-
-      <FlowerModel onReady={handleReady} />
-    </>
-  )
 }
 
 /* --------------------------------- Page --------------------------------- */
@@ -403,169 +263,7 @@ const Home: React.FC<HomeProps> = ({
     return () => clearTimeout(timer)
   }, [isTypingComplete, isScrambleComplete, isImageLoaded])
 
-  // theme memo
-  const themes = useMemo(
-    () => ({
-      bunny: {
-        "--color-text": "rgb(121, 85, 189)",
-        "--color-accent-primary": "rgba(223, 30, 155, 1)",
-        "--button-bg": "rgba(223, 30, 155, 0.8)",
-        "--button-bg-light": "rgba(223, 30, 155, 0.2)",
-        "--link-color": "rgba(223, 30, 155, 0.8)",
-      },
-      water: {
-        "--color-text": "rgb(191, 229, 249)",
-        "--color-accent-primary": "rgb(134, 196, 240)",
-        "--button-bg": "rgba(134, 196, 240, 0.8)",
-        "--button-bg-light": "rgba(214, 220, 251, 0.2)",
-        "--link-color": "rgba(134, 196, 240, 0.8)",
-      },
-    }),
-    [],
-  )
-
-  // global styles
-  const globalStyles = useMemo(() => {
-    const scrollbarColor =
-      theme === "bunny" ? themes.bunny["--button-bg"] : themes.water["--button-bg"]
-
-    const accent =
-      theme === "bunny"
-        ? themes.bunny["--color-accent-primary"]
-        : themes.water["--color-accent-primary"]
-
-    return `
-      @import url('https://fonts.googleapis.com/css2?family=Dosis:wght@700&display=swap');
-      html, body { margin: 0; padding: 0; overflow: hidden; }
-      .home-container {
-        overflow: hidden;
-        height: 100vh;
-        scrollbar-width: none;
-      }
-      .home-container::-webkit-scrollbar {
-        display: none;
-      }
-      @keyframes blink {
-        0%, 100% { opacity: 1; }
-        50% { opacity: 0; }
-      }
-      .typing-cursor {
-        display: inline-block;
-        width: 2px;
-        height: 1em;
-        background-color: ${accent};
-        margin-left: 2px;
-        vertical-align: text-bottom;
-        animation: blink 0.7s infinite;
-      }
-      /* 3D canvas behind content */
-      .three-wrapper {
-        position: fixed;
-        inset: 0;               /* full viewport */
-        z-index: 0;             /* behind your text */
-        pointer-events: none;   /* clicks pass through */
-      }
-      .three-canvas {
-        width: 100%;
-        height: 100%;
-        display: block;
-        background: transparent; /* ensure alpha shows */
-      }
-      .content-layer {
-        position: relative;
-        z-index: 1;             /* above the canvas */
-      }
-      .fade {
-        opacity: 0;
-        transform: translateY(8px);
-        transition: opacity 0.6s ease, transform 0.6s ease;
-      }
-      .fade.show {
-        opacity: 1;
-        transform: translateY(0);
-      }
-      .home-scroll-indicator {
-        width: 12px;
-        position: relative;
-        margin: 0 auto;
-        opacity: 0.6;
-      }
-      .home-scroll-indicator::before,
-      .home-scroll-indicator::after,
-      .home-scroll-dots::before,
-      .home-scroll-dots::after {
-        content: "";
-        display: block;
-        margin-left: auto;
-        margin-right: auto;
-      }
-      .home-scroll-indicator::before {
-        width: 12px;
-        height: 12px;
-        border-radius: 10px;
-        border: 1px solid currentColor;
-        animation: home-dot 3s infinite ease-in-out;
-      }
-      .home-scroll-indicator::after {
-        width: 7px;
-        height: 7px;
-        border-right: 1px solid currentColor;
-        border-bottom: 1px solid currentColor;
-        transform: rotate(45deg);
-        animation: home-arrow 3s infinite ease-in-out;
-        animation-delay: 0.75s;
-        opacity: 0.25;
-        margin-top: 6px;
-      }
-      .home-scroll-dots::before,
-      .home-scroll-dots::after {
-        border-radius: 10px;
-        border: 1px solid currentColor;
-        animation: home-dot 3s infinite ease-in-out;
-      }
-      .home-scroll-dots::before {
-        width: 8px;
-        height: 8px;
-        animation-delay: 0.25s;
-        margin: 5px auto;
-      }
-      .home-scroll-dots::after {
-        width: 6px;
-        height: 6px;
-        animation-delay: 0.5s;
-        margin: 5px auto;
-      }
-      @keyframes home-dot {
-        0% { transform: scale(0.75); opacity: 0.25; }
-        25% { transform: scale(1); opacity: 1; }
-        100% { transform: scale(0.75); opacity: 0.25; }
-      }
-      @keyframes home-arrow {
-        0% { transform: scale(0.75) rotate(45deg); opacity: 0.25; }
-        25% { transform: scale(1) rotate(45deg); opacity: 1; }
-        100% { transform: scale(0.75) rotate(45deg); opacity: 0.25; }
-      }
-      .home-center-scroll {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        text-transform: uppercase;
-        font-family: 'Dosis', sans-serif;
-        letter-spacing: 0.3em;
-      }
-      .home-center-scroll-text {
-        margin-bottom: 8px;
-        font-size: 0.75rem;
-        opacity: 0.65;
-      }
-      .home-center-scroll-line {
-        width: 1px;
-        height: 60px;
-        background-color: currentColor;
-        opacity: 0.65;
-      }
-    `
-  }, [theme, themes])
+  const themes = HOME_THEME_TOKENS
 
   // derived values
   const imageSize = useMemo(() => {
@@ -596,6 +294,10 @@ const Home: React.FC<HomeProps> = ({
     const glow = theme === "bunny" ? "rgba(223, 30, 155, 0.35)" : "rgba(134, 196, 240, 0.3)"
     return { base, hover, border, text, glow }
   }, [theme, themes])
+  const homeAccentColor =
+    theme === "bunny"
+      ? themes.bunny["--color-accent-primary"]
+      : themes.water["--color-accent-primary"]
   const navButtonsEnabled = isFlowerRevealed
   const scrollIndicatorColor = "rgba(255, 255, 255, 0.85)"
   const scrollCueOpacity = useMemo(() => {
@@ -610,31 +312,29 @@ const Home: React.FC<HomeProps> = ({
   }, [footerHeight, isMobile])
 
   return (
-    <>
-      <style>{globalStyles}</style>
-
-      <div
-        className="home-container"
-        style={{
-          width: "100%",
-          height: contentHeight,
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          justifyContent: "center",
-          boxSizing: "border-box",
-          position: "relative",
-          padding,
-          touchAction: "none",
-        }}
-        onWheel={handleWheelGesture}
-        onTouchStart={handleTouchStart}
-        onTouchMove={handleTouchMove}
-        onTouchEnd={handleTouchEnd}
-        onClick={() => {
-          if (isAnimationComplete) onScramble()
-        }}
-      >
+    <div
+      className="home-container"
+      style={{
+        width: "100%",
+        height: contentHeight,
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+        boxSizing: "border-box",
+        position: "relative",
+        padding,
+        touchAction: "none",
+        ["--home-accent" as string]: homeAccentColor,
+      }}
+      onWheel={handleWheelGesture}
+      onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={handleTouchEnd}
+      onClick={() => {
+        if (isAnimationComplete) onScramble()
+      }}
+    >
         <div
           className={`fade ${phase >= 4 && isAnimationComplete ? "show" : ""}`}
           aria-hidden={!isAnimationComplete}
@@ -673,7 +373,9 @@ const Home: React.FC<HomeProps> = ({
             dpr={[1, 2]}
             camera={{ fov: 35, near: 0.1, far: 1000, position: [0, 0, 3] }}
           >
-            <FlowerScene layout={{ isMobile, isSmallScreen, windowWidth }} />
+            <Suspense fallback={null}>
+              <FlowerScene layout={{ isMobile, isSmallScreen, windowWidth }} />
+            </Suspense>
           </Canvas>
         </div>
 
@@ -1033,10 +735,7 @@ const Home: React.FC<HomeProps> = ({
 
         {/* awards modal */}
         {showAwards && <AwardsModal onClose={() => setShowAwards(false)} theme={theme} />}
-      </div>
-    </>
+    </div>
   )
 }
-
-useGLTF.preload("/models/blue_flower.glb")
 export default Home

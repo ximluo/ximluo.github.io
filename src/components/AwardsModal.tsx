@@ -1,29 +1,12 @@
 import React from "react"
+import { AWARDS_THEME_TOKENS, type ThemeType } from "../theme/tokens"
 interface AwardsModalProps {
   onClose: () => void;
-  theme: "bunny" | "water";
+  theme: ThemeType;
 }
 
 const AwardsModal: React.FC<AwardsModalProps> = ({ onClose, theme }) => {
-  const themes = {
-    bunny: {
-      "--color-text": "rgb(172, 149, 216)",
-      "--color-text-secondary": "rgba(249, 240, 251, 1)",
-      "--color-accent-primary": "rgb(214, 129, 231)",
-      "--button-bg": "rgba(180, 82, 205, 0.8)",
-      "--button-bg-light": "rgba(180, 82, 205, 0.2)",
-      "--button-text": "rgba(249, 240, 251, 1)",
-      "--border-color": "rgb(152, 128, 220)",
-    },
-    water: {
-      "--color-text": "rgb(191, 229, 249)",
-      "--color-accent-primary": "rgb(134, 196, 240)",
-      "--button-bg": "rgba(214, 235, 251, 0.8)",
-      "--button-bg-light": "rgba(214, 220, 251, 0.2)",
-      "--button-text": "rgb(46, 80, 192)",
-      "--border-color": "rgba(8, 34, 163, 1)",
-    },
-  };
+  const themes = AWARDS_THEME_TOKENS;
 
   // Awards data organized by sections
   const awardsData = {

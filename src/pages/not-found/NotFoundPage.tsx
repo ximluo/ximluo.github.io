@@ -1,8 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { Link } from "react-router-dom";
+import { scrambleText } from "../../utils/scramble";
+import { type ThemeType } from "../../theme/tokens";
 
 interface NotFoundProps {
-  theme: "bunny" | "water";
+  theme: ThemeType;
   backPath?: string;
 }
 
@@ -11,76 +13,15 @@ const NotFound: React.FC<NotFoundProps> = ({ theme, backPath = "/" }) => {
   const [glitchText, setGlitchText] = useState<string>("404");
   const [messageText, setMessageText] = useState<string>("PAGE NOT FOUND");
 
-  // Scramble text effect using the existing scramble function
-  const scrambleEffect = (): void => {
-    const scrambleSets: Record<
-      "japanese" | "binary" | "symbols" | "matrix" | "code",
-      string
-    > = {
-      japanese: "!@#$%^&*?<>/",
-      binary: "01",
-      symbols: "!<>-_\\/[]{}=+*^?#",
-      matrix: "!@#$%^&*?<>/",
-      code: "{([/\\])}@#$%^&*<>+=",
-    };
+  const scrambleEffect = useCallback((): void => {
+    const glitchSet = theme === "bunny" ? "code" : "matrix";
+    void scrambleText("404", glitchSet, setGlitchText, 30);
 
-    const scramble = (
-      target: string,
-      setKey: keyof typeof scrambleSets,
-      steps: number = 15
-    ): void => {
-      let frame = 0;
-      const chars = scrambleSets[setKey];
-      let out = Array.from(target);
-
-      const tick = (): void => {
-        out = out.map((c, i) =>
-          frame >= steps
-            ? target[i]
-            : Math.random() < frame / steps
-              ? target[i]
-              : chars[Math.floor(Math.random() * chars.length)]
-        );
-
-        setGlitchText(out.join(""));
-
-        frame++;
-        if (frame <= steps) requestAnimationFrame(tick);
-      };
-
-      tick();
-    };
-
-    // Apply scramble effect based on theme
-    const glitchSet: keyof typeof scrambleSets = theme === "bunny" ? "code" : "matrix";
-    scramble("404", glitchSet, 30);
-
-    // Also scramble the message
-    const messageSet: keyof typeof scrambleSets = theme === "bunny" ? "symbols" : "code";
+    const messageSet = theme === "bunny" ? "symbols" : "code";
     setTimeout(() => {
-      const message = "PAGE NOT FOUND";
-      let msgFrame = 0;
-      const msgSteps = 25;
-      const msgChars = scrambleSets[messageSet];
-
-      const messageTick = (): void => {
-        const out = Array.from(message).map((c, i) =>
-          msgFrame >= msgSteps
-            ? message[i]
-            : Math.random() < msgFrame / msgSteps
-              ? message[i]
-              : msgChars[Math.floor(Math.random() * msgChars.length)]
-        );
-
-        setMessageText(out.join(""));
-
-        msgFrame++;
-        if (msgFrame <= msgSteps) requestAnimationFrame(messageTick);
-      };
-
-      messageTick();
+      void scrambleText("PAGE NOT FOUND", messageSet, setMessageText, 25);
     }, 300);
-  };
+  }, [theme]);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -88,7 +29,7 @@ const NotFound: React.FC<NotFoundProps> = ({ theme, backPath = "/" }) => {
       scrambleEffect();
     }, 200);
     return () => clearTimeout(timer);
-  }, [theme]);
+  }, [scrambleEffect]);
 
   useEffect(() => {
     const glitchInterval = setInterval(() => {
@@ -97,7 +38,7 @@ const NotFound: React.FC<NotFoundProps> = ({ theme, backPath = "/" }) => {
       }
     }, 4000);
     return () => clearInterval(glitchInterval);
-  }, [theme]);
+  }, [scrambleEffect]);
 
   return (
     <div

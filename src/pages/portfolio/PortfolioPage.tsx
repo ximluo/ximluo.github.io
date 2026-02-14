@@ -3,10 +3,12 @@
 import type React from "react"
 import { useState, useEffect, useCallback, useMemo } from "react"
 import { useNavigate } from "react-router-dom"
-import projects from "../data/projects"
+import "./Portfolio.css"
+import projects from "../../data/projects"
+import { CONTENT_THEME_TOKENS, type ThemeType } from "../../theme/tokens"
 
 interface PortfolioProps {
-  theme: "bunny" | "water"
+  theme: ThemeType
 }
 
 // Lazy Image Component with intersection observer
@@ -69,6 +71,7 @@ const LazyImage: React.FC<{
             alt={alt}
             loading="lazy"
             decoding="async"
+            fetchPriority="low"
             onLoad={() => setIsLoaded(true)}
             style={{
               ...style,
@@ -87,26 +90,7 @@ const Portfolio: React.FC<PortfolioProps> = ({ theme }) => {
   const [isDesktop, setIsDesktop] = useState(window.innerWidth > 1024)
   const navigate = useNavigate()
 
-  // Memoize theme styles to prevent recalculation
-  const themes = useMemo(() => ({
-    bunny: {
-      "--color-text": "rgb(121, 85, 189)",
-      "--color-text-secondary": "rgba(249, 240, 251, 1)",
-      "--color-accent-primary": "rgba(223, 30, 155, 1)",
-      "--button-bg": "rgba(223, 30, 155, 0.8)",
-      "--button-bg-light": "rgba(223, 30, 155, 0.2)",
-      "--button-text": "rgba(249, 240, 251, 1)",
-      "--border-color": "rgb(152, 128, 220)",
-    },
-    water: {
-      "--color-text": "rgb(191, 229, 249)",
-      "--color-accent-primary": "rgb(134, 196, 240)",
-      "--button-bg": "rgba(214, 235, 251, 0.8)",
-      "--button-bg-light": "rgba(214, 220, 251, 0.2)",
-      "--button-text": "rgb(46, 80, 192)",
-      "--border-color": "rgba(8, 34, 163, 1)",
-    },
-  }), [])
+  const themes = CONTENT_THEME_TOKENS
 
   // Memoize filtered projects to prevent unnecessary recalculations
   const filteredProjects = useMemo(() => {
@@ -142,8 +126,7 @@ const Portfolio: React.FC<PortfolioProps> = ({ theme }) => {
     navigate(`/portfolio/${projectId}`)
   }, [navigate])
 
-  // Memoize current theme
-  const currentTheme = useMemo(() => themes[theme], [themes, theme])
+  const currentTheme = themes[theme]
 
   return (
     <div
@@ -154,6 +137,7 @@ const Portfolio: React.FC<PortfolioProps> = ({ theme }) => {
         padding: "20px",
         overflow: "auto",
         boxSizing: "border-box",
+        ["--portfolio-scrollbar-thumb" as string]: currentTheme["--button-bg"],
       }}
     >
       {}
@@ -342,27 +326,6 @@ const Portfolio: React.FC<PortfolioProps> = ({ theme }) => {
         ))}
       </div>
 
-      {}
-      <style>
-        {`
-        .portfolio-container::-webkit-scrollbar{width:8px}
-        .portfolio-container::-webkit-scrollbar-track{background:transparent}
-        .portfolio-container::-webkit-scrollbar-thumb{
-          border-radius:4px;
-          background-color:${currentTheme["--button-bg"]};
-        }
-        @media (min-width:1025px){
-          .project-card:hover{
-            transform:scale(1.05) translateZ(0); /* GPU acceleration */
-            z-index:2;
-          }
-
-          .project-card:hover img{
-            transform:scale(1.08) translateZ(0); /* GPU acceleration */
-          }
-        }
-        `}
-      </style>
     </div>
   )
 }
