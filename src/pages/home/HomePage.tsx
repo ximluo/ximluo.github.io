@@ -14,6 +14,17 @@ import AsciiImage from "../../components/AsciiImage"
 import { HOME_THEME_TOKENS, type ThemeType } from "../../theme/tokens"
 import FlowerScene from "./FlowerScene"
 
+const SCROLL_LOCK_KEYS = new Set([
+  "ArrowUp",
+  "ArrowDown",
+  "PageUp",
+  "PageDown",
+  "Home",
+  "End",
+  " ",
+  "Spacebar",
+])
+
 const getEstTimeString = () =>
   new Intl.DateTimeFormat("en-US", {
     timeZone: "America/New_York",
@@ -67,6 +78,7 @@ const Home: React.FC<HomeProps> = ({
   const lastTouchYRef = useRef<number | null>(null)
 
   const revealThreshold = useMemo(() => Math.max(windowHeight * 0.6, 240), [windowHeight])
+  const introComplete = isNavigatingFromPage || isTypingComplete
 
   // responsive handler
   const handleResize = useCallback(() => {
@@ -108,6 +120,43 @@ const Home: React.FC<HomeProps> = ({
     setVirtualScroll((prev) => Math.min(prev, revealThreshold))
   }, [revealThreshold])
 
+  useEffect(() => {
+    if (typeof window === "undefined" || introComplete) return
+
+    const preventWheel = (event: WheelEvent) => {
+      if (event.cancelable) event.preventDefault()
+    }
+    const preventTouchMove = (event: TouchEvent) => {
+      if (event.cancelable) event.preventDefault()
+    }
+    const preventKeyboardScroll = (event: KeyboardEvent) => {
+      const target = event.target as HTMLElement | null
+      if (target) {
+        const tagName = target.tagName
+        if (
+          target.isContentEditable ||
+          tagName === "INPUT" ||
+          tagName === "TEXTAREA" ||
+          tagName === "SELECT"
+        ) {
+          return
+        }
+      }
+      if (SCROLL_LOCK_KEYS.has(event.key) || event.code === "Space") {
+        event.preventDefault()
+      }
+    }
+
+    window.addEventListener("wheel", preventWheel, { passive: false })
+    window.addEventListener("touchmove", preventTouchMove, { passive: false })
+    window.addEventListener("keydown", preventKeyboardScroll)
+    return () => {
+      window.removeEventListener("wheel", preventWheel)
+      window.removeEventListener("touchmove", preventTouchMove)
+      window.removeEventListener("keydown", preventKeyboardScroll)
+    }
+  }, [introComplete])
+
   const handleVirtualDelta = useCallback(
     (delta: number) => {
       if (!delta) return
@@ -118,19 +167,35 @@ const Home: React.FC<HomeProps> = ({
 
   const handleWheelGesture = useCallback(
     (event: React.WheelEvent<HTMLDivElement>) => {
+      if (!introComplete) {
+        if (event.cancelable) event.preventDefault()
+        return
+      }
       const multiplier = isMobile ? 1.35 : 1
       handleVirtualDelta(event.deltaY * multiplier)
       if (event.cancelable) event.preventDefault()
     },
-    [handleVirtualDelta, isMobile],
+    [handleVirtualDelta, introComplete, isMobile],
   )
 
-  const handleTouchStart = useCallback((event: React.TouchEvent<HTMLDivElement>) => {
-    lastTouchYRef.current = event.touches[0]?.clientY ?? null
-  }, [])
+  const handleTouchStart = useCallback(
+    (event: React.TouchEvent<HTMLDivElement>) => {
+      if (!introComplete) {
+        lastTouchYRef.current = null
+        event.preventDefault()
+        return
+      }
+      lastTouchYRef.current = event.touches[0]?.clientY ?? null
+    },
+    [introComplete],
+  )
 
   const handleTouchMove = useCallback(
     (event: React.TouchEvent<HTMLDivElement>) => {
+      if (!introComplete) {
+        event.preventDefault()
+        return
+      }
       if (lastTouchYRef.current == null) return
       const currentY = event.touches[0]?.clientY
       if (currentY == null) return
@@ -140,7 +205,7 @@ const Home: React.FC<HomeProps> = ({
       lastTouchYRef.current = currentY
       event.preventDefault()
     },
-    [handleVirtualDelta, isMobile],
+    [handleVirtualDelta, introComplete, isMobile],
   )
 
   const handleTouchEnd = useCallback(() => {
@@ -399,7 +464,7 @@ const Home: React.FC<HomeProps> = ({
               display: "flex",
               flexDirection: isMobile ? "column" : "row",
               gap: isMobile ? 16 : 24,
-              transform: `translateY(${isMobile ? "-28vh" : "-24vh"})`,
+              transform: `translateY(${isMobile ? "-23vh" : "-24vh"})`,
               alignItems: "center",
               pointerEvents: isFlowerRevealed ? "auto" : "none",
             }}
