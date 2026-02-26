@@ -5,7 +5,7 @@ const projects: Project[] = [
   {
     id: "petsteps",
     name: "PetSteps",
-    image: "/images/petsteps.png",
+    image: "/images/petsteps-app.png",
     description:
       "PetSteps is a mobile app that keeps users active by caring for a virtual pet. Real world walking boosts your pet’s mood and health. It won the Adobe Digital Edge Standout Prize and was featured at Adobe MAX 2024 for its use of AI and AR in fitness. Adobe also featured PetSteps in a marketing campaign.",
     languages: ["Swift", "SwiftUI"],
@@ -429,7 +429,7 @@ const projects: Project[] = [
     name: "NeuroScent",
     image: "/images/neuroscent.jpg",
     description:
-      "NeuroScent is an XR biofeedback system that promotes mental wellbeing by combining olfaction, vision, and biosensing. Built for MIT Reality Hack 2025, it won the Hardware: Smart Sensing prize and Best Use of OpenBCI.",
+      "NeuroScent is an XR biofeedback system that promotes mental wellbeing, combining olfaction, vision, and biosensing. Built for MIT Reality Hack 2025, it won the Hardware: Smart Sensing prize and Best Use of OpenBCI.",
     languages: ["C#", "Unity", "Arduino", "Fusion 360"],
     categories: ["graphics", "XR", "hardware", "biosensing"],
     sections: [
@@ -596,7 +596,7 @@ const projects: Project[] = [
     name: "Human AI Interaction Projects at JHU",
     image: "/images/hci.png",
     description:
-      "Conducted research in the Intuitive Computing Laboratory under Dr. Chien Ming Huang. Contributed to projects on two areas of human AI interaction: end to end co creation of visual stories with generative models, and apology strategies to mitigate errors in voice assistants.",
+      "Conducted research in the Intuitive Computing Laboratory under Dr Chien Ming Huang. Contributed to projects on two areas of human AI interaction: end to end co creation of visual stories with generative models, and apology strategies to mitigate errors in voice assistants.",
     languages: ["Python", "React.js"],
     categories: ["software", "HCI", "Generative AI", "User Studies"],
     sections: [
@@ -621,7 +621,7 @@ const projects: Project[] = [
     name: "AR MRI Point Cloud Visualization",
     image: "/images/ar-mri.png",
     description:
-      "A fully integrated web based pipeline that automates conversion of patient brain MRIs into high quality 3D point cloud models and enables collaborative visualization and annotation on Microsoft HoloLens head mounted displays.",
+      "Integrated pipeline automating conversion of patient brain MRIs into high quality 3D point cloud models for augmented reality. Enables collaborative visualization and annotation on Microsoft HoloLens head mounted displays.",
     languages: ["Python", "C#"],
     categories: ["software", "Augmented Reality", "Medical Imaging", "Web Development"],
     sections: [

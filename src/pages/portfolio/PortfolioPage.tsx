@@ -18,6 +18,14 @@ function isGifAsset(source: string) {
   return /\.gif(?:$|[?#])/i.test(source)
 }
 
+function getShortCardDescription(text: string) {
+  const trimmed = text.trim()
+  if (!trimmed) return ""
+
+  const firstSentenceMatch = trimmed.match(/.*?[.!?](?:\s|$)/)
+  return (firstSentenceMatch?.[0] ?? trimmed).trim()
+}
+
 // Lazy Image Component with intersection observer
 const LazyImage: React.FC<{
   projectId?: string
@@ -247,7 +255,7 @@ const Portfolio: React.FC<PortfolioProps> = ({ theme }) => {
                 : "rgba(8, 34, 163, 0.25)",
               cursor: "pointer",
               transition: "transform 0.3s ease",
-              height: isDesktop ? "290px" : "auto",
+              height: isDesktop ? "290px" : "240px",
               // Add will-change for better transform performance
               willChange: "transform",
             }}
@@ -257,7 +265,7 @@ const Portfolio: React.FC<PortfolioProps> = ({ theme }) => {
             <div
               style={{
                 width: "100%",
-                height: "200px",
+                height: "100%",
                 overflow: "hidden",
                 position: "relative",
               }}
@@ -273,23 +281,33 @@ const Portfolio: React.FC<PortfolioProps> = ({ theme }) => {
                   willChange: "transform", // Optimize for transform animations
                 }}
               />
-            </div>
-
-            {}
-            <div
-              style={{
-                padding: "15px",
-                position: "relative",
-                height: isDesktop ? "85px" : "auto",
-                overflow: "hidden",
-              }}
-            >
-              {}
               <div
+                className="project-card-overlay"
                 style={{
+                  position: "absolute",
+                  inset: 0,
+                  pointerEvents: "none",
+                }}
+              />
+              <div
+                className="project-card-meta-panel"
+                style={{
+                  position: "absolute",
+                  left: "14px",
+                  right: "14px",
+                  bottom: "14px",
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: "0px",
+                  zIndex: 1,
+                }}
+              >
+                <div
+                  className="project-card-meta-row"
+                  style={{
                   display: "flex",
                   justifyContent: "space-between",
-                  alignItems: "flex-start",
+                  alignItems: "flex-end",
                   gap: "10px",
                 }}
               >
@@ -298,8 +316,9 @@ const Portfolio: React.FC<PortfolioProps> = ({ theme }) => {
                     style={{
                       margin: "0 0 5px 0",
                       fontFamily: "monospace",
-                      color: currentTheme["--color-accent-primary"],
+                      color: "rgba(255, 255, 255, 0.98)",
                       textAlign: "left",
+                      textShadow: "0 2px 10px rgba(0, 0, 0, 0.45)",
                     }}
                   >
                     {project.name}
@@ -319,8 +338,8 @@ const Portfolio: React.FC<PortfolioProps> = ({ theme }) => {
                         style={{
                           fontFamily: "monospace",
                           fontSize: "12px",
-                          color: currentTheme["--color-text"],
-                          opacity: 0.8,
+                          color: "rgba(255, 255, 255, 0.84)",
+                          textShadow: "0 1px 6px rgba(0, 0, 0, 0.35)",
                         }}
                       >
                         {lang}
@@ -337,19 +356,37 @@ const Portfolio: React.FC<PortfolioProps> = ({ theme }) => {
                     minWidth: "36px",
                     height: "36px",
                     borderRadius: "50%",
-                    background: currentTheme["--button-bg"],
+                    background: "rgba(0, 0, 0, 0.34)",
+                    border: "1px solid rgba(255, 255, 255, 0.22)",
+                    backdropFilter: "blur(4px)",
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
                     fontSize: "20px",
-                    color: currentTheme["--button-text"],
+                    color: "rgba(255, 255, 255, 0.95)",
                     opacity: 1,
                     transform: "none",
-                    transition: "background 0.3s ease",
+                    transition: "background 0.3s ease, border-color 0.3s ease",
                   }}
                 >
                   →
                 </div>
+              </div>
+                <p
+                  className="project-card-hover-description"
+                  style={{
+                    margin: 0,
+                    maxWidth: "calc(100% - 46px)",
+                    fontFamily: "monospace",
+                    fontSize: "12px",
+                    lineHeight: 1.4,
+                    color: "rgba(255, 255, 255, 0.88)",
+                    textShadow: "0 1px 6px rgba(0, 0, 0, 0.35)",
+                    textAlign: "left",
+                  }}
+                >
+                  {getShortCardDescription(project.description)}
+                </p>
               </div>
             </div>
           </div>

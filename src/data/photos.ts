@@ -3,6 +3,7 @@ export interface Photo {
   title: string
   image: string
   description: string
+  previewPdf?: string
   categories: string[]
 }
 
@@ -85,6 +86,7 @@ const photos: Photo[] = [
     title: "Echoes of Earth",
     image: "/images/Echoes.png",
     description: "Australia Travel Memoir | Link: ximingluo.com/echoes.pdf",
+    previewPdf: "https://ximingluo.com/echoes.pdf",
     categories: ["photos"],
   },
   {

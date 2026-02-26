@@ -487,7 +487,7 @@ const Home: React.FC<HomeProps> = ({
               display: "flex",
               flexDirection: isMobile ? "column" : "row",
               gap: isMobile ? 16 : 24,
-              transform: `translateY(${isMobile ? "-23vh" : "-24vh"})`,
+              transform: `translateY(${isMobile ? "-21vh" : "-24vh"})`,
               alignItems: "center",
               pointerEvents: isFlowerRevealed ? "auto" : "none",
             }}
@@ -696,7 +696,7 @@ const Home: React.FC<HomeProps> = ({
               </a>) and Economics.
             </p>
             <p style={{ marginBottom: isMobile ? 0 : 20 }}>
-              I have experience in iOS, graphics, fullstack, XR, and AI/ML. I was a summer analyst at{" "}
+              I have experience in iOS, graphics, fullstack, XR, and AI/ML. Previously, I did software at{" "}
               <a
                 href="https://www.apollo.com/"
                 target="_blank"

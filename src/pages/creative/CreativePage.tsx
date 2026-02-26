@@ -21,6 +21,7 @@ interface ModalProps {
 
 const PhotoModal = React.memo<ModalProps>(({ photo, onClose, theme }) => {
   if (!photo) return null;
+  const isPdfPreview = Boolean(photo.previewPdf);
   const colors = CONTENT_THEME_TOKENS[theme];
 
   return (
@@ -41,10 +42,8 @@ const PhotoModal = React.memo<ModalProps>(({ photo, onClose, theme }) => {
         style={{
           position: "relative",
           width: "100%",
-          maxWidth: 640,
+          maxWidth: isPdfPreview ? 640 : 960,
           maxHeight: "90vh",
-          display: "flex",
-          flexDirection: "column",
           overflow: "hidden",
           borderRadius: 12,
           background:
@@ -56,38 +55,81 @@ const PhotoModal = React.memo<ModalProps>(({ photo, onClose, theme }) => {
         }}
         onClick={(e) => e.stopPropagation()}
       >
-        {}
-        <OptimizedImage
-          src={photo.image || "/placeholder.svg"}
-          alt={photo.title}
-          priority
-          style={{
-            width: "100%",
-            height: "auto",
-            maxHeight: "65vh",
-            objectFit: "contain",
-          }}
-        />
-
-        {}
         <div
           style={{
-            flexShrink: 0,
-            padding: 16,
-            overflowY: "auto",
-            color: colors["--color-text"],
-            fontFamily: "monospace",
+            position: "relative",
+            width: "100%",
+            background: "rgba(0,0,0,0.55)",
           }}
         >
-          <h2
+          {isPdfPreview ? (
+            <iframe
+              src={photo.previewPdf}
+              title={`${photo.title} PDF preview`}
+              style={{
+                width: "100%",
+                height: "min(78vh, 860px)",
+                border: "none",
+                display: "block",
+                background: "#0f0f10",
+              }}
+            />
+          ) : (
+            <OptimizedImage
+              src={photo.image || "/placeholder.svg"}
+              alt={photo.title}
+              priority
+              style={{
+                width: "100%",
+                height: "auto",
+                maxHeight: "82vh",
+                objectFit: "contain",
+                display: "block",
+              }}
+            />
+          )}
+
+          <div
             style={{
-              margin: "0 0 8px",
-              color: colors["--color-accent-primary"],
+              position: "absolute",
+              left: 0,
+              right: 0,
+              bottom: 0,
+              zIndex: 1,
+              pointerEvents: "none",
+              padding: "12px 16px 16px",
+              background:
+                "linear-gradient(to top, rgba(0,0,0,0.88) 0%, rgba(0,0,0,0.72) 54%, rgba(0,0,0,0.2) 88%, rgba(0,0,0,0) 100%)",
+              color: "rgba(255,255,255,0.96)",
+              fontFamily: "monospace",
+              textAlign: "left",
             }}
           >
-            {photo.title}
-          </h2>
-          <p style={{ margin: 0, lineHeight: 1.5 }}>{photo.description}</p>
+            <h2
+              style={{
+                margin: "0 0 8px 0",
+                fontSize: 20,
+                lineHeight: 1.15,
+                color: "rgba(255,255,255,0.98)",
+                textShadow: "0 2px 10px rgba(0,0,0,0.45)",
+              }}
+            >
+              {photo.title}
+            </h2>
+            <p
+              style={{
+                margin: 0,
+                fontSize: 13,
+                lineHeight: 1.45,
+                color: "rgba(255,255,255,0.9)",
+                textShadow: "0 1px 6px rgba(0,0,0,0.35)",
+                whiteSpace: "normal",
+                wordBreak: "break-word",
+              }}
+            >
+              {photo.description}
+            </p>
+          </div>
         </div>
 
         {}
@@ -99,12 +141,13 @@ const PhotoModal = React.memo<ModalProps>(({ photo, onClose, theme }) => {
             right: 12,
             width: 32,
             height: 32,
-            border: "none",
+            border: `1px solid ${colors["--border-color"]}`,
             borderRadius: "50%",
-            background: "rgba(0,0,0,0.55)",
-            color: "#fff",
+            background: colors["--button-bg"],
+            color: colors["--button-text"],
             fontSize: 18,
             cursor: "pointer",
+            boxShadow: "0 4px 16px rgba(0,0,0,0.28)",
           }}
           aria-label="close modal"
         >
@@ -193,6 +236,10 @@ interface ListProps {
   onPhotoClick: (p: typeof photos[number]) => void;
 }
 
+function getPhotoMedium(description: string) {
+  return description.split("|")[0]?.trim() || description;
+}
+
 const AspectImage: React.FC<{ photo: typeof photos[number] }> = ({ photo }) => (
   <div
     style={{
@@ -212,48 +259,69 @@ const AspectImage: React.FC<{ photo: typeof photos[number] }> = ({ photo }) => (
         height: "100%",
         objectFit: "cover",
         display: "block",
+        transition: "transform 0.28s ease",
+        willChange: "transform",
       }}
     />
   </div>
 );
 
-const TitleOverlay: React.FC<{ title: string; heightPct: number; isVisible?: boolean }> = ({
-  title,
-  heightPct,
-  isVisible = true,
-}) => (
-  <div
-    style={{
-      position: "absolute",
-      bottom: 0,
-      left: 0,
-      right: 0,
-      height: `${heightPct}%`,
-      backgroundColor: "rgba(0,0,0,0.6)",
-      backdropFilter: "blur(2px)",
-      display: "flex",
-      flexDirection: "column",
-      justifyContent: "center",
-      padding: "0 15px",
-      opacity: isVisible ? 1 : 0,
-      transform: isVisible ? "translateY(0)" : "translateY(12px)",
-      transition: "opacity 0.2s ease, transform 0.2s ease",
-      pointerEvents: "none",
-    }}
-  >
-    <h3
+const ArtworkCardOverlay: React.FC<{ photo: (typeof photos)[number] }> = ({ photo }) => (
+  <>
+    <div
+      className="artwork-card-overlay"
       style={{
-        margin: 0,
-        fontSize: 12,
-        color: "#fff",
-        whiteSpace: "nowrap",
-        overflow: "hidden",
-        textOverflow: "ellipsis",
+        position: "absolute",
+        inset: 0,
+        pointerEvents: "none",
+      }}
+    />
+    <div
+      style={{
+        position: "absolute",
+        left: "14px",
+        right: "14px",
+        bottom: "14px",
+        zIndex: 1,
+        display: "flex",
+        flexDirection: "column",
+        gap: "5px",
+        pointerEvents: "none",
       }}
     >
-      {title}
-    </h3>
-  </div>
+      <h3
+        style={{
+          margin: 0,
+          fontFamily: "monospace",
+          fontSize: 14,
+          color: "rgba(255, 255, 255, 0.98)",
+          textAlign: "left",
+          textShadow: "0 2px 10px rgba(0, 0, 0, 0.45)",
+          whiteSpace: "nowrap",
+          overflow: "hidden",
+          textOverflow: "ellipsis",
+        }}
+      >
+        {photo.title}
+      </h3>
+      <p
+        style={{
+          margin: 0,
+          fontFamily: "monospace",
+          fontSize: 12,
+          lineHeight: 1.35,
+          color: "rgba(255, 255, 255, 0.84)",
+          textAlign: "left",
+          textShadow: "0 1px 6px rgba(0, 0, 0, 0.35)",
+          whiteSpace: "nowrap",
+          overflow: "hidden",
+          textOverflow: "ellipsis",
+        }}
+      >
+        {getPhotoMedium(photo.description)}
+      </p>
+    </div>
+  </>
 );
 
 const MobileList: React.FC<ListProps> = ({ photos, theme, onPhotoClick }) => (
@@ -271,6 +339,7 @@ const MobileList: React.FC<ListProps> = ({ photos, theme, onPhotoClick }) => (
       <div
         key={photo.id}
         onClick={() => onPhotoClick(photo)}
+        className="artwork-card"
         style={{
           width: "100%",
           borderRadius: 12,
@@ -282,8 +351,10 @@ const MobileList: React.FC<ListProps> = ({ photos, theme, onPhotoClick }) => (
           position: "relative",
         }}
       >
-        <AspectImage photo={photo} />
-        <TitleOverlay title={photo.title} heightPct={15} />
+        <div className="artwork-card-image">
+          <AspectImage photo={photo} />
+        </div>
+        <ArtworkCardOverlay photo={photo} />
       </div>
     ))}
   </div>
@@ -294,29 +365,28 @@ const GridCard: React.FC<{ photo: (typeof photos)[number]; theme: ThemeType; onP
   theme,
   onPhotoClick,
 }) => {
-  const [isHovered, setIsHovered] = useState(false);
   const background = theme === "bunny" ? "rgba(121,85,189,0.1)" : "rgba(8,34,163,0.1)";
 
   return (
     <div
       onClick={() => onPhotoClick(photo)}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
+      className="artwork-card"
       style={{
         borderRadius: 12,
         overflow: "hidden",
         backgroundColor: background,
         cursor: "pointer",
-        boxShadow: isHovered ? "0 8px 24px rgba(0,0,0,0.2)" : "0 4px 20px rgba(0,0,0,0.1)",
+        boxShadow: "0 4px 20px rgba(0,0,0,0.1)",
         position: "relative",
-        transform: isHovered ? "scale(1.04)" : "scale(1)",
         transformOrigin: "center",
-        transition: "transform 0.2s ease, box-shadow 0.2s ease",
+        transition: "transform 0.28s ease, box-shadow 0.28s ease",
         willChange: "transform",
       }}
     >
-      <AspectImage photo={photo} />
-      <TitleOverlay title={photo.title} heightPct={20} isVisible={isHovered} />
+      <div className="artwork-card-image">
+        <AspectImage photo={photo} />
+      </div>
+      <ArtworkCardOverlay photo={photo} />
     </div>
   );
 };

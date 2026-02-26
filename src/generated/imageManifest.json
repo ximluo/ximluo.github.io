@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-26T06:23:45.708Z",
+  "generatedAt": "2026-02-26T06:45:40.490Z",
   "widths": [
     320,
     640,
@@ -1120,6 +1120,108 @@
         {
           "src": "/optimized/images/petsteps-1612w.webp",
           "w": 1612,
+          "type": "image/webp"
+        }
+      ],
+      "poster": null,
+      "animated": null,
+      "animatedDetail": null
+    },
+    "/images/petsteps1.png": {
+      "width": 2778,
+      "height": 1566,
+      "variants": [
+        {
+          "src": "/optimized/images/petsteps1-320w.webp",
+          "w": 320,
+          "type": "image/webp"
+        },
+        {
+          "src": "/optimized/images/petsteps1-640w.webp",
+          "w": 640,
+          "type": "image/webp"
+        },
+        {
+          "src": "/optimized/images/petsteps1-960w.webp",
+          "w": 960,
+          "type": "image/webp"
+        },
+        {
+          "src": "/optimized/images/petsteps1-1280w.webp",
+          "w": 1280,
+          "type": "image/webp"
+        },
+        {
+          "src": "/optimized/images/petsteps1-2778w.webp",
+          "w": 2778,
+          "type": "image/webp"
+        }
+      ],
+      "poster": null,
+      "animated": null,
+      "animatedDetail": null
+    },
+    "/images/petsteps2.png": {
+      "width": 2784,
+      "height": 1570,
+      "variants": [
+        {
+          "src": "/optimized/images/petsteps2-320w.webp",
+          "w": 320,
+          "type": "image/webp"
+        },
+        {
+          "src": "/optimized/images/petsteps2-640w.webp",
+          "w": 640,
+          "type": "image/webp"
+        },
+        {
+          "src": "/optimized/images/petsteps2-960w.webp",
+          "w": 960,
+          "type": "image/webp"
+        },
+        {
+          "src": "/optimized/images/petsteps2-1280w.webp",
+          "w": 1280,
+          "type": "image/webp"
+        },
+        {
+          "src": "/optimized/images/petsteps2-2784w.webp",
+          "w": 2784,
+          "type": "image/webp"
+        }
+      ],
+      "poster": null,
+      "animated": null,
+      "animatedDetail": null
+    },
+    "/images/petsteps3.png": {
+      "width": 2792,
+      "height": 1572,
+      "variants": [
+        {
+          "src": "/optimized/images/petsteps3-320w.webp",
+          "w": 320,
+          "type": "image/webp"
+        },
+        {
+          "src": "/optimized/images/petsteps3-640w.webp",
+          "w": 640,
+          "type": "image/webp"
+        },
+        {
+          "src": "/optimized/images/petsteps3-960w.webp",
+          "w": 960,
+          "type": "image/webp"
+        },
+        {
+          "src": "/optimized/images/petsteps3-1280w.webp",
+          "w": 1280,
+          "type": "image/webp"
+        },
+        {
+          "src": "/optimized/images/petsteps3-2792w.webp",
+          "w": 2792,
           "type": "image/webp"
         }
       ],
