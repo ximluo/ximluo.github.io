@@ -1,2 +1,0 @@
-.portfolio-container{scrollbar-color:var(--portfolio-scrollbar-thumb) #0000;scrollbar-width:thin}.portfolio-container::-webkit-scrollbar{width:8px}.portfolio-container::-webkit-scrollbar-track{background:#0000}.portfolio-container::-webkit-scrollbar-thumb{background-color:var(--portfolio-scrollbar-thumb);border-radius:4px}@media (min-width:1025px){.project-card:hover{transform:scale(1.05) translateZ(0);z-index:2}.project-card:hover img{transform:scale(1.08) translateZ(0)}}
-/*# sourceMappingURL=313.f84d0f5d.chunk.css.map*/

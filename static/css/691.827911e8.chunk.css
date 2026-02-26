@@ -1,2 +1,0 @@
-.creative-container{scrollbar-color:var(--creative-scrollbar-thumb) #0000;scrollbar-width:thin}.creative-container::-webkit-scrollbar{width:8px}.creative-container::-webkit-scrollbar-track{background:#0000}.creative-container::-webkit-scrollbar-thumb{background:var(--creative-scrollbar-thumb);border-radius:4px}.photo-grid{grid-gap:20px;display:grid;gap:20px;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));width:100%}
-/*# sourceMappingURL=691.827911e8.chunk.css.map*/
