@@ -12,15 +12,25 @@ interface PortfolioProps {
   theme: ThemeType
 }
 
+const PROGRESSIVE_GIF_THUMBNAIL_PROJECT_IDS = new Set(["penn-capsule", "mini-minecraft"])
+
+function isGifAsset(source: string) {
+  return /\.gif(?:$|[?#])/i.test(source)
+}
+
 // Lazy Image Component with intersection observer
 const LazyImage: React.FC<{
+  projectId?: string
   src: string
   alt: string
   style: React.CSSProperties
-}> = ({ src, alt, style }) => {
+}> = ({ projectId, src, alt, style }) => {
   const [isLoaded, setIsLoaded] = useState(false)
   const [isInView, setIsInView] = useState(false)
+  const [shouldAnimateGif, setShouldAnimateGif] = useState(false)
   const [imgRef, setImgRef] = useState<HTMLDivElement | null>(null)
+  const canAnimateGifThumbnail =
+    Boolean(projectId && PROGRESSIVE_GIF_THUMBNAIL_PROJECT_IDS.has(projectId)) && isGifAsset(src)
 
   useEffect(() => {
     if (!imgRef) return
@@ -42,8 +52,25 @@ const LazyImage: React.FC<{
     return () => observer.disconnect()
   }, [imgRef])
 
+  useEffect(() => {
+    if (!isInView || !canAnimateGifThumbnail || shouldAnimateGif) return
+
+    // Delay the animated GIF swap slightly so the poster paints first and the grid remains responsive.
+    const timeoutId = window.setTimeout(() => {
+      setShouldAnimateGif(true)
+    }, 180)
+
+    return () => window.clearTimeout(timeoutId)
+  }, [canAnimateGifThumbnail, isInView, shouldAnimateGif])
+
   return (
-    <div ref={setImgRef} style={style}>
+    <div
+      ref={setImgRef}
+      style={style}
+      onPointerEnter={() => {
+        if (canAnimateGifThumbnail) setShouldAnimateGif(true)
+      }}
+    >
       {isInView && (
         <>
           {}
@@ -70,9 +97,9 @@ const LazyImage: React.FC<{
           <OptimizedImage
             src={src}
             alt={alt}
-            preferPosterForGif
+            preferPosterForGif={!(canAnimateGifThumbnail && shouldAnimateGif)}
             sizes="(max-width: 960px) 100vw, 460px"
-            fetchPriority="low"
+            fetchPriority={canAnimateGifThumbnail && shouldAnimateGif ? "auto" : "low"}
             onLoad={() => setIsLoaded(true)}
             style={{
               ...style,
@@ -235,6 +262,7 @@ const Portfolio: React.FC<PortfolioProps> = ({ theme }) => {
               }}
             >
               <LazyImage
+                projectId={project.id}
                 src={project.image || "/placeholder.svg"}
                 alt={project.name}
                 style={{

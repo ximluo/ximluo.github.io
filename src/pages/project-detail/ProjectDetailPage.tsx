@@ -2,7 +2,7 @@
 
 "use client";
 
-import React, { JSX } from "react";
+import React, { JSX, useEffect, useRef, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import "./ProjectDetail.css";
 import projects from "../../data/projects";
@@ -12,6 +12,49 @@ import OptimizedImage from "../../components/ui/OptimizedImage";
 
 interface ProjectDetailProps {
   theme: ThemeType;
+}
+
+const DETAIL_IMAGE_SIZES = "(max-width: 840px) calc(100vw - 40px), 800px";
+const DETAIL_EMBED_MAX_WIDTH = "600px";
+const GIF_LOAD_AHEAD_MARGIN = "420px 0px";
+const VIDEO_EMBED_LOAD_AHEAD_MARGIN = "520px 0px";
+const PDF_EMBED_LOAD_AHEAD_MARGIN = "800px 0px";
+const preconnectedEmbedOrigins = new Set<string>();
+
+function isPdfSource(source: string) {
+  return /\.pdf(?:$|[?#])/i.test(source);
+}
+
+function isGifSource(source: string) {
+  return /\.gif(?:$|[?#])/i.test(source);
+}
+
+function preconnectToEmbedOrigin(source: string) {
+  if (typeof window === "undefined" || typeof document === "undefined") return;
+
+  let url: URL;
+  try {
+    url = new URL(source, window.location.href);
+  } catch {
+    return;
+  }
+
+  if (url.origin === window.location.origin || preconnectedEmbedOrigins.has(url.origin)) {
+    return;
+  }
+
+  preconnectedEmbedOrigins.add(url.origin);
+
+  const dnsPrefetch = document.createElement("link");
+  dnsPrefetch.rel = "dns-prefetch";
+  dnsPrefetch.href = url.origin;
+  document.head.appendChild(dnsPrefetch);
+
+  const preconnect = document.createElement("link");
+  preconnect.rel = "preconnect";
+  preconnect.href = url.origin;
+  preconnect.crossOrigin = "";
+  document.head.appendChild(preconnect);
 }
 
 // Helper to turn Markdown-style [label](url) and raw URLs into <a> tags
@@ -58,6 +101,177 @@ function parseTextWithLinks(text: string) {
 
   return elements;
 }
+
+interface DeferredEmbedProps {
+  src: string;
+  title: string;
+  theme: ThemeType;
+}
+
+interface ProgressiveDetailImageProps {
+  src: string;
+  alt: string;
+  sizes: string;
+  style: React.CSSProperties;
+  priority?: boolean;
+}
+
+const ProgressiveDetailImage: React.FC<ProgressiveDetailImageProps> = ({
+  src,
+  alt,
+  sizes,
+  style,
+  priority = false,
+}) => {
+  const isGif = isGifSource(src);
+  const [shouldAnimateGif, setShouldAnimateGif] = useState(!isGif);
+  const wrapperRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    if (!isGif || shouldAnimateGif) return;
+
+    const node = wrapperRef.current;
+    if (!node) return;
+
+    if (typeof IntersectionObserver === "undefined") {
+      setShouldAnimateGif(true);
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((entry) => entry.isIntersecting)) {
+          setShouldAnimateGif(true);
+          observer.disconnect();
+        }
+      },
+      { rootMargin: GIF_LOAD_AHEAD_MARGIN }
+    );
+
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, [isGif, shouldAnimateGif]);
+
+  return (
+    <div ref={wrapperRef} style={{ width: "100%", height: "100%" }}>
+      <OptimizedImage
+        src={src}
+        alt={alt}
+        priority={priority}
+        preferPosterForGif={isGif && !shouldAnimateGif}
+        sizes={sizes}
+        style={style}
+      />
+    </div>
+  );
+};
+
+const DeferredEmbed: React.FC<DeferredEmbedProps> = ({ src, title, theme }) => {
+  const [shouldLoadEmbed, setShouldLoadEmbed] = useState(false);
+  const containerRef = useRef<HTMLDivElement | null>(null);
+  const isPdf = isPdfSource(src);
+  const themeTokens = CONTENT_THEME_TOKENS[theme];
+
+  useEffect(() => {
+    preconnectToEmbedOrigin(src);
+  }, [src]);
+
+  useEffect(() => {
+    if (shouldLoadEmbed) return;
+
+    const node = containerRef.current;
+    if (!node) return;
+
+    if (typeof IntersectionObserver === "undefined") {
+      setShouldLoadEmbed(true);
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((entry) => entry.isIntersecting)) {
+          setShouldLoadEmbed(true);
+          observer.disconnect();
+        }
+      },
+      {
+        rootMargin: isPdf ? PDF_EMBED_LOAD_AHEAD_MARGIN : VIDEO_EMBED_LOAD_AHEAD_MARGIN,
+      }
+    );
+
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, [isPdf, shouldLoadEmbed]);
+
+  return (
+    <div
+      ref={containerRef}
+      style={{
+        position: "relative",
+        width: "100%",
+        maxWidth: DETAIL_EMBED_MAX_WIDTH,
+        margin: "30px auto",
+        aspectRatio: isPdf ? "4 / 3" : "16 / 9",
+        borderRadius: "8px",
+        overflow: "hidden",
+        backgroundColor:
+          theme === "bunny" ? "rgba(121, 85, 189, 0.08)" : "rgba(8, 34, 163, 0.08)",
+        border: `1px solid ${themeTokens["--border-color"]}`,
+        contentVisibility: "auto",
+        containIntrinsicSize: isPdf ? "480px" : "338px",
+      }}
+    >
+      {shouldLoadEmbed ? (
+        <iframe
+          width="100%"
+          height="100%"
+          src={src}
+          loading="eager"
+          title={title}
+          frameBorder={0}
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+          referrerPolicy="strict-origin-when-cross-origin"
+          allowFullScreen
+          style={{ border: "none" }}
+        />
+      ) : (
+        <>
+          <div
+            aria-hidden="true"
+            style={{
+              width: "100%",
+              height: "100%",
+              background:
+                theme === "bunny"
+                  ? "linear-gradient(120deg, rgba(121, 85, 189, 0.06), rgba(121, 85, 189, 0.14), rgba(121, 85, 189, 0.06))"
+                  : "linear-gradient(120deg, rgba(8, 34, 163, 0.05), rgba(8, 34, 163, 0.12), rgba(8, 34, 163, 0.05))",
+            }}
+          />
+          <a
+            href={src}
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{
+              position: "absolute",
+              right: "12px",
+              bottom: "12px",
+              padding: "6px 10px",
+              backgroundColor: themeTokens["--button-bg-light"],
+              color: themeTokens["--color-text"],
+              borderRadius: "16px",
+              textDecoration: "none",
+              fontFamily: "monospace",
+              fontSize: "12px",
+              border: `1px solid ${themeTokens["--border-color"]}`,
+            }}
+          >
+            {isPdf ? "Open PDF" : "Open"}
+          </a>
+        </>
+      )}
+    </div>
+  );
+};
 
 const ProjectDetail: React.FC<ProjectDetailProps> = ({ theme }) => {
   const { projectId } = useParams<{ projectId: string }>();
@@ -111,28 +325,12 @@ const ProjectDetail: React.FC<ProjectDetailProps> = ({ theme }) => {
 
     if (section.video) {
       return (
-        <div
+        <DeferredEmbed
           key={`vid-${idx}`}
-          style={{
-            width: "100%",
-            maxWidth: "600px",
-            margin: "30px auto",
-            aspectRatio: "16/9",
-          }}
-        >
-          <iframe
-            width="100%"
-            height="100%"
-            src={section.video}
-            loading="lazy"
-            title={`${project.name} demo video`}
-            frameBorder={0}
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-            referrerPolicy="strict-origin-when-cross-origin"
-            allowFullScreen
-            style={{ borderRadius: "8px" }}
-          />
-        </div>
+          src={section.video}
+          title={`${project.name} ${isPdfSource(section.video) ? "PDF preview" : "demo video"}`}
+          theme={theme}
+        />
       );
     }
 
@@ -146,11 +344,14 @@ const ProjectDetail: React.FC<ProjectDetailProps> = ({ theme }) => {
             borderRadius: "12px",
             overflow: "hidden",
             margin: "30px 0",
+            contentVisibility: "auto",
+            containIntrinsicSize: "360px",
           }}
         >
-          <OptimizedImage
+          <ProgressiveDetailImage
             src={section.image}
             alt={`${project.name} screenshot ${idx + 1}`}
+            sizes={DETAIL_IMAGE_SIZES}
             style={{ width: "100%", height: "100%", objectFit: "cover" }}
           />
         </div>
@@ -223,9 +424,10 @@ const ProjectDetail: React.FC<ProjectDetailProps> = ({ theme }) => {
               marginBottom: "30px",
             }}
           >
-            <OptimizedImage
+            <ProgressiveDetailImage
               src={project.image}
               alt={`${project.name} hero`}
+              sizes={DETAIL_IMAGE_SIZES}
               style={{ width: "100%", height: "100%", objectFit: "cover" }}
             />
           </div>
