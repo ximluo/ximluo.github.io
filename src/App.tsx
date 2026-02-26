@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { useLocation, useNavigate, Link } from "react-router-dom"
 import "./App.css"
 import "./components/gradientAnimation.css"
@@ -14,6 +14,7 @@ import {
 } from "./pages/home/home.events"
 
 const themes = APP_THEME_TOKENS
+const GA_MEASUREMENT_ID = "G-1QHSNH5G8L"
 
 const SCRAMBLE_SETS_BY_THEME: Record<ThemeType, { top: ScrambleSet; bottom: ScrambleSet }> = {
   bunny: { top: "code", bottom: "japanese" },
@@ -114,6 +115,7 @@ function App() {
   const [theme, setTheme] = useState<ThemeType>("water")
   const location = useLocation()
   const navigate = useNavigate()
+  const hasTrackedInitialPageRef = useRef(false)
   const [navSuppressed, setNavSuppressed] = useState(false)
   const { width: viewportWidth } = useViewportSize({
     width: typeof window !== "undefined" ? window.innerWidth : 0,
@@ -207,6 +209,26 @@ function App() {
       setNavSuppressed(false)
     }
   }, [])
+
+  useEffect(() => {
+    if (!hasTrackedInitialPageRef.current) {
+      hasTrackedInitialPageRef.current = true
+      return
+    }
+
+    if (typeof window === "undefined") return
+
+    const gtag = (window as Window & { gtag?: (...args: unknown[]) => void }).gtag
+    if (typeof gtag !== "function") return
+
+    const pagePath = `${location.pathname}${location.search}${location.hash}`
+
+    gtag("config", GA_MEASUREMENT_ID, {
+      page_path: pagePath,
+      page_title: document.title,
+      page_location: window.location.href,
+    })
+  }, [location.hash, location.pathname, location.search])
 
   return (
     <>

@@ -1,5 +1,6 @@
 import type React from "react"
 import AsciiImage from "../../components/AsciiImage"
+import { trackExternalLinkClick } from "../../utils/analytics"
 import type { ThemeType } from "../../theme/tokens"
 
 export interface BubblePalette {
@@ -270,7 +271,14 @@ export function HomeIntroPanel({
           <a
             className="home-email-link"
             href="mailto:ximluo@upenn.edu"
-            onClick={(event) => event.stopPropagation()}
+            onClick={(event) => {
+              event.stopPropagation()
+              trackExternalLinkClick({
+                linkId: "email",
+                href: "mailto:ximluo@upenn.edu",
+                uiRegion: "home_bio",
+              })
+            }}
           >
             ximluo@upenn.edu
           </a>

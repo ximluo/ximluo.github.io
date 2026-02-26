@@ -6,6 +6,7 @@ import projects from "../../data/projects"
 import useIntersectionOnce from "../../hooks/useIntersectionOnce"
 import useMediaQuery from "../../hooks/useMediaQuery"
 import { CONTENT_THEME_TOKENS, THEME_VISUAL_TOKENS, type ThemeType } from "../../theme/tokens"
+import { trackProjectCardClick } from "../../utils/analytics"
 import "./Portfolio.css"
 
 interface PortfolioProps {
@@ -122,10 +123,15 @@ const Portfolio: React.FC<PortfolioProps> = ({ theme }) => {
   }, [])
 
   const handleProjectClick = useCallback(
-    (projectId: string) => {
+    (projectId: string, projectName: string) => {
+      trackProjectCardClick({
+        projectId,
+        projectName,
+        uiRegion: activeFilter ? `portfolio_grid_filtered_${activeFilter}` : "portfolio_grid",
+      })
       navigate(`/portfolio/${projectId}`)
     },
-    [navigate],
+    [activeFilter, navigate],
   )
 
   const currentTheme = CONTENT_THEME_TOKENS[theme]
@@ -173,7 +179,7 @@ const Portfolio: React.FC<PortfolioProps> = ({ theme }) => {
         {filteredProjects.map((project) => (
           <div
             key={project.id}
-            onClick={() => handleProjectClick(project.id)}
+            onClick={() => handleProjectClick(project.id, project.name)}
             className="project-card"
             style={{ height: isDesktop ? "290px" : "240px" }}
           >

@@ -3,6 +3,7 @@ import { lazy, Suspense, useEffect, useState } from "react"
 import { Github, Mail, Linkedin } from "lucide-react"
 import { FOOTER_THEME_TOKENS, THEME_VISUAL_TOKENS, type ThemeType } from "../theme/tokens"
 import useIsMobile from "../hooks/useIsMobile"
+import { trackBunnyModalOpen, trackExternalLinkClick } from "../utils/analytics"
 import "./Footer.css"
 
 const BunnyModal = lazy(() => import("../features/bunny"))
@@ -87,6 +88,7 @@ const Footer: React.FC<FooterProps> = ({ theme }) => {
       onTouchStart={prefetchBunnyFeature}
       onClick={() => {
         prefetchBunnyFeature()
+        trackBunnyModalOpen("footer_bunny_button")
         setShowBunny(true)
       }}
       className="footer-icon-button footer-icon-button--bunny"
@@ -130,6 +132,13 @@ const Footer: React.FC<FooterProps> = ({ theme }) => {
               className="footer-icon-button"
               target={item.external ? "_blank" : undefined}
               rel={item.external ? "noopener noreferrer" : undefined}
+              onClick={() => {
+                trackExternalLinkClick({
+                  linkId: item.id,
+                  href: item.href,
+                  uiRegion: "footer_icons",
+                })
+              }}
             >
               <Icon size={iconSize} />
             </a>
@@ -146,6 +155,13 @@ const Footer: React.FC<FooterProps> = ({ theme }) => {
           target="_blank"
           rel="noopener noreferrer"
           className="footer-made-link"
+          onClick={() => {
+            trackExternalLinkClick({
+              linkId: "site_source_repo",
+              href: "https://github.com/ximluo/ximluo.github.io",
+              uiRegion: "footer_copyright",
+            })
+          }}
         >
           Made with ♥
         </a>
