@@ -113,6 +113,7 @@ export const GradientRightEdgeOverlay = ({
 }: GradientRightEdgeOverlayProps) => {
   const isPortfolioOrCreativePage =
     pathname.startsWith("/portfolio") || pathname.startsWith("/creative")
+  const isHomePage = pathname === "/"
   const hideForNarrowViewport = isPortfolioOrCreativePage && !isLaptopViewport
   const effectiveOpacity = hideForNarrowViewport ? 0 : overlayOpacity
 
@@ -131,7 +132,7 @@ export const GradientRightEdgeOverlay = ({
         alignItems: "center",
         justifyContent: "flex-end",
         pointerEvents: "none",
-        zIndex: 5,
+        zIndex: isHomePage ? 70 : 5,
         paddingRight: 8,
         opacity: effectiveOpacity,
         transition: "opacity 200ms ease",

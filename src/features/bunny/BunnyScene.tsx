@@ -97,6 +97,7 @@ const BunnyScene: React.FC<BunnySceneProps> = ({ colors, onCarrotCollected, isMo
     scene,
     camera,
     gl,
+    isMobile,
     colors,
     setModelLoaded,
     floorSizeRef,
@@ -119,6 +120,24 @@ const BunnyScene: React.FC<BunnySceneProps> = ({ colors, onCarrotCollected, isMo
     leafMatRef,
     outlineMatRef,
   })
+
+  useEffect(() => {
+    const jumpParams = jumpParamsRef.current
+    const primMat = primMatRef.current
+    const secMat = secMatRef.current
+    const bonusMat = bonusMatRef.current
+    const leafMat = leafMatRef.current
+    const outlineMat = outlineMatRef.current
+
+    return () => {
+      gsap.killTweensOf(jumpParams)
+      primMat.dispose()
+      secMat.dispose()
+      bonusMat.dispose()
+      leafMat.dispose()
+      outlineMat.dispose()
+    }
+  }, [])
 
   const hideCarrotMarker = useCallback(() => {
     if (carrotMarkerRef.current) carrotMarkerRef.current.visible = false

@@ -54,10 +54,17 @@ const FlowerModel: React.FC<FlowerModelProps> = ({
   )
 }
 
-const FlowerScene: React.FC<{ layout: FlowerSceneLayout }> = ({
+interface FlowerSceneProps {
+  layout: FlowerSceneLayout
+  onSceneReady?: () => void
+}
+
+const FlowerScene: React.FC<FlowerSceneProps> = ({
   layout: { isMobile, windowWidth },
+  onSceneReady,
 }) => {
   const modelRef = useRef<THREE.Group | null>(null)
+  const hasReportedReadyRef = useRef(false)
   const { camera, size } = useThree()
   const sizeMultiplier = useMemo(() => {
     if (windowWidth >= 768) return 3.2
@@ -136,13 +143,20 @@ const FlowerScene: React.FC<{ layout: FlowerSceneLayout }> = ({
       const tryFrame = () => {
         attempts += 1
         const didFrame = frameCentered()
+        if (didFrame && !hasReportedReadyRef.current) {
+          hasReportedReadyRef.current = true
+          onSceneReady?.()
+        }
         if (!didFrame && attempts < 12) {
           requestAnimationFrame(tryFrame)
+        } else if (!didFrame && !hasReportedReadyRef.current) {
+          hasReportedReadyRef.current = true
+          onSceneReady?.()
         }
       }
       requestAnimationFrame(tryFrame)
     },
-    [frameCentered],
+    [frameCentered, onSceneReady],
   )
 
   useEffect(() => {

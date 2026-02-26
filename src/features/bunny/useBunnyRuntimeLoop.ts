@@ -41,6 +41,8 @@ interface BunnyRuntimeLoopOptions {
   onCollisionCheck: () => void
 }
 
+type ShaderUniformMap = Record<string, { value: unknown } | undefined>
+
 export const useBunnyRuntimeLoop = ({
   modelLoaded,
   isMobile,
@@ -78,9 +80,7 @@ export const useBunnyRuntimeLoop = ({
     if (
       !rabbitRef.current ||
       !lineRef.current ||
-      !floorRef.current ||
-      !floorSimMatRef.current ||
-      !bufferSimRef.current
+      !floorRef.current
     ) {
       return
     }
@@ -144,18 +144,20 @@ export const useBunnyRuntimeLoop = ({
     heroNewUVPosRef.current.x = 0.5 + rabbitRef.current.position.x / floorSizeRef.current
     heroNewUVPosRef.current.y = 0.5 - rabbitRef.current.position.z / floorSizeRef.current
 
-    floorSimMatRef.current.uniforms.time.value += dt
-    floorSimMatRef.current.uniforms.blade1PosNew.value = heroNewUVPosRef.current
-    floorSimMatRef.current.uniforms.blade1PosOld.value = heroOldUVPosRef.current
-    floorSimMatRef.current.uniforms.strength.value = isJumping
-      ? 0
-      : 1 / (1 + heroSpeedRef.current.length() * 10)
-
-    bufferSimRef.current.render()
-
     if (floorRef.current.material instanceof THREE.ShaderMaterial) {
-      floorRef.current.material.uniforms.tScratches = {
-        value: bufferSimRef.current.output.texture,
+      const uniforms = floorRef.current.material.uniforms as ShaderUniformMap
+      const scratchUniform = uniforms.tScratches
+
+      if (scratchUniform && floorSimMatRef.current && bufferSimRef.current) {
+        floorSimMatRef.current.uniforms.time.value += dt
+        floorSimMatRef.current.uniforms.blade1PosNew.value = heroNewUVPosRef.current
+        floorSimMatRef.current.uniforms.blade1PosOld.value = heroOldUVPosRef.current
+        floorSimMatRef.current.uniforms.strength.value = isJumping
+          ? 0
+          : 1 / (1 + heroSpeedRef.current.length() * 10)
+
+        bufferSimRef.current.render()
+        scratchUniform.value = bufferSimRef.current.output.texture
       }
     }
 

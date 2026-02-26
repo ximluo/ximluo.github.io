@@ -231,9 +231,15 @@ function App() {
         className={`fade app-viewport-frame ${phase >= 1 ? "show" : ""}`}
         style={{
           ["--app-safe-top" as string]: safeAreaTop,
+          ["--app-viewport-border-color" as string]: themes[theme]["--border-color"],
         }}
       >
-        <div className="App app-shell-frame">
+        <div
+          className="App app-shell-frame"
+          style={{
+            ["--app-shell-border-color" as string]: themes[theme]["--border-color"],
+          }}
+        >
           <GradientBackground theme={theme}>
             <div className="app-shell-column">
               {/* NAV BAR */}

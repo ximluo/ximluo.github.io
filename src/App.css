@@ -8,11 +8,26 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  position: relative;
   padding-top: var(--app-safe-top, 15px);
   padding-bottom: 15px;
   padding-left: 15px;
   padding-right: 15px;
   box-sizing: border-box;
+  isolation: isolate;
+}
+
+.app-viewport-frame::after {
+  content: "";
+  position: absolute;
+  top: var(--app-safe-top, 15px);
+  right: 15px;
+  bottom: 15px;
+  left: 15px;
+  border-radius: 12px;
+  box-shadow: 0 0 0 9999px var(--app-viewport-border-color, rgba(8, 34, 163, 1));
+  pointer-events: none;
+  z-index: 95;
 }
 
 .app-shell-frame {
@@ -21,6 +36,18 @@
   position: relative;
   border-radius: 12px;
   overflow: hidden;
+  isolation: isolate;
+}
+
+.app-shell-frame::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  border: 2px solid var(--app-shell-border-color, rgba(8, 34, 163, 1));
+  box-sizing: border-box;
+  pointer-events: none;
+  z-index: 90;
 }
 
 .app-shell-column {

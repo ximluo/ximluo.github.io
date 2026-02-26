@@ -1,11 +1,28 @@
 import type React from "react"
-import { lazy, Suspense, useState } from "react"
+import { lazy, Suspense, useEffect, useState } from "react"
 import { Github, Mail, Linkedin } from "lucide-react"
 import { FOOTER_THEME_TOKENS, THEME_VISUAL_TOKENS, type ThemeType } from "../theme/tokens"
 import useIsMobile from "../hooks/useIsMobile"
 import "./Footer.css"
 
 const BunnyModal = lazy(() => import("../features/bunny"))
+
+let bunnyPrefetchStarted = false
+
+const prefetchBunnyFeature = () => {
+  if (bunnyPrefetchStarted) return
+  bunnyPrefetchStarted = true
+
+  void import("../features/bunny")
+    .then((mod) => {
+      if ("preloadBunnyAssets" in mod && typeof mod.preloadBunnyAssets === "function") {
+        mod.preloadBunnyAssets()
+      }
+    })
+    .catch(() => {
+      bunnyPrefetchStarted = false
+    })
+}
 
 interface FooterProps {
   theme: ThemeType
@@ -52,11 +69,26 @@ const Footer: React.FC<FooterProps> = ({ theme }) => {
 
   const iconSize = isMobile ? 18 : 22
 
+  useEffect(() => {
+    if (typeof window === "undefined") return
+
+    const timeoutId = window.setTimeout(() => {
+      prefetchBunnyFeature()
+    }, 1200)
+
+    return () => window.clearTimeout(timeoutId)
+  }, [])
+
   const bunnyButton = (
     <button
       type="button"
       aria-label="Show Bunny"
-      onClick={() => setShowBunny(true)}
+      onMouseEnter={prefetchBunnyFeature}
+      onTouchStart={prefetchBunnyFeature}
+      onClick={() => {
+        prefetchBunnyFeature()
+        setShowBunny(true)
+      }}
       className="footer-icon-button footer-icon-button--bunny"
     >
       🐰

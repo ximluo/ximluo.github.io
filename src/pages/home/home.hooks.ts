@@ -9,6 +9,8 @@ import {
   useHomeScrollLock,
 } from "./home.concern.hooks"
 
+const HOME_INTRO_GREETING = "Hi, I'm Ximing!"
+
 export function useHomeViewportState() {
   const { width: windowWidth, height: windowHeight } = useViewportSize({
     width: typeof window !== "undefined" ? window.innerWidth : 0,
@@ -58,23 +60,27 @@ export function useHomeIntroSequence({
     animationRunningRef.current = true
 
     if (isNavigatingFromPage) {
-      setTypingText("Hi, I'm Ximing!")
+      setTypingText(HOME_INTRO_GREETING)
       setIsTypingComplete(true)
       return
     }
 
-    const fullText = "Hi, I'm Ximing!"
-    let index = 0
-    let lastTime = 0
+    const fullText = HOME_INTRO_GREETING
+    let lastIndex = 0
+    const startedAt = performance.now()
 
     const typeNext = (currentTime: number) => {
-      if (currentTime - lastTime >= 50) {
-        index += 1
-        setTypingText(fullText.slice(0, index))
-        lastTime = currentTime
+      const nextIndex = Math.min(
+        fullText.length,
+        Math.floor((currentTime - startedAt) / 50) + 1,
+      )
+
+      if (nextIndex !== lastIndex) {
+        lastIndex = nextIndex
+        setTypingText(fullText.slice(0, nextIndex))
       }
 
-      if (index < fullText.length) {
+      if (lastIndex < fullText.length) {
         requestAnimationFrame(typeNext)
       } else {
         setIsTypingComplete(true)
@@ -88,10 +94,26 @@ export function useHomeIntroSequence({
     if (phase < 1 || isImageLoaded) return
 
     const img = new Image()
-    img.src = "/placeholder.svg?height=400&width=400"
-    img.onload = () => setIsImageLoaded(true)
+    let didResolve = false
 
-    const failSafe = setTimeout(() => setIsImageLoaded(true), 1000)
+    const markLoaded = () => {
+      if (didResolve) return
+      didResolve = true
+      setIsImageLoaded(true)
+    }
+
+    img.decoding = "async"
+    img.onload = markLoaded
+    img.onerror = markLoaded
+    img.src = "/images/ximing.jpg"
+
+    if (typeof img.decode === "function") {
+      void img.decode().then(markLoaded).catch(() => {
+        // onload/onerror remains as fallback
+      })
+    }
+
+    const failSafe = setTimeout(markLoaded, 1200)
     return () => clearTimeout(failSafe)
   }, [phase, isImageLoaded])
 
@@ -113,6 +135,7 @@ export function useHomeIntroSequence({
     if (phase < 1 || isAnimationComplete) return
 
     const force = setTimeout(() => {
+      setTypingText(HOME_INTRO_GREETING)
       setIsTypingComplete(true)
       setIsScrambleComplete(true)
       setIsImageLoaded(true)

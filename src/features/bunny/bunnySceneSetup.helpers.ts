@@ -18,7 +18,7 @@ export interface BunnyMaterialRefs {
 }
 
 export interface BunnyScaffoldResources {
-  floorSimMat: THREE.ShaderMaterial
+  floorSimMat: THREE.ShaderMaterial | null
   lineMaterial: THREE.LineDashedMaterial
   lineGeometry: THREE.BufferGeometry
   particleGeom: THREE.BoxGeometry
@@ -26,6 +26,7 @@ export interface BunnyScaffoldResources {
 
 interface CreateBunnySceneScaffoldOptions {
   gl: THREE.WebGLRenderer
+  isMobile: boolean
   colors: BunnySceneColors
   floorSizeRef: MutableRefObject<number>
   lineRef: MutableRefObject<THREE.Line | null>
@@ -195,6 +196,7 @@ export const loadRabbitModelIntoScene = ({
 
 export const createBunnySceneScaffold = ({
   gl,
+  isMobile,
   colors,
   floorSizeRef,
   lineRef,
@@ -209,9 +211,10 @@ export const createBunnySceneScaffold = ({
   bonusMatRef,
   addToScene,
 }: CreateBunnySceneScaffoldOptions): BunnyScaffoldResources => {
-  const floorSimMat = createFloorSimulationMaterial()
-  floorSimMatRef.current = floorSimMat
-  bufferSimRef.current = new BufferSim(gl, 1024, 1024, floorSimMat)
+  const reflectorTextureSize = isMobile ? 384 : 640
+  let floorSimMat: THREE.ShaderMaterial | null = null
+  floorSimMatRef.current = null
+  bufferSimRef.current = null
 
   const lineMaterial = new THREE.LineDashedMaterial({
     color: 0x7beeff,
@@ -251,7 +254,7 @@ export const createBunnySceneScaffold = ({
 
   const directionalLight = new THREE.DirectionalLight(0xffffff, 1)
   directionalLight.position.set(1, 5, 1)
-  directionalLight.castShadow = true
+  directionalLight.castShadow = !isMobile
   directionalLight.shadow.mapSize.width = 512
   directionalLight.shadow.mapSize.height = 512
   directionalLight.shadow.camera.near = 0.5
@@ -267,13 +270,20 @@ export const createBunnySceneScaffold = ({
   const floor = addToScene(
     new Reflector(new THREE.PlaneGeometry(floorSizeRef.current, floorSizeRef.current), {
       color: new THREE.Color(colors.floor),
-      textureWidth: 1024,
-      textureHeight: 1024,
+      textureWidth: reflectorTextureSize,
+      textureHeight: reflectorTextureSize,
     }),
   )
   floor.rotation.x = -Math.PI / 2
   floor.receiveShadow = true
   floorRef.current = floor
+
+  if (floor.material instanceof THREE.ShaderMaterial && floor.material.uniforms.tScratches) {
+    const simTextureSize = isMobile ? 384 : 640
+    floorSimMat = createFloorSimulationMaterial()
+    floorSimMatRef.current = floorSimMat
+    bufferSimRef.current = new BufferSim(gl, simTextureSize, simTextureSize, floorSimMat)
+  }
 
   const carrotMarker = addToScene(
     new THREE.Mesh(

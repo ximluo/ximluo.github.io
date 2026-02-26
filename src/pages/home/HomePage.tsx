@@ -1,5 +1,5 @@
 import type React from "react"
-import { Suspense, useMemo, useState } from "react"
+import { Suspense, useEffect, useMemo, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { Canvas } from "@react-three/fiber"
 import "./Home.css"
@@ -35,6 +35,8 @@ const Home: React.FC<HomeProps> = ({
 }) => {
   const navigate = useNavigate()
   const [showAwards, setShowAwards] = useState(false)
+  const [shouldMountFlowerScene, setShouldMountFlowerScene] = useState(false)
+  const [isFlowerSceneReady, setIsFlowerSceneReady] = useState(false)
 
   const { windowWidth, windowHeight, isMobile, isSmallScreen, footerHeight, estTime } =
     useHomeViewportState()
@@ -100,6 +102,7 @@ const Home: React.FC<HomeProps> = ({
 
   const navButtonsEnabled = isFlowerRevealed
   const scrollIndicatorColor = "rgba(255, 255, 255, 0.85)"
+  const isFlowerVisible = isFlowerRevealed && isFlowerSceneReady
 
   const scrollCueOpacity = useMemo(() => {
     if (!revealThreshold) return 1
@@ -112,6 +115,16 @@ const Home: React.FC<HomeProps> = ({
     const adjustment = isMobile ? -20 : 10
     return Math.max(16, base + adjustment)
   }, [footerHeight, isMobile])
+
+  const flowerCanvasDpr: [number, number] = isMobile ? [1, 1.1] : [1, 1.35]
+
+  useEffect(() => {
+    if (shouldMountFlowerScene) return
+    if (isFlowerRevealed || isAnimationComplete) {
+      setShouldMountFlowerScene(true)
+      return
+    }
+  }, [isAnimationComplete, isFlowerRevealed, shouldMountFlowerScene])
 
   return (
     <div
@@ -150,27 +163,38 @@ const Home: React.FC<HomeProps> = ({
         className="three-wrapper"
         aria-hidden
         style={{
-          opacity: isFlowerRevealed ? 1 : 0,
-          visibility: isFlowerRevealed ? "visible" : "hidden",
+          opacity: isFlowerVisible ? 1 : 0,
+          visibility: isFlowerVisible ? "visible" : "hidden",
           transition: "opacity 0.6s ease, visibility 0.6s ease",
         }}
       >
-        <Canvas
-          className="three-canvas"
-          gl={{ alpha: true, antialias: true, preserveDrawingBuffer: false }}
-          dpr={[1, 2]}
-          camera={{ fov: 35, near: 0.1, far: 1000, position: [0, 0, 3] }}
-        >
-          <Suspense fallback={null}>
-            <FlowerScene layout={{ isMobile, isSmallScreen, windowWidth }} />
-          </Suspense>
-        </Canvas>
+        {shouldMountFlowerScene && (
+          <Canvas
+            className="three-canvas"
+            gl={{
+              alpha: true,
+              antialias: !isMobile,
+              preserveDrawingBuffer: false,
+              powerPreference: "high-performance",
+            }}
+            dpr={flowerCanvasDpr}
+            frameloop={isFlowerRevealed ? "always" : "demand"}
+            camera={{ fov: 35, near: 0.1, far: 1000, position: [0, 0, 3] }}
+          >
+            <Suspense fallback={null}>
+              <FlowerScene
+                layout={{ isMobile, isSmallScreen, windowWidth }}
+                onSceneReady={() => setIsFlowerSceneReady(true)}
+              />
+            </Suspense>
+          </Canvas>
+        )}
       </div>
 
       <HomeNavigationBubbles
-        isFlowerRevealed={isFlowerRevealed}
+        isFlowerRevealed={isFlowerVisible}
         isMobile={isMobile}
-        navButtonsEnabled={navButtonsEnabled}
+        navButtonsEnabled={navButtonsEnabled && isFlowerSceneReady}
         bubblePalette={bubblePalette}
         onOpenPortfolio={() => navigate("/portfolio")}
         onOpenCreative={() => navigate("/creative")}
@@ -187,7 +211,7 @@ const Home: React.FC<HomeProps> = ({
         isMobile={isMobile}
         imageSize={imageSize}
         contentMaxWidth={contentMaxWidth}
-        isFlowerRevealed={isFlowerRevealed}
+        isFlowerRevealed={isFlowerVisible}
         isAnimationComplete={isAnimationComplete}
         isNavigatingFromPage={isNavigatingFromPage}
         textColor={textColor}
@@ -199,7 +223,7 @@ const Home: React.FC<HomeProps> = ({
       <HomeScrollCues
         phase={phase}
         isAnimationComplete={isAnimationComplete}
-        isFlowerRevealed={isFlowerRevealed}
+        isFlowerRevealed={isFlowerVisible}
         isMobile={isMobile}
         footerHeight={footerHeight}
         scrollCueBottom={scrollCueBottom}

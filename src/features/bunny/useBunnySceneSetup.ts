@@ -10,10 +10,28 @@ import {
 } from "./bunnySceneSetup.helpers"
 import type { BunnySceneColors } from "./bunnyScene.types"
 
+const disposeObjectGeometries = (objects: THREE.Object3D[]) => {
+  const geometries = new Set<THREE.BufferGeometry>()
+
+  objects.forEach((object) => {
+    object.traverse((child) => {
+      if ((child as THREE.Mesh).isMesh || (child as THREE.Line).isLine) {
+        const geometry = (child as THREE.Mesh | THREE.Line).geometry
+        if (geometry) {
+          geometries.add(geometry)
+        }
+      }
+    })
+  })
+
+  geometries.forEach((geometry) => geometry.dispose())
+}
+
 interface BunnySceneSetupOptions extends BunnyMaterialRefs {
   scene: THREE.Scene
   camera: THREE.Camera
   gl: THREE.WebGLRenderer
+  isMobile: boolean
   colors: BunnySceneColors
   setModelLoaded: Dispatch<SetStateAction<boolean>>
   floorSizeRef: MutableRefObject<number>
@@ -36,6 +54,7 @@ export const useBunnySceneSetup = ({
   scene,
   camera,
   gl,
+  isMobile,
   colors,
   setModelLoaded,
   floorSizeRef,
@@ -74,6 +93,7 @@ export const useBunnySceneSetup = ({
 
     const { floorSimMat, lineMaterial, lineGeometry, particleGeom } = createBunnySceneScaffold({
       gl,
+      isMobile,
       colors,
       floorSizeRef,
       lineRef,
@@ -109,16 +129,19 @@ export const useBunnySceneSetup = ({
       disposedRef.current = true
       setModelLoaded(false)
 
+      ;(floorRef.current as (Reflector & { dispose?: () => void }) | null)?.dispose?.()
+
       createdObjects.forEach((object) => {
         if (object.parent === scene) {
           scene.remove(object)
         }
       })
 
+      disposeObjectGeometries(createdObjects)
       lineGeometry.dispose()
       lineMaterial.dispose()
       particleGeom.dispose()
-      floorSimMat.dispose()
+      floorSimMat?.dispose()
       bufferSimRef.current?.dispose()
 
       lineRef.current = null
@@ -149,6 +172,7 @@ export const useBunnySceneSetup = ({
     floorSimMatRef,
     floorSizeRef,
     gl,
+    isMobile,
     leafMatRef,
     lineRef,
     outlineMatRef,

@@ -48,6 +48,7 @@ const BunnyModal: React.FC<BunnyModalProps> = ({ onClose, theme }) => {
   }, [])
 
   const palette = BUNNY_MODAL_THEME_TOKENS[theme]
+  const bunnyCanvasDpr: [number, number] = isMobile ? [1, 1.1] : [1, 1.4]
   const sceneColors = useMemo<BunnySceneColors>(
     () => ({
       floor: palette["--game-floor"],
@@ -84,13 +85,14 @@ const BunnyModal: React.FC<BunnyModalProps> = ({ onClose, theme }) => {
       <div className="bunny-modal-panel" onClick={(e) => e.stopPropagation()}>
         <Canvas
           className="bunny-modal-canvas"
-          shadows
+          shadows={!isMobile}
           gl={{
-            antialias: true,
-            preserveDrawingBuffer: true,
+            antialias: !isMobile,
+            preserveDrawingBuffer: false,
             alpha: false,
+            powerPreference: "high-performance",
           }}
-          dpr={typeof window !== "undefined" ? window.devicePixelRatio : 1}
+          dpr={bunnyCanvasDpr}
         >
           <BunnyScene
             colors={sceneColors}
