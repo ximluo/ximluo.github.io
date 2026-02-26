@@ -16,6 +16,16 @@ interface ManifestEntry {
     w: number
     type: string
   } | null
+  animated?: {
+    src: string
+    w: number
+    type: string
+  } | null
+  animatedDetail?: {
+    src: string
+    w: number
+    type: string
+  } | null
 }
 
 interface ImageManifest {
@@ -30,6 +40,8 @@ interface OptimizedImageProps
   alt: string
   priority?: boolean
   preferPosterForGif?: boolean
+  preferAnimatedGifVariant?: boolean
+  animatedGifVariantTier?: "thumb" | "detail"
 }
 
 const imageManifest = manifest as ImageManifest
@@ -60,6 +72,8 @@ const OptimizedImage: React.FC<OptimizedImageProps> = ({
   alt,
   priority = false,
   preferPosterForGif = false,
+  preferAnimatedGifVariant = false,
+  animatedGifVariantTier = "thumb",
   sizes,
   width,
   height,
@@ -85,7 +99,16 @@ const OptimizedImage: React.FC<OptimizedImageProps> = ({
   }, [normalizedSource])
 
   const shouldUsePoster = Boolean(preferPosterForGif && isGifSource && optimized?.entry.poster?.src)
-  const resolvedSrc = shouldUsePoster ? optimized?.entry.poster?.src ?? src : src
+  const preferredAnimatedGifVariant =
+    animatedGifVariantTier === "detail" ? optimized?.entry.animatedDetail ?? optimized?.entry.animated : optimized?.entry.animated
+  const shouldUseAnimatedGifVariant = Boolean(
+    !shouldUsePoster && preferAnimatedGifVariant && isGifSource && preferredAnimatedGifVariant?.src,
+  )
+  const resolvedSrc = shouldUsePoster
+    ? optimized?.entry.poster?.src ?? src
+    : shouldUseAnimatedGifVariant
+      ? preferredAnimatedGifVariant?.src ?? src
+      : src
   const resolvedSrcSet = shouldUsePoster ? undefined : optimized?.srcSet
   const resolvedSizes = shouldUsePoster ? undefined : sizes ?? (resolvedSrcSet ? "100vw" : undefined)
 

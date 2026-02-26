@@ -98,6 +98,7 @@ const LazyImage: React.FC<{
             src={src}
             alt={alt}
             preferPosterForGif={!(canAnimateGifThumbnail && shouldAnimateGif)}
+            preferAnimatedGifVariant={canAnimateGifThumbnail && shouldAnimateGif}
             sizes="(max-width: 960px) 100vw, 460px"
             fetchPriority={canAnimateGifThumbnail && shouldAnimateGif ? "auto" : "low"}
             onLoad={() => setIsLoaded(true)}

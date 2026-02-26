@@ -16,8 +16,8 @@ interface ProjectDetailProps {
 
 const DETAIL_IMAGE_SIZES = "(max-width: 840px) calc(100vw - 40px), 800px";
 const DETAIL_EMBED_MAX_WIDTH = "600px";
-const GIF_LOAD_AHEAD_MARGIN = "420px 0px";
-const VIDEO_EMBED_LOAD_AHEAD_MARGIN = "520px 0px";
+const GIF_LOAD_AHEAD_MARGIN = "650px 0px";
+const VIDEO_EMBED_LOAD_AHEAD_MARGIN = "900px 0px";
 const PDF_EMBED_LOAD_AHEAD_MARGIN = "800px 0px";
 const preconnectedEmbedOrigins = new Set<string>();
 
@@ -159,6 +159,9 @@ const ProgressiveDetailImage: React.FC<ProgressiveDetailImageProps> = ({
         alt={alt}
         priority={priority}
         preferPosterForGif={isGif && !shouldAnimateGif}
+        preferAnimatedGifVariant={isGif && shouldAnimateGif}
+        animatedGifVariantTier="detail"
+        fetchPriority={isGif && shouldAnimateGif ? "auto" : priority ? "high" : "low"}
         sizes={sizes}
         style={style}
       />
@@ -324,6 +327,10 @@ const ProjectDetail: React.FC<ProjectDetailProps> = ({ theme }) => {
     }
 
     if (section.video) {
+      if (isPdfSource(section.video)) {
+        return null;
+      }
+
       return (
         <DeferredEmbed
           key={`vid-${idx}`}
@@ -427,6 +434,7 @@ const ProjectDetail: React.FC<ProjectDetailProps> = ({ theme }) => {
             <ProgressiveDetailImage
               src={project.image}
               alt={`${project.name} hero`}
+              priority
               sizes={DETAIL_IMAGE_SIZES}
               style={{ width: "100%", height: "100%", objectFit: "cover" }}
             />

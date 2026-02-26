@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-26T05:51:08.848Z",
+  "generatedAt": "2026-02-26T06:23:45.708Z",
   "widths": [
     320,
     640,
@@ -520,6 +520,18 @@
         "w": 640,
         "type": "image/webp",
         "bytes": 26922
+      },
+      "animated": {
+        "src": "/optimized/images/capsule-customize-animated-360w.webp",
+        "w": 360,
+        "type": "image/webp",
+        "bytes": 406690
+      },
+      "animatedDetail": {
+        "src": "/optimized/images/capsule-customize-animated-detail-560w.webp",
+        "w": 560,
+        "type": "image/webp",
+        "bytes": 1304898
       }
     },
     "/images/capsule-open.gif": {
@@ -531,6 +543,18 @@
         "w": 640,
         "type": "image/webp",
         "bytes": 35928
+      },
+      "animated": {
+        "src": "/optimized/images/capsule-open-animated-480w.webp",
+        "w": 480,
+        "type": "image/webp",
+        "bytes": 1102968
+      },
+      "animatedDetail": {
+        "src": "/optimized/images/capsule-open-animated-detail-640w.webp",
+        "w": 640,
+        "type": "image/webp",
+        "bytes": 1659152
       }
     },
     "/images/capsule-upload.gif": {
@@ -542,6 +566,18 @@
         "w": 640,
         "type": "image/webp",
         "bytes": 28058
+      },
+      "animated": {
+        "src": "/optimized/images/capsule-upload-animated-360w.webp",
+        "w": 360,
+        "type": "image/webp",
+        "bytes": 143740
+      },
+      "animatedDetail": {
+        "src": "/optimized/images/capsule-upload-animated-detail-560w.webp",
+        "w": 560,
+        "type": "image/webp",
+        "bytes": 494780
       }
     },
     "/images/glsl-blinn.png": {
@@ -643,6 +679,18 @@
         "w": 640,
         "type": "image/webp",
         "bytes": 31808
+      },
+      "animated": {
+        "src": "/optimized/images/glsl-inflate-animated-360w.webp",
+        "w": 360,
+        "type": "image/webp",
+        "bytes": 824314
+      },
+      "animatedDetail": {
+        "src": "/optimized/images/glsl-inflate-animated-detail-560w.webp",
+        "w": 560,
+        "type": "image/webp",
+        "bytes": 1511130
       }
     },
     "/images/glsl-lambert.png": {
@@ -882,6 +930,18 @@
         "w": 640,
         "type": "image/webp",
         "bytes": 88576
+      },
+      "animated": {
+        "src": "/optimized/images/mini-minecraft-animated-480w.webp",
+        "w": 480,
+        "type": "image/webp",
+        "bytes": 3363236
+      },
+      "animatedDetail": {
+        "src": "/optimized/images/mini-minecraft-animated-detail-640w.webp",
+        "w": 640,
+        "type": "image/webp",
+        "bytes": 6269394
       }
     },
     "/images/mobile.png": {
@@ -2142,13 +2202,17 @@
       "width": 480,
       "height": 6468,
       "variants": [],
-      "poster": null
+      "poster": null,
+      "animated": null,
+      "animatedDetail": null
     },
     "/images/web-clock.gif": {
       "width": 480,
       "height": 12138,
       "variants": [],
-      "poster": null
+      "poster": null,
+      "animated": null,
+      "animatedDetail": null
     },
     "/images/web-gallery.gif": {
       "width": 628,
@@ -2159,6 +2223,18 @@
         "w": 628,
         "type": "image/webp",
         "bytes": 62826
+      },
+      "animated": {
+        "src": "/optimized/images/web-gallery-animated-360w.webp",
+        "w": 360,
+        "type": "image/webp",
+        "bytes": 200644
+      },
+      "animatedDetail": {
+        "src": "/optimized/images/web-gallery-animated-detail-560w.webp",
+        "w": 560,
+        "type": "image/webp",
+        "bytes": 505488
       }
     },
     "/images/web-maze.gif": {
@@ -2170,13 +2246,27 @@
         "w": 640,
         "type": "image/webp",
         "bytes": 26794
+      },
+      "animated": {
+        "src": "/optimized/images/web-maze-animated-360w.webp",
+        "w": 360,
+        "type": "image/webp",
+        "bytes": 1747822
+      },
+      "animatedDetail": {
+        "src": "/optimized/images/web-maze-animated-detail-560w.webp",
+        "w": 560,
+        "type": "image/webp",
+        "bytes": 7605592
       }
     },
     "/images/web-still.gif": {
       "width": 480,
       "height": 7160,
       "variants": [],
-      "poster": null
+      "poster": null,
+      "animated": null,
+      "animatedDetail": null
     },
     "/images/web-tree.gif": {
       "width": 800,
@@ -2187,13 +2277,27 @@
         "w": 640,
         "type": "image/webp",
         "bytes": 11874
+      },
+      "animated": {
+        "src": "/optimized/images/web-tree-animated-360w.webp",
+        "w": 360,
+        "type": "image/webp",
+        "bytes": 77222
+      },
+      "animatedDetail": {
+        "src": "/optimized/images/web-tree-animated-detail-560w.webp",
+        "w": 560,
+        "type": "image/webp",
+        "bytes": 219262
       }
     },
     "/images/web-tv.gif": {
       "width": 480,
       "height": 7296,
       "variants": [],
-      "poster": null
+      "poster": null,
+      "animated": null,
+      "animatedDetail": null
     },
     "/images/web-zoom.gif": {
       "width": 570,
@@ -2204,6 +2308,18 @@
         "w": 570,
         "type": "image/webp",
         "bytes": 67800
+      },
+      "animated": {
+        "src": "/optimized/images/web-zoom-animated-360w.webp",
+        "w": 360,
+        "type": "image/webp",
+        "bytes": 132002
+      },
+      "animatedDetail": {
+        "src": "/optimized/images/web-zoom-animated-detail-560w.webp",
+        "w": 560,
+        "type": "image/webp",
+        "bytes": 327474
       }
     },
     "/images/ximing.jpg": {

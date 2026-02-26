@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-26T05:51:08.848Z",
+  "generatedAt": "2026-02-26T06:23:45.708Z",
   "widths": [
     320,
     640,
@@ -22,7 +22,9 @@
           "type": "image/webp"
         }
       ],
-      "poster": null
+      "poster": null,
+      "animated": null,
+      "animatedDetail": null
     },
     "/images/Ashen.png": {
       "width": 886,
@@ -44,7 +46,9 @@
           "type": "image/webp"
         }
       ],
-      "poster": null
+      "poster": null,
+      "animated": null,
+      "animatedDetail": null
     },
     "/images/Bewitched.png": {
       "width": 626,
@@ -61,7 +65,9 @@
           "type": "image/webp"
         }
       ],
-      "poster": null
+      "poster": null,
+      "animated": null,
+      "animatedDetail": null
     },
     "/images/Checkmate.png": {
       "width": 544,
@@ -78,7 +84,9 @@
           "type": "image/webp"
         }
       ],
-      "poster": null
+      "poster": null,
+      "animated": null,
+      "animatedDetail": null
     },
     "/images/Crowning.png": {
       "width": 1126,
@@ -105,7 +113,9 @@
           "type": "image/webp"
         }
       ],
-      "poster": null
+      "poster": null,
+      "animated": null,
+      "animatedDetail": null
     },
     "/images/Crystalline.png": {
       "width": 482,
@@ -122,7 +132,9 @@
           "type": "image/webp"
         }
       ],
-      "poster": null
+      "poster": null,
+      "animated": null,
+      "animatedDetail": null
     },
     "/images/Echoes.png": {
       "width": 552,
@@ -139,7 +151,9 @@
           "type": "image/webp"
         }
       ],
-      "poster": null
+      "poster": null,
+      "animated": null,
+      "animatedDetail": null
     },
     "/images/Pose.png": {
       "width": 548,
@@ -156,7 +170,9 @@
           "type": "image/webp"
         }
       ],
-      "poster": null
+      "poster": null,
+      "animated": null,
+      "animatedDetail": null
     },
     "/images/Raptor.png": {
       "width": 464,
@@ -173,7 +189,9 @@
           "type": "image/webp"
         }
       ],
-      "poster": null
+      "poster": null,
+      "animated": null,
+      "animatedDetail": null
     },
     "/images/Resonance.png": {
       "width": 616,
@@ -190,7 +208,9 @@
           "type": "image/webp"
         }
       ],
-      "poster": null
+      "poster": null,
+      "animated": null,
+      "animatedDetail": null
     },
     "/images/Silver-Spoon.png": {
       "width": 542,
@@ -207,7 +227,9 @@
           "type": "image/webp"
         }
       ],
-      "poster": null
+      "poster": null,
+      "animated": null,
+      "animatedDetail": null
     },
     "/images/Vortex.png": {
       "width": 678,
@@ -229,7 +251,9 @@
           "type": "image/webp"
         }
       ],
-      "poster": null
+      "poster": null,
+      "animated": null,
+      "animatedDetail": null
     },
     "/images/adobe-max-2024.jpeg": {
       "width": 800,
@@ -251,7 +275,9 @@
           "type": "image/webp"
         }
       ],
-      "poster": null
+      "poster": null,
+      "animated": null,
+      "animatedDetail": null
     },
     "/images/ar-mri.png": {
       "width": 1162,
@@ -278,7 +304,9 @@
           "type": "image/webp"
         }
       ],
-      "poster": null
+      "poster": null,
+      "animated": null,
+      "animatedDetail": null
     },
     "/images/capsule-customize.gif": {
       "width": 800,
@@ -287,6 +315,16 @@
       "poster": {
         "src": "/optimized/images/capsule-customize-poster-640w.webp",
         "w": 640,
+        "type": "image/webp"
+      },
+      "animated": {
+        "src": "/optimized/images/capsule-customize-animated-360w.webp",
+        "w": 360,
+        "type": "image/webp"
+      },
+      "animatedDetail": {
+        "src": "/optimized/images/capsule-customize-animated-detail-560w.webp",
+        "w": 560,
         "type": "image/webp"
       }
     },
@@ -298,6 +336,16 @@
         "src": "/optimized/images/capsule-open-poster-640w.webp",
         "w": 640,
         "type": "image/webp"
+      },
+      "animated": {
+        "src": "/optimized/images/capsule-open-animated-480w.webp",
+        "w": 480,
+        "type": "image/webp"
+      },
+      "animatedDetail": {
+        "src": "/optimized/images/capsule-open-animated-detail-640w.webp",
+        "w": 640,
+        "type": "image/webp"
       }
     },
     "/images/capsule-upload.gif": {
@@ -307,6 +355,16 @@
       "poster": {
         "src": "/optimized/images/capsule-upload-poster-640w.webp",
         "w": 640,
+        "type": "image/webp"
+      },
+      "animated": {
+        "src": "/optimized/images/capsule-upload-animated-360w.webp",
+        "w": 360,
+        "type": "image/webp"
+      },
+      "animatedDetail": {
+        "src": "/optimized/images/capsule-upload-animated-detail-560w.webp",
+        "w": 560,
         "type": "image/webp"
       }
     },
@@ -325,7 +383,9 @@
           "type": "image/webp"
         }
       ],
-      "poster": null
+      "poster": null,
+      "animated": null,
+      "animatedDetail": null
     },
     "/images/glsl-blur.png": {
       "width": 398,
@@ -342,7 +402,9 @@
           "type": "image/webp"
         }
       ],
-      "poster": null
+      "poster": null,
+      "animated": null,
+      "animatedDetail": null
     },
     "/images/glsl-chrome.png": {
       "width": 379,
@@ -359,7 +421,9 @@
           "type": "image/webp"
         }
       ],
-      "poster": null
+      "poster": null,
+      "animated": null,
+      "animatedDetail": null
     },
     "/images/glsl-inflate.gif": {
       "width": 968,
@@ -368,6 +432,16 @@
       "poster": {
         "src": "/optimized/images/glsl-inflate-poster-640w.webp",
         "w": 640,
+        "type": "image/webp"
+      },
+      "animated": {
+        "src": "/optimized/images/glsl-inflate-animated-360w.webp",
+        "w": 360,
+        "type": "image/webp"
+      },
+      "animatedDetail": {
+        "src": "/optimized/images/glsl-inflate-animated-detail-560w.webp",
+        "w": 560,
         "type": "image/webp"
       }
     },
@@ -386,7 +460,9 @@
           "type": "image/webp"
         }
       ],
-      "poster": null
+      "poster": null,
+      "animated": null,
+      "animatedDetail": null
     },
     "/images/glsl-mosaic.png": {
       "width": 585,
@@ -403,7 +479,9 @@
           "type": "image/webp"
         }
       ],
-      "poster": null
+      "poster": null,
+      "animated": null,
+      "animatedDetail": null
     },
     "/images/glsl-red.png": {
       "width": 378,
@@ -420,7 +498,9 @@
           "type": "image/webp"
         }
       ],
-      "poster": null
+      "poster": null,
+      "animated": null,
+      "animatedDetail": null
     },
     "/images/glsl-sobel.png": {
       "width": 394,
@@ -437,7 +517,9 @@
           "type": "image/webp"
         }
       ],
-      "poster": null
+      "poster": null,
+      "animated": null,
+      "animatedDetail": null
     },
     "/images/hci.png": {
       "width": 716,
@@ -459,7 +541,9 @@
           "type": "image/webp"
         }
       ],
-      "poster": null
+      "poster": null,
+      "animated": null,
+      "animatedDetail": null
     },
     "/images/lost.png": {
       "width": 1294,
@@ -491,7 +575,9 @@
           "type": "image/webp"
         }
       ],
-      "poster": null
+      "poster": null,
+      "animated": null,
+      "animatedDetail": null
     },
     "/images/mini-minecraft.gif": {
       "width": 700,
@@ -499,6 +585,16 @@
       "variants": [],
       "poster": {
         "src": "/optimized/images/mini-minecraft-poster-640w.webp",
+        "w": 640,
+        "type": "image/webp"
+      },
+      "animated": {
+        "src": "/optimized/images/mini-minecraft-animated-480w.webp",
+        "w": 480,
+        "type": "image/webp"
+      },
+      "animatedDetail": {
+        "src": "/optimized/images/mini-minecraft-animated-detail-640w.webp",
         "w": 640,
         "type": "image/webp"
       }
@@ -528,7 +624,9 @@
           "type": "image/webp"
         }
       ],
-      "poster": null
+      "poster": null,
+      "animated": null,
+      "animatedDetail": null
     },
     "/images/monte-carlo.png": {
       "width": 1290,
@@ -560,7 +658,9 @@
           "type": "image/webp"
         }
       ],
-      "poster": null
+      "poster": null,
+      "animated": null,
+      "animatedDetail": null
     },
     "/images/neuroscent.jpg": {
       "width": 1800,
@@ -592,7 +692,9 @@
           "type": "image/webp"
         }
       ],
-      "poster": null
+      "poster": null,
+      "animated": null,
+      "animatedDetail": null
     },
     "/images/pathtracer-cornell-area.png": {
       "width": 1352,
@@ -624,7 +726,9 @@
           "type": "image/webp"
         }
       ],
-      "poster": null
+      "poster": null,
+      "animated": null,
+      "animatedDetail": null
     },
     "/images/pathtracer-cornell-env.png": {
       "width": 1360,
@@ -656,7 +760,9 @@
           "type": "image/webp"
         }
       ],
-      "poster": null
+      "poster": null,
+      "animated": null,
+      "animatedDetail": null
     },
     "/images/pathtracer-cornell-glass.png": {
       "width": 1658,
@@ -688,7 +794,9 @@
           "type": "image/webp"
         }
       ],
-      "poster": null
+      "poster": null,
+      "animated": null,
+      "animatedDetail": null
     },
     "/images/pathtracer-cornell-spotlight.png": {
       "width": 1346,
@@ -720,7 +828,9 @@
           "type": "image/webp"
         }
       ],
-      "poster": null
+      "poster": null,
+      "animated": null,
+      "animatedDetail": null
     },
     "/images/pathtracer-direct.png": {
       "width": 1354,
@@ -752,7 +862,9 @@
           "type": "image/webp"
         }
       ],
-      "poster": null
+      "poster": null,
+      "animated": null,
+      "animatedDetail": null
     },
     "/images/pathtracer-global.png": {
       "width": 1356,
@@ -784,7 +896,9 @@
           "type": "image/webp"
         }
       ],
-      "poster": null
+      "poster": null,
+      "animated": null,
+      "animatedDetail": null
     },
     "/images/pathtracer-mis.png": {
       "width": 1658,
@@ -816,7 +930,9 @@
           "type": "image/webp"
         }
       ],
-      "poster": null
+      "poster": null,
+      "animated": null,
+      "animatedDetail": null
     },
     "/images/pathtracer-naive.png": {
       "width": 1404,
@@ -848,7 +964,9 @@
           "type": "image/webp"
         }
       ],
-      "poster": null
+      "poster": null,
+      "animated": null,
+      "animatedDetail": null
     },
     "/images/pbr-albedo.png": {
       "width": 888,
@@ -870,7 +988,9 @@
           "type": "image/webp"
         }
       ],
-      "poster": null
+      "poster": null,
+      "animated": null,
+      "animatedDetail": null
     },
     "/images/pbr-displacement.png": {
       "width": 734,
@@ -892,7 +1012,9 @@
           "type": "image/webp"
         }
       ],
-      "poster": null
+      "poster": null,
+      "animated": null,
+      "animatedDetail": null
     },
     "/images/pbr-gui.png": {
       "width": 696,
@@ -914,7 +1036,9 @@
           "type": "image/webp"
         }
       ],
-      "poster": null
+      "poster": null,
+      "animated": null,
+      "animatedDetail": null
     },
     "/images/pbr-ssr.png": {
       "width": 593,
@@ -931,7 +1055,9 @@
           "type": "image/webp"
         }
       ],
-      "poster": null
+      "poster": null,
+      "animated": null,
+      "animatedDetail": null
     },
     "/images/pbr.png": {
       "width": 1784,
@@ -963,7 +1089,9 @@
           "type": "image/webp"
         }
       ],
-      "poster": null
+      "poster": null,
+      "animated": null,
+      "animatedDetail": null
     },
     "/images/petsteps.png": {
       "width": 1612,
@@ -995,7 +1123,9 @@
           "type": "image/webp"
         }
       ],
-      "poster": null
+      "poster": null,
+      "animated": null,
+      "animatedDetail": null
     },
     "/images/rewind.png": {
       "width": 1000,
@@ -1022,7 +1152,9 @@
           "type": "image/webp"
         }
       ],
-      "poster": null
+      "poster": null,
+      "animated": null,
+      "animatedDetail": null
     },
     "/images/sdf-sub.png": {
       "width": 1574,
@@ -1054,7 +1186,9 @@
           "type": "image/webp"
         }
       ],
-      "poster": null
+      "poster": null,
+      "animated": null,
+      "animatedDetail": null
     },
     "/images/vr.png": {
       "width": 2840,
@@ -1086,7 +1220,9 @@
           "type": "image/webp"
         }
       ],
-      "poster": null
+      "poster": null,
+      "animated": null,
+      "animatedDetail": null
     },
     "/images/wdrp.png": {
       "width": 1340,
@@ -1118,19 +1254,25 @@
           "type": "image/webp"
         }
       ],
-      "poster": null
+      "poster": null,
+      "animated": null,
+      "animatedDetail": null
     },
     "/images/web-ascii.gif": {
       "width": 480,
       "height": 6468,
       "variants": [],
-      "poster": null
+      "poster": null,
+      "animated": null,
+      "animatedDetail": null
     },
     "/images/web-clock.gif": {
       "width": 480,
       "height": 12138,
       "variants": [],
-      "poster": null
+      "poster": null,
+      "animated": null,
+      "animatedDetail": null
     },
     "/images/web-gallery.gif": {
       "width": 628,
@@ -1139,6 +1281,16 @@
       "poster": {
         "src": "/optimized/images/web-gallery-poster-640w.webp",
         "w": 628,
+        "type": "image/webp"
+      },
+      "animated": {
+        "src": "/optimized/images/web-gallery-animated-360w.webp",
+        "w": 360,
+        "type": "image/webp"
+      },
+      "animatedDetail": {
+        "src": "/optimized/images/web-gallery-animated-detail-560w.webp",
+        "w": 560,
         "type": "image/webp"
       }
     },
@@ -1150,13 +1302,25 @@
         "src": "/optimized/images/web-maze-poster-640w.webp",
         "w": 640,
         "type": "image/webp"
+      },
+      "animated": {
+        "src": "/optimized/images/web-maze-animated-360w.webp",
+        "w": 360,
+        "type": "image/webp"
+      },
+      "animatedDetail": {
+        "src": "/optimized/images/web-maze-animated-detail-560w.webp",
+        "w": 560,
+        "type": "image/webp"
       }
     },
     "/images/web-still.gif": {
       "width": 480,
       "height": 7160,
       "variants": [],
-      "poster": null
+      "poster": null,
+      "animated": null,
+      "animatedDetail": null
     },
     "/images/web-tree.gif": {
       "width": 800,
@@ -1166,13 +1330,25 @@
         "src": "/optimized/images/web-tree-poster-640w.webp",
         "w": 640,
         "type": "image/webp"
+      },
+      "animated": {
+        "src": "/optimized/images/web-tree-animated-360w.webp",
+        "w": 360,
+        "type": "image/webp"
+      },
+      "animatedDetail": {
+        "src": "/optimized/images/web-tree-animated-detail-560w.webp",
+        "w": 560,
+        "type": "image/webp"
       }
     },
     "/images/web-tv.gif": {
       "width": 480,
       "height": 7296,
       "variants": [],
-      "poster": null
+      "poster": null,
+      "animated": null,
+      "animatedDetail": null
     },
     "/images/web-zoom.gif": {
       "width": 570,
@@ -1181,6 +1357,16 @@
       "poster": {
         "src": "/optimized/images/web-zoom-poster-640w.webp",
         "w": 570,
+        "type": "image/webp"
+      },
+      "animated": {
+        "src": "/optimized/images/web-zoom-animated-360w.webp",
+        "w": 360,
+        "type": "image/webp"
+      },
+      "animatedDetail": {
+        "src": "/optimized/images/web-zoom-animated-detail-560w.webp",
+        "w": 560,
         "type": "image/webp"
       }
     },
@@ -1204,7 +1390,9 @@
           "type": "image/webp"
         }
       ],
-      "poster": null
+      "poster": null,
+      "animated": null,
+      "animatedDetail": null
     }
   }
 }

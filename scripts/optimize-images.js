@@ -23,6 +23,8 @@ const SRC_MANIFEST_PATH = path.join(ROOT, "src", "generated", "imageManifest.jso
 
 const TARGET_WIDTHS = [320, 640, 960, 1280]
 const GIF_POSTER_WIDTH = 640
+const GIF_ANIMATED_THUMB_WIDTH = 360
+const GIF_ANIMATED_DETAIL_WIDTH = 560
 const LARGE_GIF_THRESHOLD_BYTES = 2 * 1024 * 1024
 
 const STILL_EXTENSIONS = new Set([".png", ".jpg", ".jpeg"])
@@ -30,6 +32,16 @@ const GIF_EXTENSION = ".gif"
 
 const WEBP_QUALITY = 90
 const AVIF_QUALITY = 52
+const GIF_ANIMATED_WEBP_QUALITY = 45
+const GIF_ANIMATED_DETAIL_WEBP_QUALITY = 50
+const GIF_ANIMATED_THUMB_OVERRIDES = {
+  "mini-minecraft": { width: 480, quality: 55 },
+  "capsule-open": { width: 480, quality: 60 },
+}
+const GIF_ANIMATED_DETAIL_OVERRIDES = {
+  "mini-minecraft": { width: 640, quality: 55 },
+  "capsule-open": { width: 640, quality: 60 },
+}
 
 function toPosixPath(value) {
   return value.split(path.sep).join("/")
@@ -44,6 +56,22 @@ function formatBytes(bytes) {
   if (bytes < 1024) return `${bytes} B`
   if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`
   return `${(bytes / (1024 * 1024)).toFixed(2)} MB`
+}
+
+function getGifAnimatedThumbConfig(baseName) {
+  const override = GIF_ANIMATED_THUMB_OVERRIDES[baseName]
+  return {
+    width: override?.width ?? GIF_ANIMATED_THUMB_WIDTH,
+    quality: override?.quality ?? GIF_ANIMATED_WEBP_QUALITY,
+  }
+}
+
+function getGifAnimatedDetailConfig(baseName) {
+  const override = GIF_ANIMATED_DETAIL_OVERRIDES[baseName]
+  return {
+    width: override?.width ?? GIF_ANIMATED_DETAIL_WIDTH,
+    quality: override?.quality ?? GIF_ANIMATED_DETAIL_WEBP_QUALITY,
+  }
 }
 
 async function ensureDirectory(dir) {
@@ -161,6 +189,8 @@ async function buildGifPosterIfNeeded(sourcePath, sourceStat) {
     height: metadata.height || null,
     variants: [],
     poster: null,
+    animated: null,
+    animatedDetail: null,
   }
 
   if (sourceStat.size <= LARGE_GIF_THRESHOLD_BYTES) {
@@ -169,8 +199,15 @@ async function buildGifPosterIfNeeded(sourcePath, sourceStat) {
 
   const relativeFromSource = path.relative(SOURCE_DIR, sourcePath)
   const parsed = path.parse(relativeFromSource)
+  const animatedConfig = getGifAnimatedThumbConfig(parsed.name)
+  const animatedDetailConfig = getGifAnimatedDetailConfig(parsed.name)
   const outputDir = path.join(OUTPUT_DIR, parsed.dir)
   const posterPath = path.join(outputDir, `${parsed.name}-poster-${GIF_POSTER_WIDTH}w.webp`)
+  const animatedThumbPath = path.join(outputDir, `${parsed.name}-animated-${animatedConfig.width}w.webp`)
+  const animatedDetailPath = path.join(
+    outputDir,
+    `${parsed.name}-animated-detail-${animatedDetailConfig.width}w.webp`,
+  )
 
   await ensureDirectory(outputDir)
   const upToDate = await isUpToDate(posterPath, sourceStat.mtimeMs)
@@ -188,13 +225,51 @@ async function buildGifPosterIfNeeded(sourcePath, sourceStat) {
     type: "image/webp",
     bytes: posterStat.size,
   }
+
+  const animatedThumbUpToDate = await isUpToDate(animatedThumbPath, sourceStat.mtimeMs)
+  if (!animatedThumbUpToDate) {
+    await sharp(sourcePath, { animated: true, limitInputPixels: false })
+      .resize({ width: animatedConfig.width, withoutEnlargement: true })
+      .webp({ quality: animatedConfig.quality, effort: 4 })
+      .toFile(animatedThumbPath)
+  }
+
+  const animatedThumbStat = await fs.stat(animatedThumbPath)
+  result.animated = {
+    src: toPublicPath(animatedThumbPath),
+    w: metadata.width ? Math.min(metadata.width, animatedConfig.width) : animatedConfig.width,
+    type: "image/webp",
+    bytes: animatedThumbStat.size,
+  }
+
+  const animatedDetailUpToDate = await isUpToDate(animatedDetailPath, sourceStat.mtimeMs)
+  if (!animatedDetailUpToDate) {
+    await sharp(sourcePath, { animated: true, limitInputPixels: false })
+      .resize({ width: animatedDetailConfig.width, withoutEnlargement: true })
+      .webp({ quality: animatedDetailConfig.quality, effort: 4 })
+      .toFile(animatedDetailPath)
+  }
+
+  const animatedDetailStat = await fs.stat(animatedDetailPath)
+  result.animatedDetail = {
+    src: toPublicPath(animatedDetailPath),
+    w: metadata.width ? Math.min(metadata.width, animatedDetailConfig.width) : animatedDetailConfig.width,
+    type: "image/webp",
+    bytes: animatedDetailStat.size,
+  }
   return result
 }
 
 function selectComparisonSize(entry) {
   const webpVariants = entry.variants.filter((variant) => variant.type === "image/webp")
   if (webpVariants.length === 0) {
-    return entry.poster ? entry.poster.bytes : null
+    const gifCandidates = [entry.animated?.bytes, entry.animatedDetail?.bytes, entry.poster?.bytes].filter(
+      (bytes) => bytes != null,
+    )
+    if (gifCandidates.length > 0) {
+      return Math.min(...gifCandidates)
+    }
+    return null
   }
   const largestWebp = webpVariants.reduce((largest, variant) => {
     if (!largest || variant.w > largest.w) return variant
@@ -240,6 +315,10 @@ async function main() {
             bytes: sourceStat.size,
             posterBytes: manifestEntry.poster ? manifestEntry.poster.bytes : null,
             posterSrc: manifestEntry.poster ? manifestEntry.poster.src : null,
+            animatedBytes: manifestEntry.animated ? manifestEntry.animated.bytes : null,
+            animatedSrc: manifestEntry.animated ? manifestEntry.animated.src : null,
+            animatedDetailBytes: manifestEntry.animatedDetail ? manifestEntry.animatedDetail.bytes : null,
+            animatedDetailSrc: manifestEntry.animatedDetail ? manifestEntry.animatedDetail.src : null,
           })
         }
       }
@@ -281,6 +360,20 @@ async function main() {
             type: entry.poster.type,
           }
         : null,
+      animated: entry.animated
+        ? {
+            src: entry.animated.src,
+            w: entry.animated.w,
+            type: entry.animated.type,
+          }
+        : null,
+      animatedDetail: entry.animatedDetail
+        ? {
+            src: entry.animatedDetail.src,
+            w: entry.animatedDetail.w,
+            type: entry.animatedDetail.type,
+          }
+        : null,
     }
   }
 
@@ -319,7 +412,17 @@ async function main() {
         offender.posterBytes && offender.posterSrc
           ? `poster: ${offender.posterSrc} (${formatBytes(offender.posterBytes)})`
           : "poster: n/a"
-      console.log(`${offender.src} | gif: ${formatBytes(offender.bytes)} | ${posterInfo}`)
+      const animatedInfo =
+        offender.animatedBytes && offender.animatedSrc
+          ? `animated: ${offender.animatedSrc} (${formatBytes(offender.animatedBytes)})`
+          : "animated: n/a"
+      const animatedDetailInfo =
+        offender.animatedDetailBytes && offender.animatedDetailSrc
+          ? `animated-detail: ${offender.animatedDetailSrc} (${formatBytes(offender.animatedDetailBytes)})`
+          : "animated-detail: n/a"
+      console.log(
+        `${offender.src} | gif: ${formatBytes(offender.bytes)} | ${posterInfo} | ${animatedInfo} | ${animatedDetailInfo}`,
+      )
     }
   } else {
     console.log("\nNo large GIF offenders found.")
