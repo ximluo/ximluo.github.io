@@ -109,7 +109,6 @@ export function useHomeIntroSequence({
 
     if (typeof img.decode === "function") {
       void img.decode().then(markLoaded).catch(() => {
-        // onload/onerror remains as fallback
       })
     }
 

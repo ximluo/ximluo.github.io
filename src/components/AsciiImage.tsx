@@ -23,7 +23,6 @@ const AsciiImage: React.FC<AsciiImageProps> = ({
   className = "",
 }) => {
   const visualTokens = THEME_VISUAL_TOKENS[theme]
-  // state
   const [asciiData, setAsciiData] = useState<string[]>([])
   const [baseAscii, setBaseAscii] = useState<string[]>([])
   const [isHovered, setIsHovered] = useState(false)
@@ -31,13 +30,11 @@ const AsciiImage: React.FC<AsciiImageProps> = ({
   const [isTransitioning, setIsTransitioning] = useState(false)
   const isMobile = useIsMobile(768)
 
-  // refs
   const containerRef = useRef<HTMLDivElement>(null)
   const imageRef = useRef<HTMLImageElement>(null)
   const animFrameRef = useRef<number>(0)
   const imgRef = useRef<HTMLImageElement | null>(null)
 
-  // Convert the given image to ASCII.
   const convertToAscii = useCallback(
     (img: HTMLImageElement, W: number, H: number, step: number) => {
       const off = new OffscreenCanvas(W, H)
@@ -68,7 +65,6 @@ const AsciiImage: React.FC<AsciiImageProps> = ({
     [],
   )
 
-  // Calculate ASCII art based on current container size
   const calculateAsciiArt = useCallback(() => {
     if (!imgRef.current || !containerRef.current) return
 
@@ -82,7 +78,6 @@ const AsciiImage: React.FC<AsciiImageProps> = ({
     setAsciiData(ascii)
   }, [convertToAscii])
 
-  // Set up resize observer
   useEffect(() => {
     if (!containerRef.current) return
 
@@ -96,13 +91,11 @@ const AsciiImage: React.FC<AsciiImageProps> = ({
     return () => resizeObserver.disconnect()
   }, [calculateAsciiArt])
 
-  // Load + preprocess once
   useEffect(() => {
     const img = new Image()
     img.crossOrigin = "anonymous"
     img.src = src
     img.onload = () => {
-      // display photo
       if (imageRef.current) imageRef.current.src = src
 
       imgRef.current = img
@@ -110,7 +103,6 @@ const AsciiImage: React.FC<AsciiImageProps> = ({
     }
   }, [calculateAsciiArt, src])
 
-  // Hover/tap handlers
   const startScramble = () => {
     let frame = 0
     const MAX = 15
@@ -189,7 +181,6 @@ const AsciiImage: React.FC<AsciiImageProps> = ({
       onMouseLeave={handleMouseLeave}
       onClick={handleTap}
     >
-      {/* Photo */}
       <img
         ref={imageRef}
         src={src || "/placeholder.svg"}
@@ -202,7 +193,6 @@ const AsciiImage: React.FC<AsciiImageProps> = ({
         }}
       />
 
-      {/* ASCII overlay */}
       {(isHovered || isTapped || isTransitioning) && (
         <div
           style={{

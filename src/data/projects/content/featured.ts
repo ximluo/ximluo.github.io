@@ -1,7 +1,6 @@
 import type { Project } from "../types"
 
 const featuredProjects: Project[] = [
-  // petsteps $$$
   {
     id: "petsteps",
     name: "PetSteps",
@@ -31,8 +30,6 @@ const featuredProjects: Project[] = [
       },
     ],
   },
-
-  // mini minecraft
   {
     id: "mini-minecraft",
     name: "Mini Minecraft",
@@ -59,8 +56,6 @@ const featuredProjects: Project[] = [
       },
     ],
   },
-
-  // penn labs
   {
     id: "penn-mobile",
     name: "Penn Mobile",
@@ -81,8 +76,6 @@ const featuredProjects: Project[] = [
       },
     ],
   },
-
-  // time capsule
   {
     id: "penn-capsule",
     name: "Capsule",
@@ -127,8 +120,6 @@ const featuredProjects: Project[] = [
       },
     ],
   },
-
-  // real time pbr renderer
   {
     id: "pbr-renderer",
     name: "Real time Physically Based Renderer",
@@ -185,8 +176,6 @@ const featuredProjects: Project[] = [
       },
     ],
   },
-
-  // monte carlo path tracer
   {
     id: "gpu-path-tracer",
     name: "Monte Carlo Path Tracer",

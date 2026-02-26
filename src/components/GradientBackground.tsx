@@ -21,7 +21,6 @@ const GradientBackground: React.FC<GradientBackgroundProps> = ({ theme, children
     width: typeof window !== "undefined" ? window.innerWidth : 0,
     height: typeof window !== "undefined" ? window.innerHeight : 0,
   })
-  /* UA CHECK (client-only) */
   const isSafari = useMemo(() => {
     if (typeof navigator === "undefined") return false
     const ua = navigator.userAgent
@@ -36,7 +35,6 @@ const GradientBackground: React.FC<GradientBackgroundProps> = ({ theme, children
     return /Android|webOS|iPhone|iPad|iPod|BlackBerry|Windows Phone|Tablet/i.test(ua) || !!hasTouch
   }, [])
 
-  // If mobile/tablet, treat as Safari (no goo filter, blur on circles)
   const useSafariMode = isSafari || isMobileOrTablet
 
   const containerRef = useRef<HTMLDivElement>(null)
@@ -55,7 +53,6 @@ const GradientBackground: React.FC<GradientBackgroundProps> = ({ theme, children
     viewportHeight,
   })
 
-  /* Theme vars */
   useEffect(() => {
     const t = GRADIENT_BACKGROUND_THEME_VARS[theme]
     const el = containerRef.current
@@ -76,7 +73,6 @@ const GradientBackground: React.FC<GradientBackgroundProps> = ({ theme, children
         overflow: "hidden",
       }}
     >
-      {/* noise overlay */}
       <canvas
         ref={noiseCanvasRef}
         style={{
@@ -89,7 +85,6 @@ const GradientBackground: React.FC<GradientBackgroundProps> = ({ theme, children
         }}
       />
 
-      {/* goo filter for Chrome / Edge / Firefox desktop only */}
       {!useSafariMode && (
         <svg style={{ position: "absolute", width: 0, height: 0 }}>
           <defs>
@@ -120,7 +115,6 @@ const GradientBackground: React.FC<GradientBackgroundProps> = ({ theme, children
         headerOffset={headerOffset}
       />
 
-      {/* content layer stays above everything */}
       <div style={{ position: "relative", zIndex: 10, height: "100%" }}>{children}</div>
     </div>
   )

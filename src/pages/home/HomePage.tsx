@@ -116,7 +116,7 @@ const Home: React.FC<HomeProps> = ({
     return Math.max(16, base + adjustment)
   }, [footerHeight, isMobile])
 
-  const flowerCanvasDpr: [number, number] = isMobile ? [1, 1.1] : [1, 1.35]
+  const flowerCanvasDpr: [number, number] = isMobile ? [1, 1.35] : [1, 1.35]
 
   useEffect(() => {
     if (shouldMountFlowerScene) return
@@ -173,7 +173,7 @@ const Home: React.FC<HomeProps> = ({
             className="three-canvas"
             gl={{
               alpha: true,
-              antialias: !isMobile,
+              antialias: true,
               preserveDrawingBuffer: false,
               powerPreference: "high-performance",
             }}

@@ -1,7 +1,6 @@
 import type { Project } from "../types"
 
 const researchProjects: Project[] = [
-  // machine learning
   {
     id: "statistical-learning-returns",
     name: "Machine Learning in Asset Pricing",
@@ -28,8 +27,6 @@ const researchProjects: Project[] = [
       },
     ],
   },
-
-  // HCI research
   {
     id: "hci-research-jhu",
     name: "Human AI Interaction Projects at JHU",
@@ -50,8 +47,6 @@ const researchProjects: Project[] = [
       },
     ],
   },
-
-  // AR research
   {
     id: "ar-mri-point-cloud",
     name: "AR MRI Point Cloud Visualization",

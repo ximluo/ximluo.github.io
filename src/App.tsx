@@ -110,10 +110,7 @@ const NavButton = ({
   )
 }
 
-// Minimal fade-in CSS
-
 function App() {
-  // theme + nav
   const [theme, setTheme] = useState<ThemeType>("water")
   const location = useLocation()
   const navigate = useNavigate()
@@ -123,7 +120,6 @@ function App() {
     height: typeof window !== "undefined" ? window.innerHeight : 0,
   })
 
-  // Determine active tab based on current path
   const getActiveTab = () => {
     const path = location.pathname
     if (path.includes("/portfolio")) return "PROJECTS"
@@ -133,10 +129,8 @@ function App() {
   const activeTab = getActiveTab()
   const isHomeRoute = location.pathname === "/"
 
-  // phased reveal: 0-4
   const [phase, setPhase] = useState(0)
 
-  // dynamic role text
   const [roleTop, setTop] = useState("SOFTWARE ENGINEER")
   const [roleBot, setBot] = useState("DEVELOPER & DESIGNER")
   const [originalTop] = useState("SOFTWARE ENGINEER")
@@ -146,13 +140,11 @@ function App() {
   const isTablet = viewportWidth <= 768 && viewportWidth > 480
   const safeAreaTop = isMobile ? "max(15px, env(safe-area-inset-top))" : "15px"
 
-  // theme side‑effects
   useEffect(() => {
     const cur = themes[theme]
     Object.entries(cur).forEach(([k, v]) =>
       document.documentElement.style.setProperty(k, v as string),
     )
-    // outer bg tint = border color
     document.body.style.background = cur["--border-color"]
     document.body.style.margin = "0"
     document.body.style.overflow = "hidden"
@@ -160,17 +152,15 @@ function App() {
     document.documentElement.style.height = "100%"
   }, [theme])
 
-  // drive the timeline on mount
   useEffect(() => {
-    setPhase(1) // container
-    const t1 = setTimeout(() => setPhase(2), 600) // greeting
+    setPhase(1)
+    const t1 = setTimeout(() => setPhase(2), 600)
     const t2 = setTimeout(() => {
-      // scramble roles
       scrambleText(originalTop, "code", setTop, 45)
       scrambleText(originalBot, "japanese", setBot, 45)
       setPhase(3)
     }, 1200)
-    const t3 = setTimeout(() => setPhase(4), 2450) // nav + image + footer
+    const t3 = setTimeout(() => setPhase(4), 2450)
     return () => {
       clearTimeout(t1)
       clearTimeout(t2)
@@ -178,16 +168,12 @@ function App() {
     }
   }, [originalTop, originalBot])
 
-  // toggle with scramble effect
   const toggleTheme = () => {
-    // Toggle the theme
     setTheme((prevTheme) => {
       const newTheme = prevTheme === "bunny" ? "water" : "bunny"
 
-      // Create a scramble effect based on the new theme
       const { top: topSet, bottom: botSet } = SCRAMBLE_SETS_BY_THEME[newTheme]
 
-      // Apply scramble effect to role texts
       scrambleText(originalTop, topSet, setTop, 30).then(() => {})
       scrambleText(originalBot, botSet, setBot, 30).then(() => {})
 
@@ -195,7 +181,6 @@ function App() {
     })
   }
 
-  // Handle navigation
   const handleNavClick = (tab: string) => {
     if (tab === "HOME") dispatchHomeFlowerTemporaryHide()
     let path = "/"
@@ -204,7 +189,6 @@ function App() {
     navigate(path)
   }
 
-  // Handle home click scramble
   const handleHomeScramble = () => {
     if (location.pathname === "/") {
       const { top: topSet, bottom: botSet } = SCRAMBLE_SETS_BY_THEME[theme]
@@ -214,7 +198,6 @@ function App() {
     }
   }
 
-  // Listen for home flower overlay toggling navigation buttons
   useEffect(() => {
     const unsubscribe = listenHomeFlowerNavVisibility((detail) => {
       setNavSuppressed(Boolean(detail.hidden))
@@ -242,7 +225,6 @@ function App() {
         >
           <GradientBackground theme={theme}>
             <div className="app-shell-column">
-              {/* NAV BAR */}
               <div
                 className={`fade app-top-nav ${phase >= 4 ? "show" : ""}`}
                 style={{
@@ -252,7 +234,6 @@ function App() {
                   ["--app-nav-title-display" as string]: isTablet ? "none" : "block",
                 }}
               >
-                {/* desktop/tablet: name on the left */}
                 {!isMobile && (
                   <div className="app-top-nav-title">
                     <Link
@@ -267,7 +248,6 @@ function App() {
                   </div>
                 )}
 
-                {/* main row */}
                 <div className="app-top-nav-row">
                   {["HOME", "PROJECTS", "ARTWORK"].map((lbl) => (
                     <NavButton
@@ -281,7 +261,6 @@ function App() {
                     />
                   ))}
 
-                  {/* mobile: theme toggle in the same row; desktop/tablet: far right */}
                   {isMobile ? (
                     <ThemeToggle
                       currentTheme={theme}
@@ -300,7 +279,6 @@ function App() {
                 </div>
               </div>
 
-              {/* MAIN CONTENT */}
               <div
                 className={`main-content-scroll ${isHomeRoute ? "main-content-scroll--home" : "main-content-scroll--page"}`}
               >
@@ -312,7 +290,6 @@ function App() {
                   onScramble={handleHomeScramble}
                 />
 
-                {/* Footer */}
                 <div className={`fade app-footer-shell ${phase >= 4 ? "show" : ""}`}>
                   <Footer theme={theme} />
                 </div>

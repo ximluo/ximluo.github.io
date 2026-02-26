@@ -1,7 +1,6 @@
 import type { Project } from "../types"
 
 const interactiveProjects: Project[] = [
-  // rewind
   {
     id: "rewind",
     name: "Rewind",
@@ -22,8 +21,6 @@ const interactiveProjects: Project[] = [
       },
     ],
   },
-
-  // Art of the Web
   {
     id: "web-experiments",
     name: "Web Exploratorium",
@@ -80,8 +77,6 @@ const interactiveProjects: Project[] = [
       },
     ],
   },
-
-  // lost at penn
   {
     id: "lost-at-penn",
     name: "Lost@Penn",
@@ -108,8 +103,6 @@ const interactiveProjects: Project[] = [
       },
     ],
   },
-
-  // neuroscent
   {
     id: "neuroscent",
     name: "NeuroScent",
@@ -142,8 +135,6 @@ const interactiveProjects: Project[] = [
       },
     ],
   },
-
-  // VR
   {
     id: "vr-meta-quest-experiences",
     name: "Portals & DreamScape VR",
@@ -165,8 +156,6 @@ const interactiveProjects: Project[] = [
       { video: "/images/DreamScape.pdf" },
     ],
   },
-
-  // GLSL
   {
     id: "glsl-shaders",
     name: "GLSL Shaders",

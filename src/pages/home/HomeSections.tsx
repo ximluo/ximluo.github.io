@@ -216,8 +216,8 @@ export function HomeIntroPanel({
           ["--home-bio-font-size" as string]: `${isMobile ? 12 : 14}px`,
           ["--home-bio-line-height" as string]: `${isMobile ? 1.1 : 1.4}`,
           ["--home-bio-color" as string]: textColor,
-          ["--home-bio-padding" as string]: isMobile ? "0 10px" : "0",
-          ["--home-bio-paragraph-margin" as string]: isMobile ? "0px" : "20px",
+          ["--home-bio-padding" as string]: isMobile ? "2px 10px" : "14px",
+          ["--home-bio-paragraph-margin" as string]: isMobile ? "10px" : "20px",
           ["--home-link-color" as string]: linkColor,
         }}
       >

@@ -211,7 +211,7 @@ export const createBunnySceneScaffold = ({
   bonusMatRef,
   addToScene,
 }: CreateBunnySceneScaffoldOptions): BunnyScaffoldResources => {
-  const reflectorTextureSize = isMobile ? 384 : 640
+  const reflectorTextureSize = isMobile ? 512 : 640
   let floorSimMat: THREE.ShaderMaterial | null = null
   floorSimMatRef.current = null
   bufferSimRef.current = null
@@ -279,7 +279,7 @@ export const createBunnySceneScaffold = ({
   floorRef.current = floor
 
   if (floor.material instanceof THREE.ShaderMaterial && floor.material.uniforms.tScratches) {
-    const simTextureSize = isMobile ? 384 : 640
+    const simTextureSize = isMobile ? 512 : 640
     floorSimMat = createFloorSimulationMaterial()
     floorSimMatRef.current = floorSimMat
     bufferSimRef.current = new BufferSim(gl, simTextureSize, simTextureSize, floorSimMat)
