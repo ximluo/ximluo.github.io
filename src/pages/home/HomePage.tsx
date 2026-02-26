@@ -356,7 +356,7 @@ const Home: React.FC<HomeProps> = ({
   // derived values
   const imageSize = useMemo(() => {
     if (isSmallScreen) return isMobile ? "120px" : "180px"
-    return isMobile ? "180px" : "220px"
+    return isMobile ? "160px" : "220px"
   }, [isSmallScreen, isMobile])
 
   const padding = useMemo(() => {
@@ -365,7 +365,7 @@ const Home: React.FC<HomeProps> = ({
 
   const contentHeight = isSmallScreen ? "auto" : "100vh"
   const contentMaxWidth = useMemo(() => {
-    const desiredGuard = isMobile ? 120 : 160 // space reserved for the vertical timestamp
+    const desiredGuard = isMobile ? 0 : 160 // reserve space only when the desktop timestamp is visible
     const minWidth = isMobile ? 200 : 600
     const maxWidth = isMobile ? 700 : 980
     const maxGuard = Math.max(windowWidth - minWidth, 0)
@@ -423,27 +423,29 @@ const Home: React.FC<HomeProps> = ({
         if (isAnimationComplete) onScramble()
       }}
     >
-        <div
-          className={`fade ${phase >= 4 && isAnimationComplete ? "show" : ""}`}
-          aria-hidden={!isAnimationComplete}
-          style={{
-            position: "fixed",
-            left: isMobile ? 40 : 55,
-            top: "50%",
-            transform: "translate(-50%, -50%) rotate(-90deg)",
-            transformOrigin: "center",
-            fontFamily: "monospace",
-            fontSize: isMobile ? 11 : 13,
-            letterSpacing: "0.2em",
-            color:
-              theme === "bunny" ? themes.bunny["--color-text"] : themes.water["--color-text"],
-            textTransform: "uppercase",
-            pointerEvents: "none",
-            zIndex: 45,
-          }}
-        >
-          est • {estTime}
-        </div>
+        {!isMobile && (
+          <div
+            className={`fade ${phase >= 4 && isAnimationComplete ? "show" : ""}`}
+            aria-hidden={!isAnimationComplete}
+            style={{
+              position: "fixed",
+              left: 55,
+              top: "50%",
+              transform: "translate(-50%, -50%) rotate(-90deg)",
+              transformOrigin: "center",
+              fontFamily: "monospace",
+              fontSize: 13,
+              letterSpacing: "0.2em",
+              color:
+                theme === "bunny" ? themes.bunny["--color-text"] : themes.water["--color-text"],
+              textTransform: "uppercase",
+              pointerEvents: "none",
+              zIndex: 45,
+            }}
+          >
+            est • {estTime}
+          </div>
+        )}
 
         {/* ---- THREE.JS BACKDROP (transparent, full height) ---- */}
         <div
@@ -607,7 +609,7 @@ const Home: React.FC<HomeProps> = ({
               justifyContent: "center",
               gap: isMobile ? 5 : 20,
               marginTop: isMobile ? 30 : 20,
-              marginBottom: isMobile ? 25 : 0,
+              marginBottom: isMobile ? 12 : 0,
               width: "100%",
               visibility: isAnimationComplete ? "visible" : "hidden",
             }}
@@ -621,7 +623,7 @@ const Home: React.FC<HomeProps> = ({
                 className={`fade ${phase >= 3 && isAnimationComplete ? "show" : ""}`}
                 style={{
                   fontFamily: "monospace",
-                  fontSize: isMobile ? 12 : 16,
+                  fontSize: isMobile ? 14 : 16,
                   fontWeight: "bold",
                   color:
                     theme === "bunny" ? themes.bunny["--color-text"] : themes.water["--color-text"],
@@ -652,7 +654,7 @@ const Home: React.FC<HomeProps> = ({
                 className={`fade ${phase >= 3 && isAnimationComplete ? "show" : ""}`}
                 style={{
                   fontFamily: "monospace",
-                  fontSize: isMobile ? 12 : 16,
+                  fontSize: isMobile ? 13.5 : 16,
                   fontWeight: "bold",
                   color:
                     theme === "bunny" ? themes.bunny["--color-text"] : themes.water["--color-text"],
@@ -696,7 +698,7 @@ const Home: React.FC<HomeProps> = ({
               </a>) and Economics.
             </p>
             <p style={{ marginBottom: isMobile ? 0 : 20 }}>
-              I have experience in iOS, graphics, fullstack, XR, and AI/ML. Previously, I did software at{" "}
+              I am interested in computer graphics, AI/ML, and fullstack. Previously, I did software at{" "}
               <a
                 href="https://www.apollo.com/"
                 target="_blank"
@@ -711,7 +713,7 @@ const Home: React.FC<HomeProps> = ({
               </a>{" "}
               and I currently teach iOS Programming{" "}
               <a
-                href="https://www.seas.upenn.edu/~cis1951/25fa/"
+                href="https://www.seas.upenn.edu/~cis1951/"
                 target="_blank"
                 rel="noopener noreferrer"
                 style={{
