@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-26T06:08:47.795Z",
+  "generatedAt": "2026-02-26T06:45:40.490Z",
   "widths": [
     320,
     640,
@@ -526,6 +526,12 @@
         "w": 360,
         "type": "image/webp",
         "bytes": 406690
+      },
+      "animatedDetail": {
+        "src": "/optimized/images/capsule-customize-animated-detail-560w.webp",
+        "w": 560,
+        "type": "image/webp",
+        "bytes": 1304898
       }
     },
     "/images/capsule-open.gif": {
@@ -543,6 +549,12 @@
         "w": 480,
         "type": "image/webp",
         "bytes": 1102968
+      },
+      "animatedDetail": {
+        "src": "/optimized/images/capsule-open-animated-detail-640w.webp",
+        "w": 640,
+        "type": "image/webp",
+        "bytes": 1659152
       }
     },
     "/images/capsule-upload.gif": {
@@ -560,6 +572,12 @@
         "w": 360,
         "type": "image/webp",
         "bytes": 143740
+      },
+      "animatedDetail": {
+        "src": "/optimized/images/capsule-upload-animated-detail-560w.webp",
+        "w": 560,
+        "type": "image/webp",
+        "bytes": 494780
       }
     },
     "/images/glsl-blinn.png": {
@@ -667,6 +685,12 @@
         "w": 360,
         "type": "image/webp",
         "bytes": 824314
+      },
+      "animatedDetail": {
+        "src": "/optimized/images/glsl-inflate-animated-detail-560w.webp",
+        "w": 560,
+        "type": "image/webp",
+        "bytes": 1511130
       }
     },
     "/images/glsl-lambert.png": {
@@ -912,6 +936,12 @@
         "w": 480,
         "type": "image/webp",
         "bytes": 3363236
+      },
+      "animatedDetail": {
+        "src": "/optimized/images/mini-minecraft-animated-detail-640w.webp",
+        "w": 640,
+        "type": "image/webp",
+        "bytes": 6269394
       }
     },
     "/images/mobile.png": {
@@ -1916,6 +1946,204 @@
         }
       ]
     },
+    "/images/petsteps1.png": {
+      "width": 2778,
+      "height": 1566,
+      "variants": [
+        {
+          "src": "/optimized/images/petsteps1-320w.avif",
+          "w": 320,
+          "type": "image/avif",
+          "bytes": 4190
+        },
+        {
+          "src": "/optimized/images/petsteps1-320w.webp",
+          "w": 320,
+          "type": "image/webp",
+          "bytes": 8622
+        },
+        {
+          "src": "/optimized/images/petsteps1-640w.avif",
+          "w": 640,
+          "type": "image/avif",
+          "bytes": 7636
+        },
+        {
+          "src": "/optimized/images/petsteps1-640w.webp",
+          "w": 640,
+          "type": "image/webp",
+          "bytes": 19088
+        },
+        {
+          "src": "/optimized/images/petsteps1-960w.avif",
+          "w": 960,
+          "type": "image/avif",
+          "bytes": 10666
+        },
+        {
+          "src": "/optimized/images/petsteps1-960w.webp",
+          "w": 960,
+          "type": "image/webp",
+          "bytes": 29762
+        },
+        {
+          "src": "/optimized/images/petsteps1-1280w.avif",
+          "w": 1280,
+          "type": "image/avif",
+          "bytes": 13268
+        },
+        {
+          "src": "/optimized/images/petsteps1-1280w.webp",
+          "w": 1280,
+          "type": "image/webp",
+          "bytes": 41894
+        },
+        {
+          "src": "/optimized/images/petsteps1-2778w.avif",
+          "w": 2778,
+          "type": "image/avif",
+          "bytes": 27150
+        },
+        {
+          "src": "/optimized/images/petsteps1-2778w.webp",
+          "w": 2778,
+          "type": "image/webp",
+          "bytes": 100752
+        }
+      ]
+    },
+    "/images/petsteps2.png": {
+      "width": 2784,
+      "height": 1570,
+      "variants": [
+        {
+          "src": "/optimized/images/petsteps2-320w.avif",
+          "w": 320,
+          "type": "image/avif",
+          "bytes": 5367
+        },
+        {
+          "src": "/optimized/images/petsteps2-320w.webp",
+          "w": 320,
+          "type": "image/webp",
+          "bytes": 10328
+        },
+        {
+          "src": "/optimized/images/petsteps2-640w.avif",
+          "w": 640,
+          "type": "image/avif",
+          "bytes": 10342
+        },
+        {
+          "src": "/optimized/images/petsteps2-640w.webp",
+          "w": 640,
+          "type": "image/webp",
+          "bytes": 24532
+        },
+        {
+          "src": "/optimized/images/petsteps2-960w.avif",
+          "w": 960,
+          "type": "image/avif",
+          "bytes": 15255
+        },
+        {
+          "src": "/optimized/images/petsteps2-960w.webp",
+          "w": 960,
+          "type": "image/webp",
+          "bytes": 41018
+        },
+        {
+          "src": "/optimized/images/petsteps2-1280w.avif",
+          "w": 1280,
+          "type": "image/avif",
+          "bytes": 19107
+        },
+        {
+          "src": "/optimized/images/petsteps2-1280w.webp",
+          "w": 1280,
+          "type": "image/webp",
+          "bytes": 55528
+        },
+        {
+          "src": "/optimized/images/petsteps2-2784w.avif",
+          "w": 2784,
+          "type": "image/avif",
+          "bytes": 37650
+        },
+        {
+          "src": "/optimized/images/petsteps2-2784w.webp",
+          "w": 2784,
+          "type": "image/webp",
+          "bytes": 137162
+        }
+      ]
+    },
+    "/images/petsteps3.png": {
+      "width": 2792,
+      "height": 1572,
+      "variants": [
+        {
+          "src": "/optimized/images/petsteps3-320w.avif",
+          "w": 320,
+          "type": "image/avif",
+          "bytes": 8013
+        },
+        {
+          "src": "/optimized/images/petsteps3-320w.webp",
+          "w": 320,
+          "type": "image/webp",
+          "bytes": 14100
+        },
+        {
+          "src": "/optimized/images/petsteps3-640w.avif",
+          "w": 640,
+          "type": "image/avif",
+          "bytes": 17257
+        },
+        {
+          "src": "/optimized/images/petsteps3-640w.webp",
+          "w": 640,
+          "type": "image/webp",
+          "bytes": 35518
+        },
+        {
+          "src": "/optimized/images/petsteps3-960w.avif",
+          "w": 960,
+          "type": "image/avif",
+          "bytes": 26700
+        },
+        {
+          "src": "/optimized/images/petsteps3-960w.webp",
+          "w": 960,
+          "type": "image/webp",
+          "bytes": 56078
+        },
+        {
+          "src": "/optimized/images/petsteps3-1280w.avif",
+          "w": 1280,
+          "type": "image/avif",
+          "bytes": 33781
+        },
+        {
+          "src": "/optimized/images/petsteps3-1280w.webp",
+          "w": 1280,
+          "type": "image/webp",
+          "bytes": 80556
+        },
+        {
+          "src": "/optimized/images/petsteps3-2792w.avif",
+          "w": 2792,
+          "type": "image/avif",
+          "bytes": 67677
+        },
+        {
+          "src": "/optimized/images/petsteps3-2792w.webp",
+          "w": 2792,
+          "type": "image/webp",
+          "bytes": 194132
+        }
+      ]
+    },
     "/images/rewind.png": {
       "width": 1000,
       "height": 666,
@@ -2173,14 +2401,16 @@
       "height": 6468,
       "variants": [],
       "poster": null,
-      "animated": null
+      "animated": null,
+      "animatedDetail": null
     },
     "/images/web-clock.gif": {
       "width": 480,
       "height": 12138,
       "variants": [],
       "poster": null,
-      "animated": null
+      "animated": null,
+      "animatedDetail": null
     },
     "/images/web-gallery.gif": {
       "width": 628,
@@ -2197,6 +2427,12 @@
         "w": 360,
         "type": "image/webp",
         "bytes": 200644
+      },
+      "animatedDetail": {
+        "src": "/optimized/images/web-gallery-animated-detail-560w.webp",
+        "w": 560,
+        "type": "image/webp",
+        "bytes": 505488
       }
     },
     "/images/web-maze.gif": {
@@ -2214,6 +2450,12 @@
         "w": 360,
         "type": "image/webp",
         "bytes": 1747822
+      },
+      "animatedDetail": {
+        "src": "/optimized/images/web-maze-animated-detail-560w.webp",
+        "w": 560,
+        "type": "image/webp",
+        "bytes": 7605592
       }
     },
     "/images/web-still.gif": {
@@ -2221,7 +2463,8 @@
       "height": 7160,
       "variants": [],
       "poster": null,
-      "animated": null
+      "animated": null,
+      "animatedDetail": null
     },
     "/images/web-tree.gif": {
       "width": 800,
@@ -2238,6 +2481,12 @@
         "w": 360,
         "type": "image/webp",
         "bytes": 77222
+      },
+      "animatedDetail": {
+        "src": "/optimized/images/web-tree-animated-detail-560w.webp",
+        "w": 560,
+        "type": "image/webp",
+        "bytes": 219262
       }
     },
     "/images/web-tv.gif": {
@@ -2245,7 +2494,8 @@
       "height": 7296,
       "variants": [],
       "poster": null,
-      "animated": null
+      "animated": null,
+      "animatedDetail": null
     },
     "/images/web-zoom.gif": {
       "width": 570,
@@ -2262,6 +2512,12 @@
         "w": 360,
         "type": "image/webp",
         "bytes": 132002
+      },
+      "animatedDetail": {
+        "src": "/optimized/images/web-zoom-animated-detail-560w.webp",
+        "w": 560,
+        "type": "image/webp",
+        "bytes": 327474
       }
     },
     "/images/ximing.jpg": {
