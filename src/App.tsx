@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react"
+import { useEffect, useState } from "react"
 import { useLocation, useNavigate, Link } from "react-router-dom"
 import "./App.css"
 import "./components/gradientAnimation.css"
@@ -117,7 +117,6 @@ function App() {
   const [theme, setTheme] = useState<ThemeType>("water")
   const location = useLocation()
   const navigate = useNavigate()
-  const navRef = useRef<HTMLDivElement>(null)
   const [navSuppressed, setNavSuppressed] = useState(false)
   const { width: viewportWidth } = useViewportSize({
     width: typeof window !== "undefined" ? window.innerWidth : 0,
@@ -239,7 +238,6 @@ function App() {
             <div className="app-shell-column">
               {/* NAV BAR */}
               <div
-                ref={navRef}
                 className={`fade app-top-nav ${phase >= 4 ? "show" : ""}`}
                 style={{
                   ["--app-nav-padding" as string]: isMobile ? "18px 0" : "20px 0",

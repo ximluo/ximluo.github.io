@@ -24,7 +24,7 @@ export interface BunnyScaffoldResources {
   particleGeom: THREE.BoxGeometry
 }
 
-interface CreateBunnySceneScaffoldOptions extends BunnyMaterialRefs {
+interface CreateBunnySceneScaffoldOptions {
   gl: THREE.WebGLRenderer
   colors: BunnySceneColors
   floorSizeRef: MutableRefObject<number>
@@ -36,6 +36,8 @@ interface CreateBunnySceneScaffoldOptions extends BunnyMaterialRefs {
   floorSimMatRef: MutableRefObject<THREE.ShaderMaterial | null>
   particlesRef: MutableRefObject<THREE.Mesh[]>
   particles2Ref: MutableRefObject<THREE.Mesh[]>
+  primMatRef: MutableRefObject<THREE.MeshToonMaterial>
+  bonusMatRef: MutableRefObject<THREE.MeshToonMaterial>
   addToScene: AddToScene
 }
 

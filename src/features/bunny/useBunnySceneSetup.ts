@@ -85,10 +85,7 @@ export const useBunnySceneSetup = ({
       particlesRef,
       particles2Ref,
       primMatRef,
-      secMatRef,
       bonusMatRef,
-      leafMatRef,
-      outlineMatRef,
       addToScene,
     })
 
