@@ -1,0 +1,4 @@
+build
+node_modules
+public/optimized
+src/generated/imageManifest.json

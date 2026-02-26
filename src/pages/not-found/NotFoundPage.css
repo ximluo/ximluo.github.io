@@ -1,0 +1,55 @@
+.not-found-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  width: 100%;
+  padding: 20px;
+  box-sizing: border-box;
+  text-align: center;
+}
+
+.not-found-code {
+  font-size: clamp(80px, 20vw, 180px);
+  font-weight: bold;
+  margin-bottom: 20px;
+  font-family: monospace;
+  position: relative;
+  color: var(--not-found-accent, currentColor);
+  text-shadow: var(--not-found-code-glow, none);
+}
+
+.not-found-message {
+  font-size: clamp(18px, 5vw, 24px);
+  font-family: monospace;
+  margin-bottom: 40px;
+  font-weight: bold;
+  color: var(--not-found-text, currentColor);
+  letter-spacing: 0.1em;
+}
+
+.not-found-link {
+  padding: 10px 25px;
+  font-size: 16px;
+  font-family: monospace;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  background-color: var(--not-found-button-bg);
+  color: var(--not-found-button-text);
+  border: none;
+  outline: none;
+  border-radius: 20px;
+  cursor: pointer;
+  text-decoration: none;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+  box-shadow: var(--not-found-button-glow, none);
+}
+
+.not-found-link:hover {
+  transform: scale(1.05);
+  box-shadow: var(--not-found-button-glow-hover, var(--not-found-button-glow, none));
+}

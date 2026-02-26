@@ -1,9 +1,7 @@
-"use client"
-
 import type React from "react"
 import { useState, useEffect, useRef, useCallback } from "react"
 import useIsMobile from "../hooks/useIsMobile"
-import { type ThemeType } from "../theme/tokens"
+import { THEME_VISUAL_TOKENS, type ThemeType } from "../theme/tokens"
 
 interface AsciiImageProps {
   src: string
@@ -16,19 +14,6 @@ interface AsciiImageProps {
 
 const ASCII_CHARS = " .,:;i1tfLCG08@"
 const GLYPH_ASPECT = 0.55
-const THEMES = {
-  bunny: {
-    glow: "rgba(223, 30, 155, 0.5)",
-    border: "rgba(223, 30, 155, 1)",
-    text: "rgba(223, 30, 155, 1)",
-  },
-  water: {
-    glow: "rgba(134, 196, 240, 0.5)",
-    border: "rgb(134, 196, 240)",
-    text: "rgb(134, 196, 240)",
-  },
-} as const
-
 const AsciiImage: React.FC<AsciiImageProps> = ({
   src,
   alt,
@@ -37,7 +22,8 @@ const AsciiImage: React.FC<AsciiImageProps> = ({
   borderWidth = "3px",
   className = "",
 }) => {
-  // state 
+  const visualTokens = THEME_VISUAL_TOKENS[theme]
+  // state
   const [asciiData, setAsciiData] = useState<string[]>([])
   const [baseAscii, setBaseAscii] = useState<string[]>([])
   const [isHovered, setIsHovered] = useState(false)
@@ -52,35 +38,35 @@ const AsciiImage: React.FC<AsciiImageProps> = ({
   const imgRef = useRef<HTMLImageElement | null>(null)
 
   // Convert the given image to ASCII.
-  const convertToAscii = useCallback((
-    img: HTMLImageElement,
-    W: number,
-    H: number,
-    step: number
-  ) => {
-    const off = new OffscreenCanvas(W, H)
-    const ctx = off.getContext("2d", { willReadFrequently: false }) as OffscreenCanvasRenderingContext2D
-    if (!ctx) return []
+  const convertToAscii = useCallback(
+    (img: HTMLImageElement, W: number, H: number, step: number) => {
+      const off = new OffscreenCanvas(W, H)
+      const ctx = off.getContext("2d", {
+        willReadFrequently: false,
+      }) as OffscreenCanvasRenderingContext2D
+      if (!ctx) return []
 
-    ctx.drawImage(img, 0, 0, W, H)
-    const { data } = ctx.getImageData(0, 0, W, H)
+      ctx.drawImage(img, 0, 0, W, H)
+      const { data } = ctx.getImageData(0, 0, W, H)
 
-    const ascii: string[] = []
-    const stepX = step
-    const stepY = Math.max(1, Math.floor(step / GLYPH_ASPECT))
+      const ascii: string[] = []
+      const stepX = step
+      const stepY = Math.max(1, Math.floor(step / GLYPH_ASPECT))
 
-    for (let y = 0; y < H; y += stepY) {
-      let line = ""
-      for (let x = 0; x < W; x += stepX) {
-        const idx = (y * W + x) * 4
-        const brightness = (data[idx] + data[idx + 1] + data[idx + 2]) / 3 / 255
-        const charIdx = Math.floor(brightness * (ASCII_CHARS.length - 1))
-        line += ASCII_CHARS[charIdx]
+      for (let y = 0; y < H; y += stepY) {
+        let line = ""
+        for (let x = 0; x < W; x += stepX) {
+          const idx = (y * W + x) * 4
+          const brightness = (data[idx] + data[idx + 1] + data[idx + 2]) / 3 / 255
+          const charIdx = Math.floor(brightness * (ASCII_CHARS.length - 1))
+          line += ASCII_CHARS[charIdx]
+        }
+        ascii.push(line)
       }
-      ascii.push(line)
-    }
-    return ascii
-  }, [])
+      return ascii
+    },
+    [],
+  )
 
   // Calculate ASCII art based on current container size
   const calculateAsciiArt = useCallback(() => {
@@ -144,9 +130,9 @@ const AsciiImage: React.FC<AsciiImageProps> = ({
           .map((c) =>
             Math.random() > progress
               ? ASCII_CHARS[Math.floor(Math.random() * ASCII_CHARS.length)]
-              : c
+              : c,
           )
-          .join("")
+          .join(""),
       )
       setAsciiData(scrambled)
       animFrameRef.current = requestAnimationFrame(tick)
@@ -194,8 +180,8 @@ const AsciiImage: React.FC<AsciiImageProps> = ({
         overflow: "hidden",
         position: "relative",
         flexShrink: 0,
-        border: `${borderWidth} solid ${THEMES[theme].border}`,
-        boxShadow: `0 0 20px ${THEMES[theme].glow}`,
+        border: `${borderWidth} solid ${visualTokens.asciiBorder}`,
+        boxShadow: `0 0 20px ${visualTokens.asciiGlow}`,
         transition: "box-shadow 0.3s ease",
         cursor: isMobile ? "pointer" : undefined,
       }}
@@ -212,7 +198,7 @@ const AsciiImage: React.FC<AsciiImageProps> = ({
           width: "100%",
           height: "100%",
           objectFit: "cover",
-          display: (isHovered || isTapped) ? "none" : "block",
+          display: isHovered || isTapped ? "none" : "block",
         }}
       />
 
@@ -223,7 +209,7 @@ const AsciiImage: React.FC<AsciiImageProps> = ({
             position: "absolute",
             inset: 0,
             background: "#000",
-            color: THEMES[theme].text,
+            color: visualTokens.asciiText,
             fontSize: "6px",
             lineHeight: "6px",
             fontFamily: "monospace",

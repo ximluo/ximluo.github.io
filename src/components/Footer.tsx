@@ -1,10 +1,9 @@
-"use client"
-
 import type React from "react"
 import { lazy, Suspense, useState } from "react"
 import { Github, Mail, Linkedin } from "lucide-react"
-import { FOOTER_THEME_TOKENS, type ThemeType } from "../theme/tokens"
+import { FOOTER_THEME_TOKENS, THEME_VISUAL_TOKENS, type ThemeType } from "../theme/tokens"
 import useIsMobile from "../hooks/useIsMobile"
+import "./Footer.css"
 
 const BunnyModal = lazy(() => import("../features/bunny"))
 
@@ -12,197 +11,113 @@ interface FooterProps {
   theme: ThemeType
 }
 
+interface FooterLinkItem {
+  id: string
+  label: string
+  href: string
+  icon: React.ComponentType<{ size?: number }>
+  external?: boolean
+}
+
+const FOOTER_LINK_ITEMS: FooterLinkItem[] = [
+  {
+    id: "github",
+    label: "GitHub",
+    href: "https://github.com/ximluo",
+    icon: Github,
+    external: true,
+  },
+  {
+    id: "email",
+    label: "Email",
+    href: "mailto:ximluo@seas.upenn.edu",
+    icon: Mail,
+  },
+  {
+    id: "linkedin",
+    label: "LinkedIn",
+    href: "https://www.linkedin.com/in/ximingluo/",
+    icon: Linkedin,
+    external: true,
+  },
+]
+
 const Footer: React.FC<FooterProps> = ({ theme }) => {
   const [showBunny, setShowBunny] = useState(false)
   const isMobile = useIsMobile(768)
+  const isDesktop = !isMobile
 
-  // hover states
-  const [bunnyHover, setBunnyHover] = useState(false)
-  const [emailHover, setEmailHover] = useState(false)
-  const [githubHover, setGithubHover] = useState<boolean>(false)
-  const [linkedinHover, setLinkedinHover] = useState(false)
-  const [madeHover, setMadeHover] = useState(false)
+  const themeTokens = FOOTER_THEME_TOKENS[theme]
+  const visualTokens = THEME_VISUAL_TOKENS[theme]
 
-  const themes = FOOTER_THEME_TOKENS
-
-  const baseTextColor = theme === "bunny" ? themes.bunny["--color-text"] : themes.water["--color-text"]
-  const accentColor =
-    theme === "bunny" ? themes.bunny["--color-accent-primary"] : themes.water["--color-accent-primary"]
-  const buttonBg = theme === "bunny" ? themes.bunny["--button-bg-light"] : themes.water["--button-bg-light"]
-  const buttonHoverBg = theme === "bunny" ? themes.bunny["--button-bg"] : themes.water["--button-bg"]
-
-  const bunnyGlow = theme === "bunny"
-    ? "0 0 15px rgba(223, 30, 155, 0.3)"
-    : "0 0 15px rgba(134, 196, 240, 0.3)"
-
-  // Adjust icon size for mobile
   const iconSize = isMobile ? 18 : 22
-  const iconFontSize = isMobile ? "14px" : "18px"
-  const footerFontSize = isMobile ? "12px" : "14px"
 
-  const iconStyle: React.CSSProperties = {
-    width: isMobile ? "30px" : "36px",
-    height: isMobile ? "30px" : "36px",
-    borderRadius: "50%",
-    backgroundColor: buttonBg,
-    color: baseTextColor,
-    border: "none",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    fontSize: iconFontSize,
-    cursor: "pointer",
-    transition: "transform .2s, background-color .2s, box-shadow .2s",
-    flexShrink: 0,
-  }
-
-  const bunnyIconStyle = {
-    ...iconStyle,
-    boxShadow: bunnyHover ? "none" : bunnyGlow,
-  }
-
-  const isDesktopNonHomePage = !isMobile
+  const bunnyButton = (
+    <button
+      type="button"
+      aria-label="Show Bunny"
+      onClick={() => setShowBunny(true)}
+      className="footer-icon-button footer-icon-button--bunny"
+    >
+      🐰
+    </button>
+  )
 
   return (
     <footer
+      className={`footer-root ${isDesktop ? "footer-root--desktop" : "footer-root--mobile"}`}
       style={{
-        position: "relative",
-        width: "100%",
-        padding: isMobile ? "10px 15px" : "15px 20px",
-        display: "flex",
-        flexDirection: isDesktopNonHomePage ? "row" : "column",
-        alignItems: "center",
-        color: baseTextColor,
-        fontFamily: "monospace",
-        fontSize: footerFontSize,
-        boxSizing: "border-box",
+        ["--footer-padding" as string]: isMobile ? "10px 15px" : "15px 20px",
+        ["--footer-text" as string]: themeTokens["--color-text"],
+        ["--footer-accent" as string]: themeTokens["--color-accent-primary"],
+        ["--footer-button-bg" as string]: themeTokens["--button-bg-light"],
+        ["--footer-button-bg-hover" as string]: themeTokens["--button-bg"],
+        ["--footer-bunny-glow" as string]: visualTokens.iconGlowSoft,
+        ["--footer-icon-button-size" as string]: isMobile ? "30px" : "36px",
+        ["--footer-icon-font-size" as string]: isMobile ? "14px" : "18px",
+        ["--footer-font-size" as string]: isMobile ? "12px" : "14px",
+        ["--footer-icon-gap" as string]: isMobile ? "10px" : "15px",
+        ["--footer-icons-margin-bottom" as string]: isMobile ? "5px" : "10px",
+        ["--footer-bunny-slot-width" as string]: isMobile ? "100px" : "120px",
       }}
     >
-      {/* Left: Bunny trigger (desktop) */}
-      {isDesktopNonHomePage && (
-        <div style={{ width: isMobile ? "100px" : "120px" }}>
-          <button
-            aria-label="Show Bunny"
-            onClick={() => setShowBunny(true)}
-            onMouseEnter={() => setBunnyHover(true)}
-            onMouseLeave={() => setBunnyHover(false)}
-            style={{
-              ...bunnyIconStyle,
-              backgroundColor: bunnyHover ? buttonHoverBg : buttonBg,
-              transform: bunnyHover ? "scale(1.1)" : "scale(1)",
-            }}
-          >
-            🐰
-          </button>
-        </div>
-      )}
+      {isDesktop && <div className="footer-bunny-slot">{bunnyButton}</div>}
 
-        {/* Icons */}
-        <div
-          style={{
-            display: "flex",
-            gap: isMobile ? "10px" : "15px",
-            justifyContent: "center",
-            width: isDesktopNonHomePage ? "auto" : "100%",
-            order: isDesktopNonHomePage ? 2 : 1,
-            marginBottom: isMobile ? "5px" : "10px",
-          }}
-        >
-          {/* Only show bunny button in the icons section if not desktop */}
-          {!isDesktopNonHomePage && (
-            <button
-              aria-label="Show Bunny"
-              onClick={() => setShowBunny(true)}
-              onMouseEnter={() => setBunnyHover(true)}
-              onMouseLeave={() => setBunnyHover(false)}
-              style={{
-                ...bunnyIconStyle,
-                backgroundColor: bunnyHover ? buttonHoverBg : buttonBg,
-                transform: bunnyHover ? "scale(1.1)" : "scale(1)",
-              }}
+      <div
+        className={`footer-icons ${isDesktop ? "footer-icons--desktop" : "footer-icons--mobile"}`}
+      >
+        {!isDesktop && bunnyButton}
+
+        {FOOTER_LINK_ITEMS.map((item) => {
+          const Icon = item.icon
+          return (
+            <a
+              key={item.id}
+              href={item.href}
+              aria-label={item.label}
+              className="footer-icon-button"
+              target={item.external ? "_blank" : undefined}
+              rel={item.external ? "noopener noreferrer" : undefined}
             >
-              🐰
-            </button>
-          )}
+              <Icon size={iconSize} />
+            </a>
+          )
+        })}
+      </div>
 
-          {/* GitHub Icon */}
-          <a
-            href="https://github.com/ximluo"
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label="GitHub"
-            onMouseEnter={() => setGithubHover(true)}
-            onMouseLeave={() => setGithubHover(false)}
-            style={{
-              ...iconStyle,
-              backgroundColor: githubHover ? buttonHoverBg : buttonBg,
-              transform: githubHover ? "scale(1.1)" : "scale(1)",
-              textDecoration: "none",
-            }}
-          >
-            <Github size={iconSize} />
-          </a>
-
-          {/* Email Icon */}
-          <a
-            href="mailto:ximluo@seas.upenn.edu"
-            aria-label="Email"
-            onMouseEnter={() => setEmailHover(true)}
-            onMouseLeave={() => setEmailHover(false)}
-            style={{
-              ...iconStyle,
-              backgroundColor: emailHover ? buttonHoverBg : buttonBg,
-              transform: emailHover ? "scale(1.1)" : "scale(1)",
-              textDecoration: "none",
-            }}
-          >
-            <Mail size={iconSize} />
-          </a>
-
-          {/* LinkedIn Icon */}
-          <a
-            href="https://www.linkedin.com/in/ximingluo/"
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label="LinkedIn"
-            onMouseEnter={() => setLinkedinHover(true)}
-            onMouseLeave={() => setLinkedinHover(false)}
-            style={{
-              ...iconStyle,
-              backgroundColor: linkedinHover ? buttonHoverBg : buttonBg,
-              transform: linkedinHover ? "scale(1.1)" : "scale(1)",
-              textDecoration: "none",
-            }}
-          >
-            <Linkedin size={iconSize} />
-          </a>
-        </div>
-
-        {/* Copyright */}
-        <div
-          style={{
-            textAlign: "center",
-            flexGrow: isDesktopNonHomePage ? 1 : 0,
-            order: isDesktopNonHomePage ? 1 : 2,
-          }}
+      <div
+        className={`footer-copyright ${isDesktop ? "footer-copyright--desktop" : "footer-copyright--mobile"}`}
+      >
+        © 2026 Ximing Luo •{" "}
+        <a
+          href="https://github.com/ximluo/ximluo.github.io"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="footer-made-link"
         >
-          © 2026 Ximing Luo •{" "}
-          <a
-            href="https://github.com/ximluo/ximluo.github.io"
-            target="_blank"
-            rel="noopener noreferrer"
-            onMouseEnter={() => setMadeHover(true)}
-            onMouseLeave={() => setMadeHover(false)}
-            style={{
-              color: accentColor,
-              textDecoration: "none",
-              textShadow: madeHover ? `0 0 8px ${accentColor}` : "none",
-              transition: "text-shadow .2s ease-in-out",
-            }}
-          >
-            Made with ♥
-          </a>
-        </div>
+          Made with ♥
+        </a>
+      </div>
 
       {showBunny && (
         <Suspense fallback={null}>

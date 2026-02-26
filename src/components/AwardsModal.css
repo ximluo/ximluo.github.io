@@ -1,0 +1,113 @@
+.awards-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  padding: 20px;
+}
+
+.awards-modal-panel {
+  background: var(--awards-modal-surface);
+  border-radius: 12px;
+  max-width: 600px;
+  width: 100%;
+  max-height: 80vh;
+  overflow: auto;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
+  padding: 30px;
+  color: var(--awards-text);
+  font-family: monospace;
+}
+
+.awards-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.awards-modal-title {
+  margin: 0;
+  color: var(--awards-accent);
+}
+
+.awards-modal-close {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: var(--awards-button-bg-light);
+  color: var(--awards-text);
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.awards-modal-sections {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+.awards-modal-section-title {
+  color: var(--awards-accent);
+  margin: 0 0 15px;
+  border-bottom: 1px solid var(--awards-border);
+  padding-bottom: 5px;
+}
+
+.awards-modal-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.awards-modal-item {
+  padding: 15px;
+  border-radius: 8px;
+  background: var(--awards-item-surface);
+  cursor: default;
+}
+
+.awards-modal-item--linked {
+  cursor: pointer;
+}
+
+.awards-modal-item-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 10px;
+}
+
+.awards-modal-item-title {
+  margin: 0 0 8px;
+  color: var(--awards-accent);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.awards-modal-item-link-icon {
+  margin-left: 6px;
+  font-size: 14px;
+  vertical-align: middle;
+}
+
+.awards-modal-item-year {
+  font-size: 14px;
+  opacity: 0.8;
+  white-space: nowrap;
+}
+
+.awards-modal-item-description {
+  margin: 0;
+  font-size: 14px;
+  text-align: left;
+}

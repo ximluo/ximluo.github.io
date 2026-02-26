@@ -1,1 +1,1 @@
-export { default } from "../../components/BunnyModal"
+export { default } from "./BunnyModal"

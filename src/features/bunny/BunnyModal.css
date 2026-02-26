@@ -1,0 +1,97 @@
+.bunny-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.9);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.bunny-modal-panel {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  border: 8px solid var(--bunny-modal-border);
+  border-radius: var(--bunny-modal-radius, 26px);
+  box-sizing: border-box;
+  box-shadow: 0 0 35px var(--bunny-modal-shadow);
+}
+
+.bunny-modal-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  outline: none;
+  cursor: grabbing;
+}
+
+.bunny-modal-counter {
+  position: absolute;
+  top: var(--bunny-modal-counter-top, 26px);
+  left: var(--bunny-modal-counter-left, 30px);
+  padding: 8px 16px;
+  border-radius: 999px;
+  font-family: monospace;
+  font-size: var(--bunny-modal-counter-size, 0.8rem);
+  letter-spacing: 0.1em;
+  color: var(--bunny-modal-text);
+  background-color: var(--bunny-modal-button-bg);
+  border: 1px solid var(--bunny-modal-border);
+  z-index: 1000;
+}
+
+.bunny-modal-hint {
+  position: absolute;
+  width: 100%;
+  bottom: 60px;
+  font-family: "Open Sans", sans-serif;
+  color: var(--bunny-modal-accent);
+  font-size: 0.75em;
+  text-transform: uppercase;
+  text-align: center;
+  letter-spacing: 0.3em;
+}
+
+.bunny-modal-footer {
+  position: absolute;
+  width: 100%;
+  bottom: 20px;
+  font-family: "Open Sans", sans-serif;
+  color: var(--bunny-modal-text);
+  font-size: 0.7em;
+  text-transform: uppercase;
+  text-align: center;
+}
+
+.bunny-modal-text-button {
+  color: var(--bunny-modal-accent);
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: inherit;
+  text-transform: inherit;
+}
+
+.bunny-modal-close-button {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background-color: var(--bunny-modal-button-bg);
+  color: var(--bunny-modal-text);
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  cursor: pointer;
+  z-index: 1001;
+}

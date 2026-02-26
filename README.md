@@ -3,18 +3,21 @@
 React + TypeScript portfolio deployed to GitHub Pages with `gh-pages`.
 
 ## Tech Stack
+
 - Create React App (`react-scripts@5`)
 - React 19 + TypeScript
 - React Router
 - Three.js / React Three Fiber
 
 ## Run Commands
+
 - `npm start`: local dev server
 - `npm run optimize-images`: generate optimized image variants + manifests
 - `npm run build`: production build (runs image optimization first)
 - `npm run deploy`: publish `build/` to GitHub Pages
 
 ## Project Structure
+
 - `src/app/`: route composition and app-level wiring
 - `src/pages/`: page modules (`home`, `portfolio`, `creative`, `project-detail`, `not-found`)
 - `src/components/`: shared UI and site components
@@ -26,6 +29,7 @@ React + TypeScript portfolio deployed to GitHub Pages with `gh-pages`.
 - `src/generated/imageManifest.json`: runtime manifest consumed by `OptimizedImage`
 
 ## Image Performance Workflow
+
 1. Add originals to `public/images/...` and keep URLs in content as `/images/...`.
 2. Run `npm run optimize-images` (or just `npm run build`).
 3. Use `OptimizedImage` for image rendering to reuse `srcSet`, intrinsic dimensions, lazy-loading.

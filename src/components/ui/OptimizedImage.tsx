@@ -34,8 +34,10 @@ interface ImageManifest {
   images: Record<string, ManifestEntry>
 }
 
-interface OptimizedImageProps
-  extends Omit<React.ImgHTMLAttributes<HTMLImageElement>, "src" | "alt" | "loading"> {
+interface OptimizedImageProps extends Omit<
+  React.ImgHTMLAttributes<HTMLImageElement>,
+  "src" | "alt" | "loading"
+> {
   src: string
   alt: string
   priority?: boolean
@@ -100,17 +102,21 @@ const OptimizedImage: React.FC<OptimizedImageProps> = ({
 
   const shouldUsePoster = Boolean(preferPosterForGif && isGifSource && optimized?.entry.poster?.src)
   const preferredAnimatedGifVariant =
-    animatedGifVariantTier === "detail" ? optimized?.entry.animatedDetail ?? optimized?.entry.animated : optimized?.entry.animated
+    animatedGifVariantTier === "detail"
+      ? (optimized?.entry.animatedDetail ?? optimized?.entry.animated)
+      : optimized?.entry.animated
   const shouldUseAnimatedGifVariant = Boolean(
     !shouldUsePoster && preferAnimatedGifVariant && isGifSource && preferredAnimatedGifVariant?.src,
   )
   const resolvedSrc = shouldUsePoster
-    ? optimized?.entry.poster?.src ?? src
+    ? (optimized?.entry.poster?.src ?? src)
     : shouldUseAnimatedGifVariant
-      ? preferredAnimatedGifVariant?.src ?? src
+      ? (preferredAnimatedGifVariant?.src ?? src)
       : src
   const resolvedSrcSet = shouldUsePoster ? undefined : optimized?.srcSet
-  const resolvedSizes = shouldUsePoster ? undefined : sizes ?? (resolvedSrcSet ? "100vw" : undefined)
+  const resolvedSizes = shouldUsePoster
+    ? undefined
+    : (sizes ?? (resolvedSrcSet ? "100vw" : undefined))
 
   return (
     <img
@@ -119,8 +125,8 @@ const OptimizedImage: React.FC<OptimizedImageProps> = ({
       alt={alt}
       srcSet={resolvedSrcSet}
       sizes={resolvedSizes}
-      width={width ?? (optimized?.entry.width ?? undefined)}
-      height={height ?? (optimized?.entry.height ?? undefined)}
+      width={width ?? optimized?.entry.width ?? undefined}
+      height={height ?? optimized?.entry.height ?? undefined}
       loading={priority ? "eager" : "lazy"}
       decoding={decoding ?? "async"}
       fetchPriority={fetchPriority ?? (priority ? "high" : "auto")}

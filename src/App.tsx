@@ -1,5 +1,3 @@
-"use client"
-
 import { useEffect, useState, useRef } from "react"
 import { useLocation, useNavigate, Link } from "react-router-dom"
 import "./App.css"
@@ -7,20 +5,39 @@ import "./components/gradientAnimation.css"
 import GradientBackground from "./components/GradientBackground"
 import Footer from "./components/Footer"
 import AppRoutes from "./app/routes"
-import { APP_THEME_TOKENS, type ThemeType } from "./theme/tokens"
-import { scrambleText } from "./utils/scramble"
+import { APP_THEME_TOKENS, THEME_VISUAL_TOKENS, type ThemeType } from "./theme/tokens"
+import { scrambleText, type ScrambleSet } from "./utils/scramble"
+import useViewportSize from "./hooks/useViewportSize"
+import {
+  dispatchHomeFlowerTemporaryHide,
+  listenHomeFlowerNavVisibility,
+} from "./pages/home/home.events"
 
 const themes = APP_THEME_TOKENS
+
+const SCRAMBLE_SETS_BY_THEME: Record<ThemeType, { top: ScrambleSet; bottom: ScrambleSet }> = {
+  bunny: { top: "code", bottom: "japanese" },
+  water: { top: "matrix", bottom: "symbols" },
+}
+
+const THEME_TOGGLE_ICON: Record<ThemeType, string> = {
+  bunny: "☾",
+  water: "☼",
+}
 
 const ThemeToggle = ({
   currentTheme,
   toggleTheme,
   isMobile,
-}: { currentTheme: ThemeType; toggleTheme: () => void; isMobile: boolean }) => {
-  const moonIcon = "☾"
-  const sunIcon = "☼"
+}: {
+  currentTheme: ThemeType
+  toggleTheme: () => void
+  isMobile: boolean
+}) => {
   const buttonSize = isMobile ? 34 : 40
   const [isHovered, setIsHovered] = useState(false)
+  const themeTokens = themes[currentTheme]
+  const buttonBackground = isHovered ? themeTokens["--button-bg"] : themeTokens["--button-bg-light"]
 
   return (
     <button
@@ -31,10 +48,8 @@ const ThemeToggle = ({
         width: buttonSize,
         height: buttonSize,
         borderRadius: "50%",
-        background: isHovered
-          ? currentTheme === "bunny" ? themes.bunny["--button-bg"] : themes.water["--button-bg"]
-          : currentTheme === "bunny" ? themes.bunny["--button-bg-light"] : themes.water["--button-bg-light"],
-        color: currentTheme === "bunny" ? themes.bunny["--color-text"] : themes.water["--color-text"],
+        background: buttonBackground,
+        color: themeTokens["--color-text"],
         border: "none",
         outline: "none",
         cursor: "pointer",
@@ -46,7 +61,7 @@ const ThemeToggle = ({
         transform: isHovered ? "scale(1.1)" : "scale(1)",
       }}
     >
-      {currentTheme === "bunny" ? moonIcon : sunIcon}
+      {THEME_TOGGLE_ICON[currentTheme]}
     </button>
   )
 }
@@ -65,74 +80,49 @@ const NavButton = ({
   onClick: () => void
   isMobile: boolean
   isSuppressed?: boolean
-}) => (
-  <button
-    onClick={onClick}
-    style={{
-      padding: isMobile ? "9px 14px" : "10px 14px",
-      fontFamily: "monospace",
-      fontSize: isMobile ? 12 : 14,
-      fontWeight: "bold",
-      textTransform: "uppercase",
-      letterSpacing: isMobile ? "0.08em" : "0.1em",
-      backgroundColor: isActive
-        ? theme === "bunny"
-          ? themes.bunny["--button-bg"]
-          : themes.water["--button-bg"]
-        : theme === "bunny"
-          ? themes.bunny["--button-bg-light"]
-          : themes.water["--button-bg-light"],
-      color: isActive
-        ? theme === "bunny"
-          ? themes.bunny["--button-text"]
-          : themes.water["--button-text"]
-        : theme === "bunny"
-          ? themes.bunny["--color-text"]
-          : themes.water["--color-text"],
-      border: "none",
-      outline: "none",
-      borderRadius: 20,
-      cursor: "pointer",
-      margin: isMobile ? "0 2px" : "0 5px",
-      transition: "all 0.2s ease, opacity 0.3s ease",
-      boxShadow: isActive
-        ? theme === "bunny"
-          ? "0 0 15px rgba(223, 30, 155, 0.4)"
-          : "0 0 15px rgba(134, 196, 240, 0.4)"
-        : "none",
-      opacity: isSuppressed ? 0 : 1,
-      pointerEvents: isSuppressed ? "none" : "auto",
-    }}
-    onMouseEnter={(e) => {
-      if (isSuppressed) return
-      e.currentTarget.style.transform = "scale(1.05)"
-      e.currentTarget.style.boxShadow = theme === "bunny"
-        ? "0 0 20px rgba(223, 30, 155, 0.6)"
-        : "0 0 20px rgba(134, 196, 240, 0.6)"
-    }}
-    onMouseLeave={(e) => {
-      if (isSuppressed) return
-      e.currentTarget.style.transform = "scale(1)"
-      e.currentTarget.style.boxShadow = isActive
-        ? theme === "bunny"
-          ? "0 0 15px rgba(223, 30, 155, 0.4)"
-          : "0 0 15px rgba(134, 196, 240, 0.4)"
-        : "none"
-    }}
-  >
-    {label}
-  </button>
-)
+}) => {
+  const themeTokens = themes[theme]
+  const visualTokens = THEME_VISUAL_TOKENS[theme]
+
+  return (
+    <button
+      onClick={onClick}
+      className={`app-nav-button ${isSuppressed ? "app-nav-button--suppressed" : ""}`}
+      style={{
+        ["--app-nav-button-padding" as string]: isMobile ? "9px 14px" : "10px 14px",
+        ["--app-nav-button-font-size" as string]: `${isMobile ? 12 : 14}px`,
+        ["--app-nav-button-letter-spacing" as string]: isMobile ? "0.08em" : "0.1em",
+        ["--app-nav-button-bg" as string]: isActive
+          ? themeTokens["--button-bg"]
+          : themeTokens["--button-bg-light"],
+        ["--app-nav-button-color" as string]: isActive
+          ? themeTokens["--button-text"]
+          : themeTokens["--color-text"],
+        ["--app-nav-button-margin" as string]: isMobile ? "0 2px" : "0 5px",
+        ["--app-nav-button-shadow" as string]: isActive ? visualTokens.navGlowActive : "none",
+        ["--app-nav-button-shadow-hover" as string]: visualTokens.navGlowHover,
+        ["--app-nav-button-opacity" as string]: isSuppressed ? "0" : "1",
+        ["--app-nav-button-pointer-events" as string]: isSuppressed ? "none" : "auto",
+      }}
+    >
+      {label}
+    </button>
+  )
+}
 
 // Minimal fade-in CSS
 
 function App() {
-  // theme + nav 
+  // theme + nav
   const [theme, setTheme] = useState<ThemeType>("water")
   const location = useLocation()
   const navigate = useNavigate()
   const navRef = useRef<HTMLDivElement>(null)
   const [navSuppressed, setNavSuppressed] = useState(false)
+  const { width: viewportWidth } = useViewportSize({
+    width: typeof window !== "undefined" ? window.innerWidth : 0,
+    height: typeof window !== "undefined" ? window.innerHeight : 0,
+  })
 
   // Determine active tab based on current path
   const getActiveTab = () => {
@@ -144,52 +134,26 @@ function App() {
   const activeTab = getActiveTab()
   const isHomeRoute = location.pathname === "/"
 
-  // phased reveal: 0-4 
+  // phased reveal: 0-4
   const [phase, setPhase] = useState(0)
 
-  // dynamic role text 
+  // dynamic role text
   const [roleTop, setTop] = useState("SOFTWARE ENGINEER")
   const [roleBot, setBot] = useState("DEVELOPER & DESIGNER")
   const [originalTop] = useState("SOFTWARE ENGINEER")
   const [originalBot] = useState("DEVELOPER & DESIGNER")
 
-  // track if device is mobile
-  const [isMobile, setIsMobile] = useState(false)
-  const [isTablet, setIsTablet] = useState(false)
+  const isMobile = viewportWidth <= 480
+  const isTablet = viewportWidth <= 768 && viewportWidth > 480
+  const safeAreaTop = isMobile ? "max(15px, env(safe-area-inset-top))" : "15px"
 
-  // track safe area top and bottom 
-  const [safeAreaTop, setSafeAreaTop] = useState("15px")
-
-  // check device type and safe area 
-  useEffect(() => {
-    const checkDeviceAndSafeArea = () => {
-      // Only mobile devices (not tablets) should have different nav behavior
-      const mobile = window.innerWidth <= 480
-      const tablet = window.innerWidth <= 768 && window.innerWidth > 480
-      setIsMobile(mobile)
-      setIsTablet(tablet)
-
-      // Check for safe area insets
-      if (mobile) {
-        // Use safe area inset for mobile devices
-        setSafeAreaTop("max(15px, env(safe-area-inset-top))")
-      } else {
-        // Standard padding for desktop
-        setSafeAreaTop("15px")
-      }
-    }
-
-    checkDeviceAndSafeArea()
-    window.addEventListener("resize", checkDeviceAndSafeArea)
-
-    return () => window.removeEventListener("resize", checkDeviceAndSafeArea)
-  }, [])
-
-  // theme side‑effects 
+  // theme side‑effects
   useEffect(() => {
     const cur = themes[theme]
-    Object.entries(cur).forEach(([k, v]) => document.documentElement.style.setProperty(k, v as string))
-    // outer bg tint = border color 
+    Object.entries(cur).forEach(([k, v]) =>
+      document.documentElement.style.setProperty(k, v as string),
+    )
+    // outer bg tint = border color
     document.body.style.background = cur["--border-color"]
     document.body.style.margin = "0"
     document.body.style.overflow = "hidden"
@@ -197,7 +161,7 @@ function App() {
     document.documentElement.style.height = "100%"
   }, [theme])
 
-  // drive the timeline on mount 
+  // drive the timeline on mount
   useEffect(() => {
     setPhase(1) // container
     const t1 = setTimeout(() => setPhase(2), 600) // greeting
@@ -215,19 +179,18 @@ function App() {
     }
   }, [originalTop, originalBot])
 
-  // toggle with scramble effect 
+  // toggle with scramble effect
   const toggleTheme = () => {
     // Toggle the theme
     setTheme((prevTheme) => {
       const newTheme = prevTheme === "bunny" ? "water" : "bunny"
 
       // Create a scramble effect based on the new theme
-      const topSet = newTheme === "bunny" ? "code" : "matrix"
-      const botSet = newTheme === "bunny" ? "japanese" : "symbols"
+      const { top: topSet, bottom: botSet } = SCRAMBLE_SETS_BY_THEME[newTheme]
 
       // Apply scramble effect to role texts
-      scrambleText(originalTop, topSet, setTop, 30).then(() => { })
-      scrambleText(originalBot, botSet, setBot, 30).then(() => { })
+      scrambleText(originalTop, topSet, setTop, 30).then(() => {})
+      scrambleText(originalBot, botSet, setBot, 30).then(() => {})
 
       return newTheme
     })
@@ -235,9 +198,7 @@ function App() {
 
   // Handle navigation
   const handleNavClick = (tab: string) => {
-    if (tab === "HOME" && typeof window !== "undefined") {
-      window.dispatchEvent(new CustomEvent("home-flower-temporary-hide"))
-    }
+    if (tab === "HOME") dispatchHomeFlowerTemporaryHide()
     let path = "/"
     if (tab === "PROJECTS") path = "/portfolio"
     if (tab === "ARTWORK") path = "/creative"
@@ -247,23 +208,20 @@ function App() {
   // Handle home click scramble
   const handleHomeScramble = () => {
     if (location.pathname === "/") {
-      const topSet = theme === "bunny" ? "code" : "matrix"
-      const botSet = theme === "bunny" ? "japanese" : "symbols"
+      const { top: topSet, bottom: botSet } = SCRAMBLE_SETS_BY_THEME[theme]
 
-      scrambleText(originalTop, topSet, setTop, 30).then(() => { })
-      scrambleText(originalBot, botSet, setBot, 30).then(() => { })
+      scrambleText(originalTop, topSet, setTop, 30).then(() => {})
+      scrambleText(originalBot, botSet, setBot, 30).then(() => {})
     }
   }
 
   // Listen for home flower overlay toggling navigation buttons
   useEffect(() => {
-    const handler = (event: Event) => {
-      const detail = (event as CustomEvent<{ hidden: boolean }>).detail
-      setNavSuppressed(Boolean(detail?.hidden))
-    }
-    window.addEventListener("home-flower-nav-visibility", handler as EventListener)
+    const unsubscribe = listenHomeFlowerNavVisibility((detail) => {
+      setNavSuppressed(Boolean(detail.hidden))
+    })
     return () => {
-      window.removeEventListener("home-flower-nav-visibility", handler as EventListener)
+      unsubscribe()
       setNavSuppressed(false)
     }
   }, [])
@@ -271,74 +229,33 @@ function App() {
   return (
     <>
       <div
-        className={`fade ${phase >= 1 ? "show" : ""}`}
+        className={`fade app-viewport-frame ${phase >= 1 ? "show" : ""}`}
         style={{
-          width: "100vw",
-          height: "100dvh",
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          paddingTop: safeAreaTop,
-          paddingBottom: "15px",
-          paddingLeft: "15px",
-          paddingRight: "15px",
-          boxSizing: "border-box",
+          ["--app-safe-top" as string]: safeAreaTop,
         }}
       >
-        <div
-          className="App"
-          style={{
-            width: "100%",
-            height: "100%",
-            position: "relative",
-            borderRadius: 12,
-            overflow: "hidden",
-          }}
-        >
+        <div className="App app-shell-frame">
           <GradientBackground theme={theme}>
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                width: "100%",
-                height: "100%",
-              }}
-            >
+            <div className="app-shell-column">
               {/* NAV BAR */}
               <div
                 ref={navRef}
-                className={`fade ${phase >= 4 ? "show" : ""}`}
+                className={`fade app-top-nav ${phase >= 4 ? "show" : ""}`}
                 style={{
-                  width: "100%",
-                  padding: isMobile ? "18px 0" : "20px 0",
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  position: "relative",
-                  flexShrink: 0,
-                  zIndex: 60,
+                  ["--app-nav-padding" as string]: isMobile ? "18px 0" : "20px 0",
+                  ["--app-nav-gap" as string]: `${isTablet || isMobile ? 6 : 12}px`,
+                  ["--app-nav-title-color" as string]: themes[theme]["--color-text"],
+                  ["--app-nav-title-display" as string]: isTablet ? "none" : "block",
                 }}
               >
                 {/* desktop/tablet: name on the left */}
                 {!isMobile && (
-                  <div
-                    style={{
-                      position: "absolute",
-                      left: 28,
-                      fontFamily: "monospace",
-                      fontSize: 16,
-                      fontWeight: "bold",
-                      color: theme === "bunny" ? themes.bunny["--color-text"] : themes.water["--color-text"],
-                      display: isTablet ? "none" : "block",
-                    }}
-                  >
+                  <div className="app-top-nav-title">
                     <Link
                       to="/"
-                      style={{ color: "inherit", textDecoration: "none" }}
+                      className="app-top-nav-home-link"
                       onClick={() => {
-                        if (typeof window !== "undefined") {
-                          window.dispatchEvent(new CustomEvent("home-flower-temporary-hide"))
-                        }
+                        dispatchHomeFlowerTemporaryHide()
                       }}
                     >
                       XIMING LUO
@@ -347,15 +264,7 @@ function App() {
                 )}
 
                 {/* main row */}
-                <div
-                  style={{
-                    display: "flex",
-                    gap: isTablet || isMobile ? 6 : 12,
-                    alignItems: "center",
-                    justifyContent: "center",
-                    width: "100%",
-                  }}
-                >
+                <div className="app-top-nav-row">
                   {["HOME", "PROJECTS", "ARTWORK"].map((lbl) => (
                     <NavButton
                       key={lbl}
@@ -376,7 +285,7 @@ function App() {
                       isMobile={isMobile}
                     />
                   ) : (
-                    <div style={{ position: "absolute", right: 20 }}>
+                    <div className="app-top-nav-theme-slot">
                       <ThemeToggle
                         currentTheme={theme}
                         toggleTheme={toggleTheme}
@@ -389,18 +298,7 @@ function App() {
 
               {/* MAIN CONTENT */}
               <div
-                className="main-content-scroll"
-                style={{
-                  width: "100%",
-                  flex: 1,
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  // Keep the Home route scroll-free while allowing other pages to scroll normally
-                  overflow: isHomeRoute ? "hidden" : "auto",
-                  position: "relative",
-                }}
+                className={`main-content-scroll ${isHomeRoute ? "main-content-scroll--home" : "main-content-scroll--page"}`}
               >
                 <AppRoutes
                   theme={theme}
@@ -411,16 +309,7 @@ function App() {
                 />
 
                 {/* Footer */}
-                <div
-                  className={`fade ${phase >= 4 ? "show" : ""}`}
-                  style={{
-                    width: "100%",
-                    marginTop: "auto",
-                    flexShrink: 0,
-                    position: "relative",
-                    zIndex: 60,
-                  }}
-                >
+                <div className={`fade app-footer-shell ${phase >= 4 ? "show" : ""}`}>
                   <Footer theme={theme} />
                 </div>
               </div>
