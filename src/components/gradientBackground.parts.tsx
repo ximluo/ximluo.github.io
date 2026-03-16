@@ -101,6 +101,7 @@ export const GradientCircles = ({
 interface GradientRightEdgeOverlayProps {
   pathname: string
   isLaptopViewport: boolean
+  isMobileViewport: boolean
   overlayOpacity: number
   headerOffset: number
 }
@@ -108,14 +109,15 @@ interface GradientRightEdgeOverlayProps {
 export const GradientRightEdgeOverlay = ({
   pathname,
   isLaptopViewport,
+  isMobileViewport,
   overlayOpacity,
   headerOffset,
 }: GradientRightEdgeOverlayProps) => {
   const isPortfolioOrCreativePage =
     pathname.startsWith("/portfolio") || pathname.startsWith("/creative")
-  const isHomePage = pathname === "/"
   const hideForNarrowViewport = isPortfolioOrCreativePage && !isLaptopViewport
-  const effectiveOpacity = hideForNarrowViewport ? 0 : overlayOpacity
+  const hideForMobileViewport = isMobileViewport
+  const effectiveOpacity = hideForNarrowViewport || hideForMobileViewport ? 0 : overlayOpacity
 
   if (effectiveOpacity <= 0) return null
 
@@ -132,7 +134,7 @@ export const GradientRightEdgeOverlay = ({
         alignItems: "center",
         justifyContent: "flex-end",
         pointerEvents: "none",
-        zIndex: isHomePage ? 70 : 5,
+        zIndex: 5,
         paddingRight: 8,
         opacity: effectiveOpacity,
         transition: "opacity 200ms ease",
@@ -140,21 +142,28 @@ export const GradientRightEdgeOverlay = ({
       }}
     >
       <svg
-        className="gbg-svg"
-        version="1.1"
-        viewBox="0 0 123 246"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <title>Path</title>
-        <desc>Animated stroke path</desc>
-        <g fill="none" fillRule="evenodd">
-          <path
-            className="gbg-path"
-            d="m9.9062 245.43c13.174-137.4 46.685-178.94 100.53-124.63-28.198 6.2083-45.074-1.5234-50.629-23.195s-25.401-29.307-59.539-22.906c36.723 27.034 64.646 16.445 83.77-31.766 28.686-72.316-34.465-37.046 0 0 50.863 54.672 50.863 0 0 0-83.77 0-24.23-35.594 0 0 24.23 35.594-19.03 74.584 0 0 18.324-71.816 49.922 7 0 0-54.872-7.6942-24.23 48.168 0 0"
-            fill="none"
-          />
-        </g>
-      </svg>
+  className="gbg-svg"
+  version="1.1"
+  viewBox="0 0 123 246"
+  xmlns="http://www.w3.org/2000/svg"
+  style={{
+    position: "absolute",
+    top: 0,
+    left: 0,
+    height: "100vh",
+    width: "auto",
+  }}
+>
+  <title>Path</title>
+  <desc>Animated stroke path</desc>
+  <g fill="none" fillRule="evenodd">
+    <path
+      className="gbg-path"
+      d="m9.9062 245.43c13.174-137.4 46.685-178.94 100.53-124.63-28.198 6.2083-45.074-1.5234-50.629-23.195s-25.401-29.307-59.539-22.906c36.723 27.034 64.646 16.445 83.77-31.766 28.686-72.316-34.465-37.046 0 0 50.863 54.672 50.863 0 0 0-83.77 0-24.23-35.594 0 0 24.23 35.594-19.03 74.584 0 0 18.324-71.816 49.922 7 0 0-54.872-7.6942-24.23 48.168 0 0"
+      fill="none"
+    />
+  </g>
+</svg>
     </div>
   )
 }

@@ -7,6 +7,7 @@ export interface FlowerSceneLayout {
   isMobile: boolean
   isSmallScreen: boolean
   windowWidth: number
+  focusScale?: number
 }
 
 interface FlowerModelProps {
@@ -60,16 +61,16 @@ interface FlowerSceneProps {
 }
 
 const FlowerScene: React.FC<FlowerSceneProps> = ({
-  layout: { isMobile, windowWidth },
+  layout: { isMobile, windowWidth, focusScale = 1 },
   onSceneReady,
 }) => {
   const modelRef = useRef<THREE.Group | null>(null)
   const hasReportedReadyRef = useRef(false)
   const { camera, size } = useThree()
   const sizeMultiplier = useMemo(() => {
-    if (windowWidth >= 768) return 3.2
-    return 1.65
-  }, [windowWidth])
+    if (windowWidth >= 768) return 3.8 * focusScale
+    return 2.15 * focusScale
+  }, [focusScale, windowWidth])
 
   const frameCentered = useCallback(() => {
     if (!modelRef.current) return false
@@ -117,7 +118,7 @@ const FlowerScene: React.FC<FlowerSceneProps> = ({
     const viewportHalfHeight = Math.tan(fov / 2) * cameraDistance
     const viewportHalfWidth = viewportHalfHeight * viewAspect
 
-    const verticalFactor = isMobile ? 1.9 : 2.95
+    const verticalFactor = isMobile ? 3.1 : 3.8
     const verticalOffset = viewportHalfHeight * verticalFactor
     const horizontalOffset = isMobile ? 0 : viewportHalfWidth * 0.002
 

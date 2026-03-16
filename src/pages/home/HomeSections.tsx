@@ -35,6 +35,41 @@ export function HomeDesktopEstRail({
   )
 }
 
+interface HomeDesktopScrollProgressProps {
+  activePageIndex: number
+  pageCount: number
+  phase: number
+  isAnimationComplete: boolean
+  textColor: string
+}
+
+export function HomeDesktopScrollProgress({
+  activePageIndex,
+  pageCount,
+  phase,
+  isAnimationComplete,
+  textColor,
+}: HomeDesktopScrollProgressProps) {
+  return (
+    <div
+      className={`home-scroll-progress fade ${phase >= 4 && isAnimationComplete ? "show" : ""}`}
+      aria-hidden={!isAnimationComplete}
+      style={{ ["--home-scroll-progress-color" as string]: textColor }}
+    >
+      {Array.from({ length: pageCount }, (_, index) => {
+        const isActive = index === activePageIndex
+
+        return (
+          <span
+            key={index}
+            className={`home-scroll-progress-dot ${isActive ? "is-active" : ""}`}
+          />
+        )
+      })}
+    </div>
+  )
+}
+
 interface HomeNavigationBubblesProps {
   isFlowerRevealed: boolean
   isMobile: boolean

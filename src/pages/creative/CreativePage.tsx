@@ -1,4 +1,5 @@
-import React, { useState } from "react"
+import React from "react"
+import { useSearchParams } from "react-router-dom"
 import OptimizedImage from "../../components/ui/OptimizedImage"
 import useIsMobile from "../../hooks/useIsMobile"
 import photos from "../../data/photos"
@@ -74,13 +75,27 @@ PhotoModal.displayName = "PhotoModal"
 
 const Creative: React.FC<CreativeProps> = ({ theme }) => {
   const isMobile = useIsMobile()
-  const [selectedPhoto, setSelectedPhoto] = useState<(typeof photos)[number] | null>(null)
+  const [searchParams, setSearchParams] = useSearchParams()
 
   const colors = CONTENT_THEME_TOKENS[theme]
   const cardBackground = THEME_VISUAL_TOKENS[theme].surfaceCreativeCard
+  const selectedPhotoId = searchParams.get("photo")
+  const selectedPhoto = photos.find((photo) => photo.id === selectedPhotoId) ?? null
 
   const handlePhotoClick = (photo: (typeof photos)[number]) => {
-    setSelectedPhoto(photo)
+    setSearchParams((currentParams) => {
+      const nextParams = new URLSearchParams(currentParams)
+      nextParams.set("photo", photo.id)
+      return nextParams
+    })
+  }
+
+  const handlePhotoClose = () => {
+    setSearchParams((currentParams) => {
+      const nextParams = new URLSearchParams(currentParams)
+      nextParams.delete("photo")
+      return nextParams
+    })
   }
 
   return (
@@ -108,7 +123,7 @@ const Creative: React.FC<CreativeProps> = ({ theme }) => {
       </div>
 
       {selectedPhoto && (
-        <PhotoModal photo={selectedPhoto} onClose={() => setSelectedPhoto(null)} theme={theme} />
+        <PhotoModal photo={selectedPhoto} onClose={handlePhotoClose} theme={theme} />
       )}
     </div>
   )

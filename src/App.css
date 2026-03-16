@@ -156,6 +156,7 @@
   -ms-overflow-style: none;
   width: 100%;
   flex: 1;
+  min-height: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -169,19 +170,69 @@
 }
 
 .main-content-scroll--home {
+  overflow: auto;
+  align-items: stretch;
+  justify-content: flex-start;
+  scroll-snap-type: y mandatory;
+  scroll-behavior: smooth;
+  overscroll-behavior-y: contain;
+  scrollbar-width: thin;
+  scrollbar-color: var(--button-bg) transparent;
+  -ms-overflow-style: auto;
+}
+
+.main-content-scroll--home::-webkit-scrollbar {
+  width: 8px;
+}
+
+.main-content-scroll--home::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.main-content-scroll--home::-webkit-scrollbar-thumb {
+  border-radius: 4px;
+  background-color: var(--button-bg);
+}
+
+.main-content-scroll--home.main-content-scroll--home-locked {
   overflow: hidden;
+  scroll-snap-type: none;
+  scroll-behavior: auto;
+  overscroll-behavior-y: none;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.main-content-scroll--home.main-content-scroll--home-locked::-webkit-scrollbar {
+  width: 0;
+  height: 0;
 }
 
 .main-content-scroll--page {
   overflow: auto;
 }
 
+@media (max-width: 767px) {
+  .main-content-scroll--home {
+    scroll-snap-type: none;
+    scroll-behavior: auto;
+    overscroll-behavior-y: auto;
+  }
+}
+
 .app-footer-shell {
   width: 100%;
-  margin-top: auto;
+  margin-top: 0;
   flex-shrink: 0;
-  position: relative;
-  z-index: 60;
+  position: sticky;
+  bottom: 0;
+  z-index: 96;
+  background: inherit;
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.app-footer-shell--home {
+  background: transparent;
 }
 
 .fade {

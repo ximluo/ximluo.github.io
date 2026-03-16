@@ -8,10 +8,7 @@ import AppRoutes from "./app/routes"
 import { APP_THEME_TOKENS, THEME_VISUAL_TOKENS, type ThemeType } from "./theme/tokens"
 import { scrambleText, type ScrambleSet } from "./utils/scramble"
 import useViewportSize from "./hooks/useViewportSize"
-import {
-  dispatchHomeFlowerTemporaryHide,
-  listenHomeFlowerNavVisibility,
-} from "./pages/home/home.events"
+import { dispatchHomeFlowerTemporaryHide } from "./pages/home/home.events"
 
 const themes = APP_THEME_TOKENS
 const GA_MEASUREMENT_ID = "G-1QHSNH5G8L"
@@ -116,7 +113,6 @@ function App() {
   const location = useLocation()
   const navigate = useNavigate()
   const hasTrackedInitialPageRef = useRef(false)
-  const [navSuppressed, setNavSuppressed] = useState(false)
   const { width: viewportWidth } = useViewportSize({
     width: typeof window !== "undefined" ? window.innerWidth : 0,
     height: typeof window !== "undefined" ? window.innerHeight : 0,
@@ -201,16 +197,6 @@ function App() {
   }
 
   useEffect(() => {
-    const unsubscribe = listenHomeFlowerNavVisibility((detail) => {
-      setNavSuppressed(Boolean(detail.hidden))
-    })
-    return () => {
-      unsubscribe()
-      setNavSuppressed(false)
-    }
-  }, [])
-
-  useEffect(() => {
     if (!hasTrackedInitialPageRef.current) {
       hasTrackedInitialPageRef.current = true
       return
@@ -279,7 +265,6 @@ function App() {
                       theme={theme}
                       onClick={() => handleNavClick(lbl)}
                       isMobile={isMobile}
-                      isSuppressed={navSuppressed}
                     />
                   ))}
 
@@ -311,10 +296,12 @@ function App() {
                   roleBot={roleBot}
                   onScramble={handleHomeScramble}
                 />
+              </div>
 
-                <div className={`fade app-footer-shell ${phase >= 4 ? "show" : ""}`}>
-                  <Footer theme={theme} />
-                </div>
+              <div
+                className={`fade app-footer-shell ${isHomeRoute ? "app-footer-shell--home" : ""} ${phase >= 4 ? "show" : ""}`}
+              >
+                <Footer theme={theme} />
               </div>
             </div>
           </GradientBackground>

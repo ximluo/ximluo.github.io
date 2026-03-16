@@ -156,6 +156,7 @@ export function useHomeIntroSequence({
   return {
     typingRef,
     typingText,
+    isGreetingComplete: isTypingComplete || isNavigatingFromPage,
     isAnimationComplete,
   }
 }

@@ -42,6 +42,7 @@ const GradientBackground: React.FC<GradientBackgroundProps> = ({ theme, children
   const noiseCanvasRef = useRef<HTMLCanvasElement>(null)
   const headerOffset = useHeaderOffset()
   const isLaptopViewport = viewportWidth >= LAPTOP_BREAKPOINT
+  const isMobileViewport = viewportWidth <= 767
   const isHomePage = location.pathname === "/"
   const { overlayOpacity } = useHomeFlowerOverlay({ isHomePage })
 
@@ -111,6 +112,7 @@ const GradientBackground: React.FC<GradientBackgroundProps> = ({ theme, children
       <GradientRightEdgeOverlay
         pathname={location.pathname ?? ""}
         isLaptopViewport={isLaptopViewport}
+        isMobileViewport={isMobileViewport}
         overlayOpacity={overlayOpacity}
         headerOffset={headerOffset}
       />

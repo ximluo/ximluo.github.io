@@ -6,7 +6,7 @@ const featuredProjects: Project[] = [
     name: "PetSteps",
     image: "/images/petsteps-app.png",
     description:
-      "PetSteps is a mobile app that keeps users active by caring for a virtual pet. Real world walking boosts your pet’s mood and health. It won the Adobe Digital Edge Standout Prize and was featured at Adobe MAX 2024 for its use of AI and AR in fitness. Adobe also featured PetSteps in a marketing campaign.",
+      "PetSteps is an award winning iOS app that keeps users active by caring for a virtual pet. Real world walking boosts your pet’s mood and health. It won the Adobe Digital Edge Standout Prize and was featured at Adobe MAX 2024 for its use of AI and AR in fitness. Adobe also featured PetSteps in a marketing campaign.",
     languages: ["Swift", "SwiftUI"],
     categories: ["software", "mobile", "AI", "AR"],
     sections: [
@@ -57,26 +57,6 @@ const featuredProjects: Project[] = [
     ],
   },
   {
-    id: "penn-mobile",
-    name: "Penn Mobile",
-    image: "/images/mobile.png",
-    description:
-      "Penn Mobile is the University of Pennsylvania’s official student life app, serving 20,000+ users. Developed by Penn Labs, it brings campus essentials like dining hours, GSR reservations, laundry availability, and student resources directly to students’ phones.",
-    languages: ["Swift", "SwiftUI"],
-    categories: ["software", "mobile", "iOS", "student tools"],
-    sections: [
-      {
-        text: "Learn more at [pennlabs.org/products/penn-mobile](https://pennlabs.org/products/penn-mobile).",
-      },
-      {
-        text: "With Penn Mobile, students can reserve study rooms across campus, view dining hall menus and hours, check real time laundry availability, and access essential university resources, all from one centralized app.",
-      },
-      {
-        text: "Features include push notifications for upcoming reservations, daily laundry activity graphs, campus wide contact info, access to the Daily Pennsylvanian feed, and more. It’s designed to make campus life easier, faster, and more mobile friendly.",
-      },
-    ],
-  },
-  {
     id: "penn-capsule",
     name: "Capsule",
     image: "/images/capsule-open.gif",
@@ -117,6 +97,26 @@ const featuredProjects: Project[] = [
       },
       {
         video: "/images/PennCapsule.pdf",
+      },
+    ],
+  },
+  {
+    id: "penn-mobile",
+    name: "Penn Mobile",
+    image: "/images/mobile.png",
+    description:
+      "Penn Mobile is the University of Pennsylvania’s official student life app, serving 20,000+ users. Developed by Penn Labs, it brings campus essentials like dining hours, GSR reservations, laundry availability, and student resources directly to students’ phones.",
+    languages: ["Swift", "SwiftUI"],
+    categories: ["software", "mobile", "iOS", "student tools"],
+    sections: [
+      {
+        text: "Learn more at [pennlabs.org/products/penn-mobile](https://pennlabs.org/products/penn-mobile).",
+      },
+      {
+        text: "With Penn Mobile, students can reserve study rooms across campus, view dining hall menus and hours, check real time laundry availability, and access essential university resources, all from one centralized app.",
+      },
+      {
+        text: "Features include push notifications for upcoming reservations, daily laundry activity graphs, campus wide contact info, access to the Daily Pennsylvanian feed, and more. It’s designed to make campus life easier, faster, and more mobile friendly.",
       },
     ],
   },
