@@ -9,8 +9,13 @@ import OptimizedImage from "../../components/ui/OptimizedImage"
 import photos from "../../data/photos"
 import projects from "../../data/projects"
 import useIntersectionOnce from "../../hooks/useIntersectionOnce"
-import { HOME_THEME_TOKENS, THEME_VISUAL_TOKENS, type ThemeType } from "../../theme/tokens"
-import { trackBunnyModalOpen, trackExternalLinkClick } from "../../utils/analytics"
+import {
+  CONTENT_THEME_TOKENS,
+  HOME_THEME_TOKENS,
+  THEME_VISUAL_TOKENS,
+  type ThemeType,
+} from "../../theme/tokens"
+import { trackBunnyModalOpen } from "../../utils/analytics"
 import FlowerScene from "./FlowerScene"
 import { HomeDesktopEstRail, HomeDesktopScrollProgress, HomeIntroPanel } from "./HomeSections"
 import { useHomeIntroSequence, useHomeViewportState } from "./home.hooks"
@@ -23,6 +28,8 @@ const HOME_SHOWCASE_RAIL_CLEARANCE_PX = 96
 const HOME_SIDE_RAIL_BREAKPOINT_PX = 1024
 const HOME_SINGLE_COLUMN_BREAKPOINT_PX = 767
 const HOME_SCROLL_GUIDE_FLOWER_GAP_PX = 24
+const HOME_SCROLL_GUIDE_TEXT_GAP_PX = 4
+const HOME_SCROLL_CUE_BIO_GAP_PX = 18
 const HOME_SCROLL_UNLOCK_DELAY_MS = 0
 const HOME_SCROLL_LOCK_KEYS = new Set([
   "ArrowUp",
@@ -66,11 +73,13 @@ const Home: React.FC<HomeProps> = ({
   const [isFlowerSceneReady, setIsFlowerSceneReady] = useState(false)
   const [isScrollUnlocked, setIsScrollUnlocked] = useState(isNavigatingFromPage)
   const [activePageIndex, setActivePageIndex] = useState(0)
+  const [resolvedScrollCueBottom, setResolvedScrollCueBottom] = useState(44)
   const [scrollGuideMetrics, setScrollGuideMetrics] = useState({ top: 0, height: 0 })
   const [tallPageFlags, setTallPageFlags] = useState<boolean[]>(
     () => Array.from({ length: HOME_SCROLL_PAGE_COUNT }, () => false),
   )
   const homeContainerRef = useRef<HTMLDivElement | null>(null)
+  const introBioRef = useRef<HTMLDivElement | null>(null)
   const scrollCueRef = useRef<HTMLDivElement | null>(null)
   const flowerActionsAnchorRef = useRef<HTMLDivElement | null>(null)
   const scrollPageRefs = useRef<Array<HTMLElement | null>>([])
@@ -88,9 +97,34 @@ const Home: React.FC<HomeProps> = ({
 
   const themes = HOME_THEME_TOKENS
   const currentTheme = themes[theme]
+  const contentTheme = CONTENT_THEME_TOKENS[theme]
   const textColor = currentTheme["--color-text"]
   const accentColor = currentTheme["--color-accent-primary"]
   const linkColor = currentTheme["--link-color"]
+  const homeScrollCueColor =
+    theme === "bunny" ? "rgba(121, 85, 189, 0.74)" : "rgba(170, 214, 255, 0.6)"
+  const homeScrollGuideGradient =
+    theme === "bunny"
+      ? "linear-gradient(to bottom, rgba(121, 85, 189, 0.74) 0%, rgba(223, 30, 155, 0.26) 58%, rgba(223, 30, 155, 0.12) 100%)"
+      : "linear-gradient(to bottom, rgba(170, 214, 255, 0.72) 0%, rgba(170, 214, 255, 0.28) 58%, rgba(170, 214, 255, 0.14) 100%)"
+  const homeScrollGuideDotBorder =
+    theme === "bunny" ? "rgba(121, 85, 189, 0.5)" : "rgba(170, 214, 255, 0.5)"
+  const homeActionBorder =
+    theme === "bunny" ? "rgba(223, 30, 155, 0.34)" : "rgba(173, 214, 255, 0.46)"
+  const homeActionBackground =
+    theme === "bunny"
+      ? "linear-gradient(180deg, rgba(137, 112, 183, 0.4) 0%, rgba(223, 30, 155, 0.32) 100%)"
+      : "linear-gradient(180deg, rgba(15, 58, 104, 0.78) 0%, rgba(24, 77, 132, 0.72) 100%)"
+  const homeActionBackgroundHover =
+    theme === "bunny"
+      ? "linear-gradient(180deg, rgba(121, 85, 189, 0.5) 0%, rgba(223, 30, 155, 0.42) 100%)"
+      : "linear-gradient(180deg, rgba(21, 70, 120, 0.84) 0%, rgba(34, 93, 154, 0.78) 100%)"
+  const homeActionText =
+    theme === "bunny" ? contentTheme["--button-text"] : "rgba(214, 238, 255, 0.96)"
+  const homeActionShadow =
+    theme === "bunny"
+      ? "inset 0 0 0 1px rgba(255, 255, 255, 0.14), 0 10px 28px rgba(223, 30, 155, 0.22)"
+      : "inset 0 0 0 1px rgba(255, 255, 255, 0.12), 0 10px 28px rgba(79, 153, 223, 0.25)"
 
   const imageSize = useMemo(() => {
     if (isSmallScreen) return isMobile ? "120px" : "180px"
@@ -108,6 +142,20 @@ const Home: React.FC<HomeProps> = ({
   const padding = useMemo(() => {
     return `${introHorizontalPadding}px`
   }, [introHorizontalPadding])
+
+  const scrollCueBottom = useMemo(() => {
+    const baseFooterHeight = footerHeight || 70
+
+    if (windowWidth <= HOME_SINGLE_COLUMN_BREAKPOINT_PX) {
+      return Math.max(baseFooterHeight - 42, 18)
+    }
+
+    if (windowWidth <= HOME_SIDE_RAIL_BREAKPOINT_PX) {
+      return Math.max(baseFooterHeight - 22, 36)
+    }
+
+    return Math.max(baseFooterHeight - 16, 44)
+  }, [footerHeight, windowWidth])
 
   const showcaseHorizontalPadding = useMemo(() => {
     if (windowWidth <= HOME_SIDE_RAIL_BREAKPOINT_PX) return introHorizontalPadding
@@ -286,6 +334,63 @@ const Home: React.FC<HomeProps> = ({
     }
   }, [isScrollUnlocked])
 
+  useLayoutEffect(() => {
+    if (typeof window === "undefined") return
+
+    const introSection = scrollPageRefs.current[0]
+    const scrollCue = scrollCueRef.current
+    if (!introSection || !scrollCue) {
+      setResolvedScrollCueBottom(scrollCueBottom)
+      return
+    }
+
+    let frameId = 0
+
+    const updateScrollCueBottom = () => {
+      frameId = 0
+
+      const sectionRect = introSection.getBoundingClientRect()
+      const cueHeight = scrollCue.offsetHeight
+      let nextBottom = scrollCueBottom
+
+      if (phase >= 4 && isAnimationComplete && introBioRef.current) {
+        const bioRect = introBioRef.current.getBoundingClientRect()
+        const bioBottom = bioRect.bottom - sectionRect.top
+        const maxBottomWithoutOverlap = Math.max(
+          sectionRect.height - cueHeight - bioBottom - HOME_SCROLL_CUE_BIO_GAP_PX,
+          0,
+        )
+
+        nextBottom = Math.min(scrollCueBottom, maxBottomWithoutOverlap)
+      }
+
+      setResolvedScrollCueBottom((prev) => {
+        const roundedBottom = Math.round(nextBottom)
+        return prev === roundedBottom ? prev : roundedBottom
+      })
+    }
+
+    const scheduleScrollCueUpdate = () => {
+      if (frameId) return
+      frameId = window.requestAnimationFrame(updateScrollCueBottom)
+    }
+
+    scheduleScrollCueUpdate()
+    window.addEventListener("resize", scheduleScrollCueUpdate)
+
+    const resizeObserver =
+      typeof ResizeObserver === "undefined" ? null : new ResizeObserver(scheduleScrollCueUpdate)
+    resizeObserver?.observe(introSection)
+    resizeObserver?.observe(scrollCue)
+    if (introBioRef.current) resizeObserver?.observe(introBioRef.current)
+
+    return () => {
+      if (frameId) window.cancelAnimationFrame(frameId)
+      resizeObserver?.disconnect()
+      window.removeEventListener("resize", scheduleScrollCueUpdate)
+    }
+  }, [isAnimationComplete, phase, scrollCueBottom, sectionHeight, windowWidth])
+
   useEffect(() => {
     if (typeof window === "undefined" || isScrollUnlocked) return
 
@@ -343,7 +448,10 @@ const Home: React.FC<HomeProps> = ({
       const scrollCueRect = scrollCue.getBoundingClientRect()
       const flowerActionsAnchorRect = flowerActionsAnchor.getBoundingClientRect()
 
-      const nextTop = Math.max(scrollCueRect.bottom - containerRect.top + 10, 0)
+      const nextTop = Math.max(
+        scrollCueRect.bottom - containerRect.top + HOME_SCROLL_GUIDE_TEXT_GAP_PX,
+        0,
+      )
       const nextBottom = Math.max(
         flowerActionsAnchorRect.top - containerRect.top - HOME_SCROLL_GUIDE_FLOWER_GAP_PX,
         nextTop,
@@ -399,6 +507,14 @@ const Home: React.FC<HomeProps> = ({
         ["--home-preview-accent" as string]: accentColor,
         ["--home-preview-button-bg" as string]: currentTheme["--button-bg"],
         ["--home-preview-button-text" as string]: textColor,
+        ["--home-scroll-cue-color" as string]: homeScrollCueColor,
+        ["--home-scroll-guide-gradient" as string]: homeScrollGuideGradient,
+        ["--home-scroll-guide-dot-border" as string]: homeScrollGuideDotBorder,
+        ["--home-action-border" as string]: homeActionBorder,
+        ["--home-action-bg" as string]: homeActionBackground,
+        ["--home-action-bg-hover" as string]: homeActionBackgroundHover,
+        ["--home-action-text" as string]: homeActionText,
+        ["--home-action-shadow" as string]: homeActionShadow,
         ["--home-section-height" as string]: `${sectionHeight}px`,
         ["--home-footer-height" as string]: `${footerHeight}px`,
         ["--home-scroll-guide-top" as string]: `${scrollGuideMetrics.top}px`,
@@ -466,6 +582,7 @@ const Home: React.FC<HomeProps> = ({
               accentColor={accentColor}
               linkColor={linkColor}
               onOpenAwards={() => setShowAwards(true)}
+              bioRef={introBioRef}
             />
           </div>
 
@@ -474,7 +591,7 @@ const Home: React.FC<HomeProps> = ({
             className={`fade home-native-scroll-cue ${phase >= 4 && isAnimationComplete ? "show" : ""}`}
             aria-hidden
             style={{
-              ["--home-scroll-side-bottom" as string]: `${Math.max((footerHeight || 70) + 8, 68)}px`,
+              ["--home-scroll-side-bottom" as string]: `${resolvedScrollCueBottom}px`,
             }}
           >
             SCROLL
@@ -496,7 +613,7 @@ const Home: React.FC<HomeProps> = ({
               ref={(node) => {
                 scrollPageContentRefs.current[1] = node
               }}
-              className="home-preview-stack"
+              className="home-preview-stack home-preview-stack--projects"
             >
               <div className="home-preview-section">
                 <div className="home-preview-header">
@@ -622,19 +739,6 @@ const Home: React.FC<HomeProps> = ({
               >
                 Awards
               </button>
-              <a
-                className="home-showcase-action"
-                href="mailto:ximluo@upenn.edu"
-                onClick={() => {
-                  trackExternalLinkClick({
-                    linkId: "email",
-                    href: "mailto:ximluo@upenn.edu",
-                    uiRegion: "home_showcase_contact",
-                  })
-                }}
-              >
-                Contact
-              </a>
               <button
                 type="button"
                 className="home-showcase-action"

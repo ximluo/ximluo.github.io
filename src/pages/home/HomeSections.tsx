@@ -161,6 +161,7 @@ interface HomeIntroPanelProps {
   accentColor: string
   linkColor: string
   onOpenAwards: () => void
+  bioRef?: React.Ref<HTMLDivElement>
 }
 
 export function HomeIntroPanel({
@@ -180,6 +181,7 @@ export function HomeIntroPanel({
   accentColor,
   linkColor,
   onOpenAwards,
+  bioRef,
 }: HomeIntroPanelProps) {
   return (
     <div
@@ -247,6 +249,7 @@ export function HomeIntroPanel({
       </div>
 
       <div
+        ref={bioRef}
         className={`fade home-bio ${phase >= 4 && isAnimationComplete ? "show" : ""}`}
         style={{
           ["--home-bio-font-size" as string]: `${isMobile ? 12 : 14}px`,
