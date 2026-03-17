@@ -41,6 +41,7 @@ interface HomeDesktopScrollProgressProps {
   phase: number
   isAnimationComplete: boolean
   textColor: string
+  onSelectPage: (pageIndex: number) => void
 }
 
 export function HomeDesktopScrollProgress({
@@ -49,20 +50,29 @@ export function HomeDesktopScrollProgress({
   phase,
   isAnimationComplete,
   textColor,
+  onSelectPage,
 }: HomeDesktopScrollProgressProps) {
+  const isReady = phase >= 4 && isAnimationComplete
+
   return (
     <div
-      className={`home-scroll-progress fade ${phase >= 4 && isAnimationComplete ? "show" : ""}`}
-      aria-hidden={!isAnimationComplete}
+      className={`home-scroll-progress fade ${isReady ? "show" : ""}`}
+      aria-label="Home section navigation"
+      role="navigation"
       style={{ ["--home-scroll-progress-color" as string]: textColor }}
     >
       {Array.from({ length: pageCount }, (_, index) => {
         const isActive = index === activePageIndex
 
         return (
-          <span
+          <button
             key={index}
+            type="button"
             className={`home-scroll-progress-dot ${isActive ? "is-active" : ""}`}
+            aria-label={`Scroll to section ${index + 1}`}
+            aria-current={isActive ? "page" : undefined}
+            disabled={!isReady}
+            onClick={() => onSelectPage(index)}
           />
         )
       })}

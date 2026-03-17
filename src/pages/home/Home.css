@@ -89,6 +89,9 @@
   left: 50%;
   bottom: var(--home-scroll-side-bottom, 90px);
   transform: translate(-50%, 0);
+  border: 0;
+  padding: 0;
+  background: none;
   font-family: monospace;
   font-size: clamp(12px, 1vw, 14px);
   letter-spacing: 0.24em;
@@ -96,14 +99,23 @@
   text-transform: uppercase;
   color: var(--home-scroll-cue-color, rgba(170, 214, 255, 0.6));
   opacity: 0.88;
-  pointer-events: none;
+  pointer-events: auto;
   display: flex;
   flex-direction: column;
   align-items: center;
+  cursor: pointer;
 }
 
 .home-native-scroll-cue::after {
   content: none;
+}
+
+.home-native-scroll-cue:disabled {
+  cursor: default;
+}
+
+.home-native-scroll-cue:not(:disabled):hover {
+  opacity: 1;
 }
 
 .home-container .home-native-scroll-cue.fade {
@@ -257,6 +269,7 @@
   overflow: hidden;
   cursor: pointer;
   text-align: left;
+  transform: translateZ(0);
 }
 
 .home-preview-card::before {
@@ -310,6 +323,9 @@
   object-fit: cover;
   display: block;
   transition: transform 0.26s ease;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  will-change: transform;
 }
 
 .home-preview-card-overlay {
@@ -710,27 +726,53 @@
   align-items: center;
   gap: 12px;
   color: var(--home-scroll-progress-color, currentColor);
-  pointer-events: none;
+  pointer-events: auto;
   z-index: 45;
 }
 
 .home-scroll-progress-dot {
+  position: relative;
+  width: 20px;
+  height: 20px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+}
+
+.home-scroll-progress-dot::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
   width: 8px;
   height: 8px;
   border-radius: 999px;
   border: 1px solid currentColor;
   background: transparent;
   opacity: 0.38;
+  transform: translate(-50%, -50%);
   transition:
     background-color 0.2s ease,
     opacity 0.2s ease,
     transform 0.2s ease;
 }
 
-.home-scroll-progress-dot.is-active {
+.home-scroll-progress-dot.is-active::before {
   background: currentColor;
   opacity: 0.9;
-  transform: scale(1.08);
+  transform: translate(-50%, -50%) scale(1.08);
+}
+
+.home-scroll-progress-dot:disabled {
+  cursor: default;
+}
+
+.home-scroll-progress-dot:not(:disabled):hover::before,
+.home-scroll-progress-dot:focus-visible::before {
+  opacity: 0.9;
+  transform: translate(-50%, -50%) scale(1.08);
 }
 
 .home-container .home-scroll-progress.fade {

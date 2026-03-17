@@ -1,5 +1,14 @@
 import type React from "react"
-import { lazy, Suspense, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react"
+import {
+  lazy,
+  Suspense,
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react"
 import { useNavigate } from "react-router-dom"
 import { Canvas } from "@react-three/fiber"
 import "./Home.css"
@@ -42,6 +51,10 @@ const HOME_SCROLL_LOCK_KEYS = new Set([
   "Spacebar",
 ])
 
+function isGifAsset(source: string) {
+  return /\.gif(?:$|[?#])/i.test(source)
+}
+
 function getShortCardDescription(text: string) {
   const trimmed = text.trim()
   if (!trimmed) return ""
@@ -80,7 +93,7 @@ const Home: React.FC<HomeProps> = ({
   )
   const homeContainerRef = useRef<HTMLDivElement | null>(null)
   const introBioRef = useRef<HTMLDivElement | null>(null)
-  const scrollCueRef = useRef<HTMLDivElement | null>(null)
+  const scrollCueRef = useRef<HTMLButtonElement | null>(null)
   const flowerActionsAnchorRef = useRef<HTMLDivElement | null>(null)
   const scrollPageRefs = useRef<Array<HTMLElement | null>>([])
   const scrollPageContentRefs = useRef<Array<HTMLElement | null>>([])
@@ -208,6 +221,23 @@ const Home: React.FC<HomeProps> = ({
     })
 
   const flowerCanvasDpr: [number, number] = isMobile ? [1, 1.35] : [1, 1.35]
+
+  const scrollToPage = useCallback((pageIndex: number) => {
+    const parent = homeContainerRef.current?.parentElement
+    const clampedIndex = Math.max(0, Math.min(pageIndex, HOME_SCROLL_PAGE_COUNT - 1))
+    const page = scrollPageRefs.current[clampedIndex]
+    if (!parent || !page) return
+
+    const prefersReducedMotion =
+      typeof window !== "undefined" &&
+      typeof window.matchMedia === "function" &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches
+
+    parent.scrollTo({
+      top: page.offsetTop,
+      behavior: prefersReducedMotion ? "auto" : "smooth",
+    })
+  }, [])
 
   useEffect(() => {
     if (shouldMountFlowerScene) return
@@ -540,6 +570,7 @@ const Home: React.FC<HomeProps> = ({
             phase={phase}
             isAnimationComplete={isAnimationComplete}
             textColor={textColor}
+            onSelectPage={scrollToPage}
           />
         </>
       )}
@@ -586,16 +617,19 @@ const Home: React.FC<HomeProps> = ({
             />
           </div>
 
-          <div
+          <button
             ref={scrollCueRef}
+            type="button"
             className={`fade home-native-scroll-cue ${phase >= 4 && isAnimationComplete ? "show" : ""}`}
-            aria-hidden
+            aria-label="Scroll to projects"
+            disabled={!(phase >= 4 && isAnimationComplete)}
+            onClick={() => scrollToPage(1)}
             style={{
               ["--home-scroll-side-bottom" as string]: `${resolvedScrollCueBottom}px`,
             }}
           >
             SCROLL
-          </div>
+          </button>
         </section>
 
         <section
@@ -631,6 +665,8 @@ const Home: React.FC<HomeProps> = ({
                         src={project.image}
                         alt={project.name}
                         className="home-preview-card-image"
+                        preferAnimatedGifVariant={isGifAsset(project.image)}
+                        animatedGifVariantTier="thumb"
                         sizes="(max-width: 900px) 100vw, 33vw"
                       />
                       <span className="home-preview-card-overlay" />
