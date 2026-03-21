@@ -271,7 +271,7 @@ export function HomeIntroPanel({
         }}
       >
         <p className="home-bio-paragraph home-bio-paragraph--spaced">
-          I&apos;m a student at the University of Pennsylvania, studying Computer Science (
+          Currently @ UPenn, studying Computer Science (
           <a
             className="home-link"
             href="http://cg.cis.upenn.edu/dmd.html"
@@ -280,7 +280,16 @@ export function HomeIntroPanel({
           >
             Digital Media Design
           </a>
-          ) and Economics.
+          ) & Economics and teaching iOS Programming{" "}
+          <a
+            className="home-link"
+            href="https://www.seas.upenn.edu/~cis1951/"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            (CIS 1951)
+          </a>
+          .
         </p>
         <p className="home-bio-paragraph home-bio-paragraph--spaced">
           I am interested in computer graphics, AI/ML, and fullstack. Previously, I did software at{" "}
@@ -292,15 +301,8 @@ export function HomeIntroPanel({
           >
             Apollo Global Management
           </a>{" "}
-          and I currently teach iOS Programming{" "}
-          <a
-            className="home-link"
-            href="https://www.seas.upenn.edu/~cis1951/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            (CIS 1951)
-          </a>
+     
+          
           . My work has been recognized by Adobe and{" "}
           <button
             className="home-inline-link-button"

@@ -173,7 +173,7 @@
   overflow: auto;
   align-items: stretch;
   justify-content: flex-start;
-  scroll-snap-type: y mandatory;
+  scroll-snap-type: none;
   scroll-behavior: smooth;
   overscroll-behavior-y: contain;
   scrollbar-width: thin;

@@ -40,6 +40,8 @@ const HOME_SCROLL_GUIDE_FLOWER_GAP_PX = 24
 const HOME_SCROLL_GUIDE_TEXT_GAP_PX = 4
 const HOME_SCROLL_CUE_BIO_GAP_PX = 18
 const HOME_SCROLL_UNLOCK_DELAY_MS = 0
+const HOME_FLOWER_SCROLL_STOP_EPSILON_PX = 2
+const HOME_FLOWER_HEIGHT_CLAMP_BREAKPOINT_PX = 480
 const HOME_SCROLL_LOCK_KEYS = new Set([
   "ArrowUp",
   "ArrowDown",
@@ -60,6 +62,51 @@ function getShortCardDescription(text: string) {
   if (!trimmed) return ""
   const firstSentenceMatch = trimmed.match(/.*?[.!?](?:\s|$)/)
   return (firstSentenceMatch?.[0] ?? trimmed).trim()
+}
+
+interface HomeProjectPreviewImageProps {
+  src: string
+  alt: string
+}
+
+const HomeProjectPreviewImage: React.FC<HomeProjectPreviewImageProps> = ({ src, alt }) => {
+  const mediaRef = useRef<HTMLSpanElement | null>(null)
+  const isGif = isGifAsset(src)
+  const [isInView, setIsInView] = useState(() => !isGif)
+
+  useEffect(() => {
+    if (!isGif) return
+
+    const mediaNode = mediaRef.current
+    if (!mediaNode || typeof IntersectionObserver === "undefined") {
+      setIsInView(true)
+      return
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setIsInView(entry.isIntersecting && entry.intersectionRatio > 0.2)
+      },
+      { threshold: [0, 0.2, 0.5, 1] },
+    )
+
+    observer.observe(mediaNode)
+    return () => observer.disconnect()
+  }, [isGif])
+
+  return (
+    <span ref={mediaRef} className="home-preview-card-media">
+      <OptimizedImage
+        src={src}
+        alt={alt}
+        className="home-preview-card-image"
+        preferPosterForGif={isGif && !isInView}
+        preferAnimatedGifVariant={isGif && isInView}
+        animatedGifVariantTier="thumb"
+        sizes="(max-width: 900px) 100vw, 33vw"
+      />
+    </span>
+  )
 }
 
 interface HomeProps {
@@ -146,6 +193,13 @@ const Home: React.FC<HomeProps> = ({
 
   const showHomeScrollProgress = windowWidth > HOME_SINGLE_COLUMN_BREAKPOINT_PX
   const showHomeSideRails = windowWidth > HOME_SIDE_RAIL_BREAKPOINT_PX
+  const shouldClampFlowerHeight = windowWidth > HOME_FLOWER_HEIGHT_CLAMP_BREAKPOINT_PX
+
+  const showcaseSectionGapHalf = useMemo(() => {
+    if (windowWidth < 510) return 32
+    if (windowWidth <= HOME_SIDE_RAIL_BREAKPOINT_PX) return 42
+    return 52
+  }, [windowWidth])
 
   const introHorizontalPadding = useMemo(() => {
     if (windowWidth < 510) return 11
@@ -175,15 +229,34 @@ const Home: React.FC<HomeProps> = ({
     return 20
   }, [introHorizontalPadding, windowWidth])
 
-  const showcasePadding = useMemo(() => {
-    if (windowWidth < 510) return "14px 11px 20px"
+  const artworkPadding = useMemo(() => {
+    if (windowWidth < 510) return `${showcaseSectionGapHalf}px 11px ${showcaseSectionGapHalf}px`
     if (windowWidth <= HOME_SIDE_RAIL_BREAKPOINT_PX) {
-      return `20px ${introHorizontalPadding}px 30px`
+      return `${showcaseSectionGapHalf}px ${introHorizontalPadding}px ${showcaseSectionGapHalf}px`
     }
-    return isMobile ? "16px 14px 24px" : "20px 20px 30px"
-  }, [introHorizontalPadding, isMobile, windowWidth])
+    return isMobile
+      ? `${showcaseSectionGapHalf}px 14px ${showcaseSectionGapHalf}px`
+      : `${showcaseSectionGapHalf}px 20px ${showcaseSectionGapHalf}px`
+  }, [introHorizontalPadding, isMobile, showcaseSectionGapHalf, windowWidth])
 
-  const flowerPadding = "0"
+  const projectsPadding = useMemo(() => {
+    if (windowWidth < 510) return `14px 11px ${showcaseSectionGapHalf}px`
+    if (windowWidth <= HOME_SIDE_RAIL_BREAKPOINT_PX) {
+      return `20px ${introHorizontalPadding}px ${showcaseSectionGapHalf}px`
+    }
+    return isMobile
+      ? `16px 14px ${showcaseSectionGapHalf}px`
+      : `20px 20px ${showcaseSectionGapHalf}px`
+  }, [introHorizontalPadding, isMobile, showcaseSectionGapHalf, windowWidth])
+
+  const flowerPadding = `${showcaseSectionGapHalf}px 0 0`
+
+  const clampedFlowerStageHeight = useMemo(() => {
+    if (!shouldClampFlowerHeight) return null
+
+    const reservedHeight = windowWidth <= HOME_SIDE_RAIL_BREAKPOINT_PX ? 188 : 168
+    return `${Math.max(sectionHeight - reservedHeight, 360)}px`
+  }, [sectionHeight, shouldClampFlowerHeight, windowWidth])
 
   const contentMaxWidth = useMemo(() => {
     const desiredGuard = isMobile ? 0 : 160
@@ -202,7 +275,7 @@ const Home: React.FC<HomeProps> = ({
     return Math.max(Math.min(HOME_SHOWCASE_DESKTOP_MAX_WIDTH, safeViewportWidth), 320)
   }, [contentMaxWidth, showHomeSideRails, showcaseHorizontalPadding, windowWidth])
 
-  const featuredProjects = useMemo(() => projects.slice(0, 3), [])
+  const featuredProjects = useMemo(() => projects.slice(0, 6), [])
   const featuredArtworks = useMemo(() => photos.slice(0, 3), [])
   const { ref: setProjectsSectionRef, hasIntersected: hasProjectsIntersected } =
     useIntersectionOnce<HTMLDivElement>({
@@ -295,10 +368,18 @@ const Home: React.FC<HomeProps> = ({
       frameId = 0
       const viewportHeight = Math.max(parent.clientHeight, 1)
       const nextTallFlags = Array.from({ length: HOME_SCROLL_PAGE_COUNT }, (_, index) => {
-        const contentNode = scrollPageContentRefs.current[index] ?? scrollPageRefs.current[index]
-        if (!contentNode) return false
+        if (index === HOME_SCROLL_PAGE_COUNT - 1 && shouldClampFlowerHeight) {
+          return false
+        }
 
-        return contentNode.scrollHeight > viewportHeight + HOME_TALL_PAGE_THRESHOLD_PX
+        const pageNode = scrollPageRefs.current[index]
+        const contentNode = scrollPageContentRefs.current[index]
+        const measuredHeight = Math.max(
+          pageNode?.scrollHeight ?? 0,
+          contentNode?.scrollHeight ?? 0,
+        )
+
+        return measuredHeight > viewportHeight + HOME_TALL_PAGE_THRESHOLD_PX
       })
       const scrollMidpoint = parent.scrollTop + viewportHeight / 2
       let nextPageIndex = 0
@@ -347,7 +428,138 @@ const Home: React.FC<HomeProps> = ({
       parent.removeEventListener("scroll", schedulePageMetrics)
       window.removeEventListener("resize", schedulePageMetrics)
     }
-  }, [sectionHeight, isAnimationComplete])
+  }, [sectionHeight, isAnimationComplete, shouldClampFlowerHeight])
+
+  useEffect(() => {
+    if (typeof window === "undefined" || shouldClampFlowerHeight) return
+    const parent = homeContainerRef.current?.parentElement
+    if (!parent) return
+
+    let frameId = 0
+    let touchStartY: number | null = null
+
+    const getMaxScrollTop = () => {
+      const flowerPage = scrollPageRefs.current[HOME_SCROLL_PAGE_COUNT - 1]
+      if (!flowerPage) return null
+      return Math.max(flowerPage.offsetTop, 0)
+    }
+
+    const clampScrollPosition = () => {
+      frameId = 0
+      const maxScrollTop = getMaxScrollTop()
+      if (maxScrollTop === null) return
+      if (parent.scrollTop > maxScrollTop + HOME_FLOWER_SCROLL_STOP_EPSILON_PX) {
+        parent.scrollTop = maxScrollTop
+      }
+    }
+
+    const scheduleScrollClamp = () => {
+      if (frameId) return
+      frameId = window.requestAnimationFrame(clampScrollPosition)
+    }
+
+    const stopAtFlowerBoundary = (deltaY: number) => {
+      if (deltaY <= 0) return false
+
+      const maxScrollTop = getMaxScrollTop()
+      if (maxScrollTop === null) return false
+
+      const remainingScroll = maxScrollTop - parent.scrollTop
+      if (remainingScroll > HOME_FLOWER_SCROLL_STOP_EPSILON_PX && deltaY < remainingScroll) {
+        return false
+      }
+
+      parent.scrollTop = maxScrollTop
+      return true
+    }
+
+    const isEditableTarget = (target: EventTarget | null) => {
+      const element = target as HTMLElement | null
+      if (!element) return false
+
+      const tagName = element.tagName
+      return (
+        element.isContentEditable ||
+        tagName === "INPUT" ||
+        tagName === "TEXTAREA" ||
+        tagName === "SELECT"
+      )
+    }
+
+    const preventWheelPastFlower = (event: WheelEvent) => {
+      if (!event.cancelable) return
+      if (stopAtFlowerBoundary(event.deltaY)) event.preventDefault()
+    }
+
+    const preventKeyboardPastFlower = (event: KeyboardEvent) => {
+      if (isEditableTarget(event.target)) return
+
+      let requestedDelta = 0
+
+      if (event.key === "ArrowDown") {
+        requestedDelta = 48
+      } else if (
+        event.key === "PageDown" ||
+        event.key === " " ||
+        event.key === "Spacebar" ||
+        event.code === "Space"
+      ) {
+        requestedDelta = parent.clientHeight * 0.9
+      } else if (event.key === "End") {
+        requestedDelta = Number.POSITIVE_INFINITY
+      }
+
+      if (requestedDelta <= 0) return
+      if (stopAtFlowerBoundary(requestedDelta)) event.preventDefault()
+    }
+
+    const handleTouchStart = (event: TouchEvent) => {
+      touchStartY = event.touches[0]?.clientY ?? null
+    }
+
+    const preventTouchPastFlower = (event: TouchEvent) => {
+      const currentY = event.touches[0]?.clientY
+      if (touchStartY === null || currentY == null) return
+
+      const deltaY = touchStartY - currentY
+      touchStartY = currentY
+
+      if (!event.cancelable) return
+      if (stopAtFlowerBoundary(deltaY)) event.preventDefault()
+    }
+
+    const resetTouchTracking = () => {
+      touchStartY = null
+    }
+
+    clampScrollPosition()
+    parent.addEventListener("wheel", preventWheelPastFlower, { passive: false })
+    window.addEventListener("keydown", preventKeyboardPastFlower)
+    parent.addEventListener("touchstart", handleTouchStart, { passive: true })
+    parent.addEventListener("touchmove", preventTouchPastFlower, { passive: false })
+    parent.addEventListener("touchend", resetTouchTracking)
+    parent.addEventListener("touchcancel", resetTouchTracking)
+    parent.addEventListener("scroll", scheduleScrollClamp, { passive: true })
+    window.addEventListener("resize", scheduleScrollClamp)
+
+    const resizeObserver =
+      typeof ResizeObserver === "undefined" ? null : new ResizeObserver(scheduleScrollClamp)
+    resizeObserver?.observe(parent)
+    scrollPageRefs.current.forEach((page) => page && resizeObserver?.observe(page))
+
+    return () => {
+      if (frameId) window.cancelAnimationFrame(frameId)
+      resizeObserver?.disconnect()
+      parent.removeEventListener("wheel", preventWheelPastFlower)
+      window.removeEventListener("keydown", preventKeyboardPastFlower)
+      parent.removeEventListener("touchstart", handleTouchStart)
+      parent.removeEventListener("touchmove", preventTouchPastFlower)
+      parent.removeEventListener("touchend", resetTouchTracking)
+      parent.removeEventListener("touchcancel", resetTouchTracking)
+      parent.removeEventListener("scroll", scheduleScrollClamp)
+      window.removeEventListener("resize", scheduleScrollClamp)
+    }
+  }, [sectionHeight, shouldClampFlowerHeight, windowWidth])
 
   useLayoutEffect(() => {
     const parent = homeContainerRef.current?.parentElement
@@ -545,11 +757,17 @@ const Home: React.FC<HomeProps> = ({
         ["--home-action-bg-hover" as string]: homeActionBackgroundHover,
         ["--home-action-text" as string]: homeActionText,
         ["--home-action-shadow" as string]: homeActionShadow,
+        ["--home-inline-button-rest-text" as string]:
+          theme === "bunny" ? "rgba(223, 30, 155, 0.96)" : "rgba(214, 238, 255, 0.96)",
+        ["--home-inline-button-hover-bg" as string]:
+          theme === "bunny" ? "rgba(223, 30, 155, 0.78)" : "rgba(34, 93, 154, 0.78)",
+        ["--home-inline-button-hover-text" as string]: homeActionText,
         ["--home-section-height" as string]: `${sectionHeight}px`,
         ["--home-footer-height" as string]: `${footerHeight}px`,
         ["--home-scroll-guide-top" as string]: `${scrollGuideMetrics.top}px`,
         ["--home-scroll-guide-height" as string]: `${scrollGuideMetrics.height}px`,
         ["--home-showcase-max-width" as string]: `${showcaseMaxWidth}px`,
+        ["--home-flower-stage-height" as string]: clampedFlowerStageHeight ?? undefined,
       }}
     >
       {showHomeSideRails && (
@@ -637,7 +855,7 @@ const Home: React.FC<HomeProps> = ({
             scrollPageRefs.current[1] = node
           }}
           className={`home-scroll-page home-scroll-page--showcase ${tallPageFlags[1] ? "home-scroll-page--content-tall" : ""}`}
-          style={{ padding: showcasePadding }}
+          style={{ padding: projectsPadding }}
         >
           <div
             ref={setProjectsSectionRef}
@@ -647,7 +865,7 @@ const Home: React.FC<HomeProps> = ({
               ref={(node) => {
                 scrollPageContentRefs.current[1] = node
               }}
-              className="home-preview-stack home-preview-stack--projects"
+              className="home-preview-stack home-preview-stack--showcase-gap"
             >
               <div className="home-preview-section">
                 <div className="home-preview-header">
@@ -661,14 +879,7 @@ const Home: React.FC<HomeProps> = ({
                       className="home-preview-card home-preview-card--project"
                       onClick={() => navigate(`/portfolio/${project.id}`)}
                     >
-                      <OptimizedImage
-                        src={project.image}
-                        alt={project.name}
-                        className="home-preview-card-image"
-                        preferAnimatedGifVariant={isGifAsset(project.image)}
-                        animatedGifVariantTier="thumb"
-                        sizes="(max-width: 900px) 100vw, 33vw"
-                      />
+                      <HomeProjectPreviewImage src={project.image} alt={project.name} />
                       <span className="home-preview-card-overlay" />
                       <span className="home-project-preview-meta-panel">
                         <span className="home-project-preview-meta-row">
@@ -705,7 +916,7 @@ const Home: React.FC<HomeProps> = ({
             scrollPageRefs.current[2] = node
           }}
           className={`home-scroll-page home-scroll-page--showcase ${tallPageFlags[2] ? "home-scroll-page--content-tall" : ""}`}
-          style={{ padding: showcasePadding }}
+          style={{ padding: artworkPadding }}
         >
           <div
             ref={setArtworkSectionRef}
@@ -715,7 +926,7 @@ const Home: React.FC<HomeProps> = ({
               ref={(node) => {
                 scrollPageContentRefs.current[2] = node
               }}
-              className="home-preview-stack"
+              className="home-preview-stack home-preview-stack--showcase-gap"
             >
               <div className="home-preview-section">
                 <div className="home-preview-header">
@@ -759,7 +970,7 @@ const Home: React.FC<HomeProps> = ({
           ref={(node) => {
             scrollPageRefs.current[3] = node
           }}
-          className={`home-scroll-page home-scroll-page--flower ${tallPageFlags[3] ? "home-scroll-page--content-tall" : ""}`}
+          className={`home-scroll-page home-scroll-page--flower ${shouldClampFlowerHeight ? "home-scroll-page--flower-clamped" : ""} ${tallPageFlags[3] ? "home-scroll-page--content-tall" : ""}`}
           style={{ padding: flowerPadding }}
         >
           <div ref={flowerActionsAnchorRef} className="home-showcase-actions-anchor" aria-hidden />

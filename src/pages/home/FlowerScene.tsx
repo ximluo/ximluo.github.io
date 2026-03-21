@@ -118,7 +118,7 @@ const FlowerScene: React.FC<FlowerSceneProps> = ({
     const viewportHalfHeight = Math.tan(fov / 2) * cameraDistance
     const viewportHalfWidth = viewportHalfHeight * viewAspect
 
-    const verticalFactor = isMobile ? 3.1 : 3.8
+    const verticalFactor = isMobile ? 3.1 * 0.9 : 3.8
     const verticalOffset = viewportHalfHeight * verticalFactor
     const horizontalOffset = isMobile ? 0 : viewportHalfWidth * 0.002
 

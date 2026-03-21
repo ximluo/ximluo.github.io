@@ -167,7 +167,7 @@ export const HOME_THEME_TOKENS = {
   },
   water: {
     ...pickTokens(BASE_THEME_TOKENS.water, HOME_THEME_KEYS),
-    "--link-color": "rgba(134, 196, 240, 0.8)",
+    "--link-color": "rgba(191, 229, 249, 0.96)",
   },
 } as const
 

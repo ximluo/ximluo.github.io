@@ -2,26 +2,6 @@ import type { Project } from "../types"
 
 const interactiveProjects: Project[] = [
   {
-    id: "rewind",
-    name: "Rewind",
-    image: "/images/rewind.png",
-    description:
-      "Rewind is an AR memory recall app that won the InterSystems Challenge at HackMIT 2024, integrated with the Apple Vision Pro. It uses Gaussian splatting for 3D scene generation and a LangChain based RAG pipeline with InterSystems IRIS Vector Search for natural language memory queries.",
-    languages: ["React", "WebXR", "Python", "LangChain", "IRIS Vector Search"],
-    categories: ["software", "AR", "AI", "healthtech"],
-    sections: [
-      {
-        text: "Gaussian Splatting 3D Scene Generation: We convert user video clips into point cloud environments using a custom Python pipeline and render them in real time with Three.js and WebXR. Users can navigate their memories in 360 degree AR.",
-      },
-      {
-        text: "Backend Architecture: The Flask API manages user sessions, stores memory metadata in a relational SQL database, and coordinates scene jobs. Each memory record includes timestamps, tags, and AR scene links.",
-      },
-      {
-        text: "RAG with Vector Search: We embed memory metadata and textual notes into vectors using LangChain embedding models. These vectors are indexed in InterSystems IRIS Vector Search. At query time, user questions are embedded, top K matching memories are retrieved, and the app surfaces exact moments, for example, “Show my graduation day”.",
-      },
-    ],
-  },
-  {
     id: "web-experiments",
     name: "Web Exploratorium",
     image: "/images/web-tv.gif",
@@ -100,38 +80,6 @@ const interactiveProjects: Project[] = [
       },
       {
         video: "/images/lost.pdf",
-      },
-    ],
-  },
-  {
-    id: "neuroscent",
-    name: "NeuroScent",
-    image: "/images/neuroscent.jpg",
-    description:
-      "NeuroScent is an XR biofeedback system that promotes mental wellbeing, combining olfaction, vision, and biosensing. Built for MIT Reality Hack 2025, it won the Hardware: Smart Sensing prize and Best Use of OpenBCI.",
-    languages: ["C#", "Unity", "Arduino", "Fusion 360"],
-    categories: ["graphics", "XR", "hardware", "biosensing"],
-    sections: [
-      {
-        text: "NeuroScent integrates scent delivery and physiological sensing to extend XR immersion beyond vision and sound. We used the Varjo headset for visual feedback and OpenBCI Galea for EEG, PPG, and EMG biosignals, creating a holistic biofeedback loop.",
-      },
-      {
-        text: "The system captures EEG, EMG, and heart rate data from Galea, analyzes real time mental state, and triggers adaptive scent releases and visual effects to guide users toward calm or focus.",
-      },
-      {
-        text: "Harvested ultrasonic atomizers from consumer diffusers, controlled them with relays on an ESP32, and designed a Fusion 360 airflow chamber. Inspired by [Nebula: An Affordable Open Source and Autonomous Olfactory Display for VR Headsets](https://hal.science/hal-03838757v1/file/Nebula_VRST_2022%20%281%29.pdf), built a compact olfactory module.",
-      },
-      {
-        text: "In Unity, C# scripts stream Galea biosignals over USB serial. Shader Graph, particle systems, and animation scripts map biofeedback thresholds to scent and visual triggers in real time.",
-      },
-      {
-        video: "https://player.vimeo.com/video/1059625069",
-      },
-      {
-        text: "Optimized performance by reducing draw calls, enabling occlusion culling, and using Unity URP with baked lighting. Simplified geometry and LOD management maximizing FPS on Varjo Aero.",
-      },
-      {
-        text: "Next steps include expanding immersive sequences, adding more scent channel permutations, and exploring clinical applications like patient relaxation during anesthesia with targeted biofeedback driven scent delivery.",
       },
     ],
   },

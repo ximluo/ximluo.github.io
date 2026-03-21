@@ -7,7 +7,7 @@ const featuredProjects: Project[] = [
     image: "/images/petsteps-app.png",
     description:
       "PetSteps is an award winning iOS app that keeps users active by caring for a virtual pet. Real world walking boosts your pet’s mood and health. It won the Adobe Digital Edge Standout Prize and was featured at Adobe MAX 2024 for its use of AI and AR in fitness. Adobe also featured PetSteps in a marketing campaign.",
-    languages: ["Swift", "SwiftUI"],
+    languages: ["Adobe Digital Edge Winner", "Swift", "SwiftUI"],
     categories: ["software", "mobile", "AI", "AR"],
     sections: [
       {
@@ -36,7 +36,7 @@ const featuredProjects: Project[] = [
     image: "/images/mini-minecraft.gif",
     description:
       "Custom built 3D voxel game engine inspired by Minecraft, featuring procedural terrain, day night cycles, dynamic lighting, instanced rendering, and a post processing pipeline. I implemented the player physics, raycast based block interaction, and immersive visual effects such as a time interpolated sky with sun arcs, distance fog blending, and a post process system for water and lava overlays.",
-    languages: ["C++", "OpenGL", "GLSL"],
+    languages: ["3D Voxel Engine", "C++", "OpenGL", "GLSL"],
     categories: ["graphics"],
     sections: [
       {
@@ -56,13 +56,85 @@ const featuredProjects: Project[] = [
       },
     ],
   },
-  {
+    {
+    id: "penn-mobile",
+    name: "Penn Mobile",
+    image: "/images/mobile.png",
+    description:
+      "Penn Mobile is the University of Pennsylvania’s official student life app, serving 20,000+ users. Developed by Penn Labs, it brings campus essentials like dining hours, GSR reservations, laundry availability, and student resources directly to students’ phones.",
+    languages: ["Official University App", "Swift", "SwiftUI"],
+    categories: ["software", "mobile", "iOS", "student tools"],
+    sections: [
+      {
+        text: "Learn more at [pennlabs.org/products/penn-mobile](https://pennlabs.org/products/penn-mobile).",
+      },
+      {
+        text: "With Penn Mobile, students can reserve study rooms across campus, view dining hall menus and hours, check real time laundry availability, and access essential university resources, all from one centralized app.",
+      },
+      {
+        text: "Features include push notifications for upcoming reservations, daily laundry activity graphs, campus wide contact info, access to the Daily Pennsylvanian feed, and more. It’s designed to make campus life easier, faster, and more mobile friendly.",
+      },
+    ],
+  },
+    {
+    id: "rewind",
+    name: "Rewind",
+    image: "/images/rewind.png",
+    description:
+      "Rewind is an AR memory recall app that won the InterSystems Challenge at HackMIT 2024, integrated with the Apple Vision Pro. It uses Gaussian splatting for 3D scene generation and a LangChain based RAG pipeline with InterSystems IRIS Vector Search for natural language memory queries.",
+    languages: ["HackMIT Winner", "WebXR", "LangChain", "IRIS Vector Search"],
+    categories: ["software", "AR", "AI", "healthtech"],
+    sections: [
+      {
+        text: "Gaussian Splatting 3D Scene Generation: We convert user video clips into point cloud environments using a custom Python pipeline and render them in real time with Three.js and WebXR. Users can navigate their memories in 360 degree AR.",
+      },
+      {
+        text: "Backend Architecture: The Flask API manages user sessions, stores memory metadata in a relational SQL database, and coordinates scene jobs. Each memory record includes timestamps, tags, and AR scene links.",
+      },
+      {
+        text: "RAG with Vector Search: We embed memory metadata and textual notes into vectors using LangChain embedding models. These vectors are indexed in InterSystems IRIS Vector Search. At query time, user questions are embedded, top K matching memories are retrieved, and the app surfaces exact moments, for example, “Show my graduation day”.",
+      },
+    ],
+  },
+    {
+    id: "neuroscent",
+    name: "NeuroScent",
+    image: "/images/neuroscent.jpg",
+    description:
+      "NeuroScent is an XR biofeedback system that promotes mental wellbeing, combining olfaction, vision, and biosensing. Built for MIT Reality Hack 2025, it won the Hardware: Smart Sensing prize and Best Use of OpenBCI.",
+    languages: ["MIT Reality Hack Winner", "C#", "Unity", "Arduino", "Fusion 360"],
+    categories: ["graphics", "XR", "hardware", "biosensing"],
+    sections: [
+      {
+        text: "NeuroScent integrates scent delivery and physiological sensing to extend XR immersion beyond vision and sound. We used the Varjo headset for visual feedback and OpenBCI Galea for EEG, PPG, and EMG biosignals, creating a holistic biofeedback loop.",
+      },
+      {
+        text: "The system captures EEG, EMG, and heart rate data from Galea, analyzes real time mental state, and triggers adaptive scent releases and visual effects to guide users toward calm or focus.",
+      },
+      {
+        text: "Harvested ultrasonic atomizers from consumer diffusers, controlled them with relays on an ESP32, and designed a Fusion 360 airflow chamber. Inspired by [Nebula: An Affordable Open Source and Autonomous Olfactory Display for VR Headsets](https://hal.science/hal-03838757v1/file/Nebula_VRST_2022%20%281%29.pdf), built a compact olfactory module.",
+      },
+      {
+        text: "In Unity, C# scripts stream Galea biosignals over USB serial. Shader Graph, particle systems, and animation scripts map biofeedback thresholds to scent and visual triggers in real time.",
+      },
+      {
+        video: "https://player.vimeo.com/video/1059625069",
+      },
+      {
+        text: "Optimized performance by reducing draw calls, enabling occlusion culling, and using Unity URP with baked lighting. Simplified geometry and LOD management maximizing FPS on Varjo Aero.",
+      },
+      {
+        text: "Next steps include expanding immersive sequences, adding more scent channel permutations, and exploring clinical applications like patient relaxation during anesthesia with targeted biofeedback driven scent delivery.",
+      },
+    ],
+  },
+    {
     id: "penn-capsule",
     name: "Capsule",
     image: "/images/capsule-open.gif",
     description:
       "Penn Capsule transforms photo collections into interactive 3D time capsules that unlock on a specified date. Users customize capsule appearance, upload memories, and later experience a dynamic timelapse of their photos in a 3D environment.",
-    languages: ["TypeScript", "Node.js", "AWS S3", "MongoDB", "React Three Fiber"],
+    languages: ["3D Time Capsules", "AWS S3", "Node.js", "TypeScript", "MongoDB"],
     categories: ["software", "web", "3D", "fullstack"],
     sections: [
       {
@@ -97,82 +169,6 @@ const featuredProjects: Project[] = [
       },
       {
         video: "/images/PennCapsule.pdf",
-      },
-    ],
-  },
-  {
-    id: "penn-mobile",
-    name: "Penn Mobile",
-    image: "/images/mobile.png",
-    description:
-      "Penn Mobile is the University of Pennsylvania’s official student life app, serving 20,000+ users. Developed by Penn Labs, it brings campus essentials like dining hours, GSR reservations, laundry availability, and student resources directly to students’ phones.",
-    languages: ["Swift", "SwiftUI"],
-    categories: ["software", "mobile", "iOS", "student tools"],
-    sections: [
-      {
-        text: "Learn more at [pennlabs.org/products/penn-mobile](https://pennlabs.org/products/penn-mobile).",
-      },
-      {
-        text: "With Penn Mobile, students can reserve study rooms across campus, view dining hall menus and hours, check real time laundry availability, and access essential university resources, all from one centralized app.",
-      },
-      {
-        text: "Features include push notifications for upcoming reservations, daily laundry activity graphs, campus wide contact info, access to the Daily Pennsylvanian feed, and more. It’s designed to make campus life easier, faster, and more mobile friendly.",
-      },
-    ],
-  },
-  {
-    id: "pbr-renderer",
-    name: "Real time Physically Based Renderer",
-    image: "/images/pbr.png",
-    description:
-      "A real time shading project from Penn’s Advanced Rendering course. Implements the energy conserving Cook Torrance microfacet BRDF using the Trowbridge Reitz GGX distribution, Schlick’s Fresnel approximation, and the Smith Schlick GGX geometry term.",
-    languages: ["C++", "GLSL", "OpenGL"],
-    categories: ["graphics", "rendering"],
-    sections: [
-      {
-        text: "The PBR shader screenshot shows the microfacet model in action. Metallicness is toggled between zero and one via GUI sliders, and roughness is held around 0 to illustrate reflectiveness.",
-      },
-      {
-        image: "/images/pbr-gui.png",
-      },
-      {
-        text: "All lighting and material calculations run in the fragment shader. Material properties like albedo, metallicness, and roughness are sampled from textures when available or controlled with GUI sliders otherwise.",
-      },
-      {
-        text: "Image based lighting uses two precomputed cubemaps: one for diffuse irradiance and one for glossy irradiance. The shader samples the diffuse map using surface normals and the glossy map using the reflected view vector.",
-      },
-      {
-        image: "/images/pbr-displacement.png",
-      },
-      {
-        text: "Vertex displacement is driven by a height map in the vertex shader. Vertices are offset along interpolated normals before tangent space normal mapping adds fine surface detail.",
-      },
-      {
-        image: "/images/pbr-albedo.png",
-      },
-      {
-        text: "When a model provides its own albedo texture, the shader samples its base color and feeds it into both the Lambertian diffuse irradiance and Cook Torrance specular equations for accurate material appearance.",
-      },
-      {
-        text: "The renderer maintains full refresh rates without dropped frames, demonstrating that even with PBR and displacement, real time performance is achievable.",
-      },
-      {
-        text: "For full implementation details, see [Real Shading in Unreal Engine 4](https://cdn2.unrealengine.com/Resources/files/2013SiggraphPresentationsNotes-26915738.pdf).",
-      },
-      {
-        text: "Beyond the core PBR pipeline, two advanced rendering features were developed as course extensions.",
-      },
-      {
-        text: "Deferred Rendering and Screen Space Reflection: A multi pass deferred pipeline first renders scene attributes into a G buffer with attachments for albedo, world space normals, specular, and depth. The SSR pass reconstructs view space positions and normals, reflects view vectors, and performs iterative ray marching in screen space to sample G buffer data. A binary search refines intersection points before separable Gaussian blur applies glossy falloff. The final composite blends these reflections with direct Cook Torrance lighting.",
-      },
-      {
-        image: "/images/pbr-ssr.png",
-      },
-      {
-        text: "Signed Distance Fields and Subsurface Scattering: A ray marched SDF shader steps along view rays using the sceneSDF composed of primitive SDF operations. Upon hit detection, the Cook Torrance BSDF calculates local lighting. Subsurface scattering uses a thinness metric computed via opposite direction SDF queries to attenuate light transmitted through the material, blended with diffuse irradiance for translucent effects. Scene repetition applies SDF repetition functions to clone the building elements across the environment.",
-      },
-      {
-        image: "/images/sdf-sub.png",
       },
     ],
   },
@@ -247,6 +243,62 @@ const featuredProjects: Project[] = [
       },
       {
         image: "/images/pathtracer-mis.png",
+      },
+    ],
+  },
+    {
+    id: "pbr-renderer",
+    name: "Real time Physically Based Renderer",
+    image: "/images/pbr.png",
+    description:
+      "A real time shading project from Penn’s Advanced Rendering course. Implements the energy conserving Cook Torrance microfacet BRDF using the Trowbridge Reitz GGX distribution, Schlick’s Fresnel approximation, and the Smith Schlick GGX geometry term.",
+    languages: ["C++", "GLSL", "OpenGL"],
+    categories: ["graphics", "rendering"],
+    sections: [
+      {
+        text: "The PBR shader screenshot shows the microfacet model in action. Metallicness is toggled between zero and one via GUI sliders, and roughness is held around 0 to illustrate reflectiveness.",
+      },
+      {
+        image: "/images/pbr-gui.png",
+      },
+      {
+        text: "All lighting and material calculations run in the fragment shader. Material properties like albedo, metallicness, and roughness are sampled from textures when available or controlled with GUI sliders otherwise.",
+      },
+      {
+        text: "Image based lighting uses two precomputed cubemaps: one for diffuse irradiance and one for glossy irradiance. The shader samples the diffuse map using surface normals and the glossy map using the reflected view vector.",
+      },
+      {
+        image: "/images/pbr-displacement.png",
+      },
+      {
+        text: "Vertex displacement is driven by a height map in the vertex shader. Vertices are offset along interpolated normals before tangent space normal mapping adds fine surface detail.",
+      },
+      {
+        image: "/images/pbr-albedo.png",
+      },
+      {
+        text: "When a model provides its own albedo texture, the shader samples its base color and feeds it into both the Lambertian diffuse irradiance and Cook Torrance specular equations for accurate material appearance.",
+      },
+      {
+        text: "The renderer maintains full refresh rates without dropped frames, demonstrating that even with PBR and displacement, real time performance is achievable.",
+      },
+      {
+        text: "For full implementation details, see [Real Shading in Unreal Engine 4](https://cdn2.unrealengine.com/Resources/files/2013SiggraphPresentationsNotes-26915738.pdf).",
+      },
+      {
+        text: "Beyond the core PBR pipeline, two advanced rendering features were developed as course extensions.",
+      },
+      {
+        text: "Deferred Rendering and Screen Space Reflection: A multi pass deferred pipeline first renders scene attributes into a G buffer with attachments for albedo, world space normals, specular, and depth. The SSR pass reconstructs view space positions and normals, reflects view vectors, and performs iterative ray marching in screen space to sample G buffer data. A binary search refines intersection points before separable Gaussian blur applies glossy falloff. The final composite blends these reflections with direct Cook Torrance lighting.",
+      },
+      {
+        image: "/images/pbr-ssr.png",
+      },
+      {
+        text: "Signed Distance Fields and Subsurface Scattering: A ray marched SDF shader steps along view rays using the sceneSDF composed of primitive SDF operations. Upon hit detection, the Cook Torrance BSDF calculates local lighting. Subsurface scattering uses a thinness metric computed via opposite direction SDF queries to attenuate light transmitted through the material, blended with diffuse irradiance for translucent effects. Scene repetition applies SDF repetition functions to clone the building elements across the environment.",
+      },
+      {
+        image: "/images/sdf-sub.png",
       },
     ],
   },
