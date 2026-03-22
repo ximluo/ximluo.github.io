@@ -785,7 +785,7 @@ const Home: React.FC<HomeProps> = ({
         </>
       )}
       <div
-        className={`home-scroll-guide ${phase >= 4 && isAnimationComplete && scrollGuideMetrics.height > 0 ? "is-visible" : ""}`}
+        className={`home-scroll-guide ${phase >= 3 && isAnimationComplete && scrollGuideMetrics.height > 0 ? "is-visible" : ""}`}
         aria-hidden
       />
 
@@ -826,9 +826,9 @@ const Home: React.FC<HomeProps> = ({
           <button
             ref={scrollCueRef}
             type="button"
-            className={`fade home-native-scroll-cue ${phase >= 4 && isAnimationComplete ? "show" : ""}`}
+            className={`fade home-native-scroll-cue ${phase >= 3 && isAnimationComplete ? "show" : ""}`}
             aria-label="Scroll to projects"
-            disabled={!(phase >= 4 && isAnimationComplete)}
+            disabled={!(phase >= 3 && isAnimationComplete)}
             onClick={() => scrollToPage(1)}
             style={{
               ["--home-scroll-side-bottom" as string]: `${resolvedScrollCueBottom}px`,
@@ -1025,7 +1025,7 @@ const Home: React.FC<HomeProps> = ({
         </section>
       </div>
 
-      <Footer theme={theme} controlsVisible={phase >= 4} />
+      <Footer theme={theme} controlsVisible={phase >= 3} />
 
       {showAwards && <AwardsModal onClose={() => setShowAwards(false)} theme={theme} />}
       {showBunny && (

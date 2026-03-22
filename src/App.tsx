@@ -207,7 +207,7 @@ function App() {
           <GradientBackground theme={theme}>
             <div className="app-shell-column">
               <div
-                className={`fade app-top-nav ${phase >= 4 ? "show" : ""}`}
+                className={`fade app-top-nav ${phase >= 3 ? "show" : ""}`}
                 style={{
                   ["--app-nav-padding" as string]: isMobile ? "18px 0" : "20px 0",
                   ["--app-nav-gap" as string]: `${isTablet || isMobile ? 6 : 12}px`,

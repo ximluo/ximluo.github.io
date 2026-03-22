@@ -28,7 +28,7 @@ export function HomeDesktopScrollProgress({
   alignment,
   onSelectPage,
 }: HomeDesktopScrollProgressProps) {
-  const isReady = phase >= 4 && isAnimationComplete
+  const isReady = phase >= 3 && isAnimationComplete
 
   return (
     <div
@@ -412,7 +412,7 @@ export function HomeScrollCues({
     <>
       {!isFlowerRevealed && !isMobile && (
         <div
-          className={`fade home-scroll-side-cue ${phase >= 4 && isAnimationComplete ? "show" : ""}`}
+          className={`fade home-scroll-side-cue ${phase >= 3 && isAnimationComplete ? "show" : ""}`}
           aria-hidden
           style={{
             ["--home-scroll-side-bottom" as string]: `${(footerHeight || 70) + 20}px`,
@@ -426,7 +426,7 @@ export function HomeScrollCues({
       )}
 
       <div
-        className={`fade home-scroll-center-cue ${phase >= 4 && isAnimationComplete ? "show" : ""}`}
+        className={`fade home-scroll-center-cue ${phase >= 3 && isAnimationComplete ? "show" : ""}`}
         aria-hidden={!isAnimationComplete}
         style={{
           ["--home-scroll-center-bottom" as string]: `${scrollCueBottom}px`,
