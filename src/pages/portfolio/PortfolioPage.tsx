@@ -1,6 +1,7 @@
 import type React from "react"
 import { useCallback, useEffect, useMemo, useState } from "react"
 import { useNavigate } from "react-router-dom"
+import Footer from "../../components/Footer"
 import OptimizedImage from "../../components/ui/OptimizedImage"
 import projects from "../../data/projects"
 import useIntersectionOnce from "../../hooks/useIntersectionOnce"
@@ -221,6 +222,8 @@ const Portfolio: React.FC<PortfolioProps> = ({ theme }) => {
           </div>
         ))}
       </div>
+
+      <Footer theme={theme} />
     </div>
   )
 }

@@ -23,35 +23,52 @@ const getEstTimeString = () =>
     hour12: true,
   }).format(new Date())
 
-export const useHomeFooterMeasurement = (setFooterHeight: (value: number) => void) => {
+export const useHomeFooterMeasurement = (
+  setFooterHeight: (value: number) => void,
+  setFooterCopyrightHeight?: (value: number) => void,
+) => {
   useEffect(() => {
     if (typeof document === "undefined") return
 
     let footerEl: HTMLElement | null = null
+    let footerCopyrightEl: HTMLElement | null = null
     let footerResizeObserver: ResizeObserver | null = null
+    let footerCopyrightResizeObserver: ResizeObserver | null = null
 
     const measureFooter = () => {
       if (!footerEl) return
       setFooterHeight(footerEl.getBoundingClientRect().height || 0)
+      setFooterCopyrightHeight?.(footerCopyrightEl?.getBoundingClientRect().height || 0)
     }
 
     const attachFooterObserver = () => {
       const nextFooter = document.querySelector<HTMLElement>("footer")
-      if (nextFooter === footerEl) {
+      const nextFooterCopyright = nextFooter?.querySelector<HTMLElement>(".footer-copyright") ?? null
+
+      if (nextFooter === footerEl && nextFooterCopyright === footerCopyrightEl) {
         measureFooter()
         return
       }
 
       footerResizeObserver?.disconnect()
+      footerCopyrightResizeObserver?.disconnect()
       footerEl = nextFooter
+      footerCopyrightEl = nextFooterCopyright
 
       if (!footerEl) {
         setFooterHeight(0)
+        setFooterCopyrightHeight?.(0)
         return
       }
 
       footerResizeObserver = new ResizeObserver(measureFooter)
       footerResizeObserver.observe(footerEl)
+
+      if (footerCopyrightEl) {
+        footerCopyrightResizeObserver = new ResizeObserver(measureFooter)
+        footerCopyrightResizeObserver.observe(footerCopyrightEl)
+      }
+
       measureFooter()
     }
 
@@ -66,8 +83,9 @@ export const useHomeFooterMeasurement = (setFooterHeight: (value: number) => voi
     return () => {
       mutationObserver.disconnect()
       footerResizeObserver?.disconnect()
+      footerCopyrightResizeObserver?.disconnect()
     }
-  }, [setFooterHeight])
+  }, [setFooterCopyrightHeight, setFooterHeight])
 }
 
 export const useEstClock = (setEstTime: (value: string) => void) => {

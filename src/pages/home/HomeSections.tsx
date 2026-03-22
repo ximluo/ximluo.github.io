@@ -1,7 +1,5 @@
 import type React from "react"
-import AsciiImage from "../../components/AsciiImage"
 import { trackExternalLinkClick } from "../../utils/analytics"
-import type { ThemeType } from "../../theme/tokens"
 
 export interface BubblePalette {
   base: string
@@ -11,36 +9,13 @@ export interface BubblePalette {
   glow: string
 }
 
-interface HomeDesktopEstRailProps {
-  estTime: string
-  phase: number
-  isAnimationComplete: boolean
-  textColor: string
-}
-
-export function HomeDesktopEstRail({
-  estTime,
-  phase,
-  isAnimationComplete,
-  textColor,
-}: HomeDesktopEstRailProps) {
-  return (
-    <div
-      className={`home-est-rail fade ${phase >= 4 && isAnimationComplete ? "show" : ""}`}
-      aria-hidden={!isAnimationComplete}
-      style={{ ["--home-est-rail-color" as string]: textColor }}
-    >
-      est • {estTime}
-    </div>
-  )
-}
-
 interface HomeDesktopScrollProgressProps {
   activePageIndex: number
   pageCount: number
   phase: number
   isAnimationComplete: boolean
   textColor: string
+  alignment: "left" | "right"
   onSelectPage: (pageIndex: number) => void
 }
 
@@ -50,13 +25,14 @@ export function HomeDesktopScrollProgress({
   phase,
   isAnimationComplete,
   textColor,
+  alignment,
   onSelectPage,
 }: HomeDesktopScrollProgressProps) {
   const isReady = phase >= 4 && isAnimationComplete
 
   return (
     <div
-      className={`home-scroll-progress fade ${isReady ? "show" : ""}`}
+      className={`home-scroll-progress home-scroll-progress--${alignment} fade ${isReady ? "show" : ""}`}
       aria-label="Home section navigation"
       role="navigation"
       style={{ ["--home-scroll-progress-color" as string]: textColor }}
@@ -155,15 +131,12 @@ export function HomeNavigationBubbles({
 }
 
 interface HomeIntroPanelProps {
-  theme: ThemeType
   phase: number
-  roleTop: string
-  roleBot: string
   typingText: string
   typingRef: React.RefObject<HTMLDivElement | null>
   isMobile: boolean
-  imageSize: string
   contentMaxWidth: number
+  desktopOffset: number
   isFlowerRevealed: boolean
   isAnimationComplete: boolean
   isNavigatingFromPage: boolean
@@ -175,15 +148,12 @@ interface HomeIntroPanelProps {
 }
 
 export function HomeIntroPanel({
-  theme,
   phase,
-  roleTop,
-  roleBot,
   typingText,
   typingRef,
   isMobile,
-  imageSize,
   contentMaxWidth,
+  desktopOffset,
   isFlowerRevealed,
   isAnimationComplete,
   isNavigatingFromPage,
@@ -198,6 +168,7 @@ export function HomeIntroPanel({
       className="content-layer home-intro-panel"
       style={{
         ["--home-intro-max-width" as string]: `${contentMaxWidth}px`,
+        ["--home-intro-desktop-offset" as string]: `${desktopOffset}px`,
         ["--home-intro-panel-opacity" as string]: isFlowerRevealed ? "0" : "1",
         ["--home-intro-panel-visibility" as string]: isFlowerRevealed ? "hidden" : "visible",
       }}
@@ -219,11 +190,12 @@ export function HomeIntroPanel({
       <div
         className={`fade home-hero ${phase >= 1 && isAnimationComplete ? "show" : ""}`}
         style={{
-          ["--home-hero-direction" as string]: isMobile ? "column" : "row",
-          ["--home-hero-gap" as string]: `${isMobile ? 5 : 20}px`,
+          ["--home-hero-direction" as string]: "row",
+          ["--home-hero-gap" as string]: "0px",
           ["--home-hero-margin-top" as string]: `${isMobile ? 30 : 20}px`,
           ["--home-hero-margin-bottom" as string]: `${isMobile ? 12 : 0}px`,
-          ["--home-hero-text-align" as string]: isMobile ? "center" : "left",
+          ["--home-hero-copy-padding" as string]: isMobile ? "0 10px" : "0 14px",
+          ["--home-hero-text-align" as string]: "left",
           ["--home-hero-line-color" as string]: textColor,
           ["--home-hero-line-top-size" as string]: `${isMobile ? 14 : 16}px`,
           ["--home-hero-line-top-margin" as string]: isMobile ? "5px 0" : "10px 0",
@@ -235,43 +207,28 @@ export function HomeIntroPanel({
           visibility: isAnimationComplete ? "visible" : "hidden",
         }}
       >
-        <div className={`fade ${phase >= 2 && isAnimationComplete ? "show" : ""}`}>
-          <AsciiImage src="/images/ximing.jpg" alt="Ximing Luo" size={imageSize} theme={theme} />
-        </div>
-
         <div className="home-hero-copy">
-          <p
-            className={`fade home-hero-line home-hero-line--top ${phase >= 3 && isAnimationComplete ? "show" : ""}`}
-          >
-            {roleTop}
-          </p>
-
           <h1 className={`fade home-hero-title ${phase >= 2 && isAnimationComplete ? "show" : ""}`}>
             Hi, I&apos;m Ximing!
           </h1>
-
-          <p
-            className={`fade home-hero-line home-hero-line--bottom ${phase >= 3 && isAnimationComplete ? "show" : ""}`}
-          >
-            {roleBot}
-          </p>
         </div>
       </div>
 
       <div
         ref={bioRef}
-        className={`fade home-bio ${phase >= 4 && isAnimationComplete ? "show" : ""}`}
+        className={`fade home-bio ${phase >= 2 && isAnimationComplete ? "show" : ""}`}
         style={{
-          ["--home-bio-font-size" as string]: `${isMobile ? 12 : 14}px`,
-          ["--home-bio-line-height" as string]: `${isMobile ? 1.1 : 1.4}`,
+          ["--home-bio-font-size" as string]: isMobile ? "14px" : "16px",
+          ["--home-bio-line-height" as string]: "1.5",
           ["--home-bio-color" as string]: textColor,
           ["--home-bio-padding" as string]: isMobile ? "2px 10px" : "14px",
-          ["--home-bio-paragraph-margin" as string]: isMobile ? "10px" : "20px",
+          ["--home-bio-list-gap" as string]: isMobile ? "0px" : "0px",
+          ["--home-bio-section-gap" as string]: isMobile ? "30px" : "40px",
           ["--home-link-color" as string]: linkColor,
         }}
       >
         <p className="home-bio-paragraph home-bio-paragraph--spaced">
-          Currently @ UPenn, studying Computer Science (
+          Currently @ UPenn | Computer Science (
           <a
             className="home-link"
             href="http://cg.cis.upenn.edu/dmd.html"
@@ -280,41 +237,131 @@ export function HomeIntroPanel({
           >
             Digital Media Design
           </a>
-          ) & Economics and teaching iOS Programming{" "}
-          <a
-            className="home-link"
-            href="https://www.seas.upenn.edu/~cis1951/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            (CIS 1951)
-          </a>
-          .
+          ) & Economics 
         </p>
-        <p className="home-bio-paragraph home-bio-paragraph--spaced">
-          I am interested in computer graphics, AI/ML, and fullstack. Previously, I did software at{" "}
+        <div className="home-bio-list" aria-label="Highlights">
+          <div className="home-bio-line">
+            <span className="home-bio-line-bullet">✿</span>
+            <span className="home-bio-line-copy">
+              Instuctor for iOS Programming{" "}
+              <a
+                className="home-link"
+                href="https://www.seas.upenn.edu/~cis1951/"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                (CIS 1951)
+              </a>{" "}
+              @ Penn
+            </span>
+          </div>
+
+          <div className="home-bio-line">
+            <span className="home-bio-line-bullet">✿</span>
+            <span className="home-bio-line-copy">
+              Previous software engineer @{" "}
+              <a
+                className="home-link"
+                href="https://www.apollo.com/"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Apollo Global Management
+              </a>
+            </span>
+          </div>
+
+          <div className="home-bio-line">
+            <span className="home-bio-line-bullet">✿</span>
+            <span className="home-bio-line-copy">
+              Work recognized by{" "}
+              <a
+                className="home-link"
+                href="https://www.adobe.com/creativecloud/buy/students.html?"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Adobe
+              </a>{" "}
+              and{" "}
+              <button
+                className="home-inline-link-button"
+                type="button"
+                onClick={(event) => {
+                  event.stopPropagation()
+                  onOpenAwards()
+                }}
+              >
+                other awards
+              </button>
+            </span>
+          </div>
+        </div>
+        <p className="home-bio-paragraph home-bio-paragraph--after-list">
+          Also: President of{" "}
           <a
             className="home-link"
-            href="https://www.apollo.com/"
+            href="https://wics.cis.upenn.edu"
             target="_blank"
             rel="noopener noreferrer"
           >
-            Apollo Global Management
-          </a>{" "}
-     
-          
-          . My work has been recognized by Adobe and{" "}
-          <button
-            className="home-inline-link-button"
-            type="button"
-            onClick={(event) => {
-              event.stopPropagation()
-              onOpenAwards()
-            }}
+            Penn Women in Computer Science
+          </a>
+          , Director of{" "}
+          <a
+            className="home-link"
+            href="https://www.femmehacks.io"
+            target="_blank"
+            rel="noopener noreferrer"
           >
-            other awards
-          </button>
-          . Feel free to explore!
+            FemmeHacks
+          </a>
+          , developer for{" "}
+          <a
+            className="home-link"
+            href="https://pennlabs.org/"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Penn Labs
+          </a>{" "}
+          &{" "}
+          <a
+            className="home-link"
+            href="https://pennspark.org/"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Penn Spark
+          </a>
+          ,{" "}
+          <a
+            className="home-link"
+            href="https://snfpaideia.upenn.edu/fellowships/fellowship-information/"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            SNF Paideia Fellow
+          </a>
+          , Prev TA for{" "}
+          <a
+            className="home-link"
+            href="https://cis4120.seas.upenn.edu/"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            CIS 5120
+          </a>{" "}
+          Human Computer Interaction &{" "}
+          <a
+            className="home-link"
+            href="https://www.cis.upenn.edu/~cis4600/current/"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            CIS 5600
+          </a>{" "}
+          computer graphics
         </p>
         <p className="home-bio-paragraph">
           Say hello:{" "}

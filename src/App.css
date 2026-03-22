@@ -210,6 +210,8 @@
 
 .main-content-scroll--page {
   overflow: auto;
+  align-items: stretch;
+  justify-content: flex-start;
 }
 
 @media (max-width: 767px) {
@@ -222,13 +224,11 @@
 
 .app-footer-shell {
   width: 100%;
-  margin-top: 0;
+  margin-top: auto;
   flex-shrink: 0;
-  position: sticky;
-  bottom: 0;
-  z-index: 96;
-  background: inherit;
-  padding-bottom: env(safe-area-inset-bottom);
+  position: relative;
+  z-index: 50;
+  background: transparent;
 }
 
 .app-footer-shell--home {

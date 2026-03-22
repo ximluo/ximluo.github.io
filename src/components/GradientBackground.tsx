@@ -107,6 +107,7 @@ const GradientBackground: React.FC<GradientBackgroundProps> = ({ theme, children
         useSafariMode={useSafariMode}
         isMobileOrTablet={isMobileOrTablet}
         interBubbleRef={interBubbleRef}
+        opacityScale={isHomePage ? 0.7 : 1}
       />
 
       <GradientRightEdgeOverlay

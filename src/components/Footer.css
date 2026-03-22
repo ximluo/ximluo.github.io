@@ -2,24 +2,65 @@
   position: relative;
   width: 100%;
   box-sizing: border-box;
-  padding: var(--footer-padding);
-  display: flex;
-  align-items: center;
   color: var(--footer-text);
   font-family: monospace;
   font-size: var(--footer-font-size);
 }
 
-.footer-root--desktop {
-  flex-direction: row;
+.footer-root--floating {
+  padding: 14px 20px calc(env(safe-area-inset-bottom) + 24px);
+}
+
+.footer-root--inline {
+  padding: 14px 0 16px;
 }
 
 .footer-root--mobile {
+  padding: 6px 15px 10px;
+  display: flex;
   flex-direction: column;
+  align-items: center;
+}
+
+.footer-controls {
+  width: 100%;
+}
+
+.footer-controls--floating {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: calc(15px + 54px + env(safe-area-inset-bottom));
+  pointer-events: none;
+  z-index: 70;
+}
+
+.footer-controls--mobile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.footer-controls--inline {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  box-sizing: border-box;
+  padding-left: 28px;
+  padding-right: 20px;
+  margin-bottom: 18px;
 }
 
 .footer-bunny-slot {
   width: var(--footer-bunny-slot-width);
+  display: flex;
+  justify-content: flex-start;
+}
+
+.footer-controls--floating .footer-bunny-slot {
+  position: absolute;
+  left: calc(15px + 28px);
 }
 
 .footer-icons {
@@ -29,9 +70,16 @@
   margin-bottom: var(--footer-icons-margin-bottom);
 }
 
-.footer-icons--desktop {
+.footer-icons--floating {
+  position: absolute;
+  right: calc(15px + 20px);
   width: auto;
-  order: 2;
+  margin-bottom: 0;
+}
+
+.footer-icons--inline {
+  width: auto;
+  margin-bottom: 0;
 }
 
 .footer-icons--mobile {
@@ -59,6 +107,14 @@
   text-decoration: none;
 }
 
+.footer-controls--floating .footer-icon-button {
+  pointer-events: auto;
+}
+
+.footer-controls--inline .footer-icon-button {
+  pointer-events: auto;
+}
+
 .footer-icon-button--bunny {
   box-shadow: var(--footer-bunny-glow);
 }
@@ -76,9 +132,14 @@
   text-align: center;
 }
 
-.footer-copyright--desktop {
-  flex-grow: 1;
-  order: 1;
+.footer-copyright--floating {
+  width: 100%;
+  padding-bottom: 4px;
+}
+
+.footer-copyright--inline {
+  width: 100%;
+  padding-bottom: 4px;
 }
 
 .footer-copyright--mobile {

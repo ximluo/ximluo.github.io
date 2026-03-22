@@ -14,6 +14,7 @@ import { Canvas } from "@react-three/fiber"
 import "./Home.css"
 
 import AwardsModal from "../../components/AwardsModal"
+import Footer from "../../components/Footer"
 import OptimizedImage from "../../components/ui/OptimizedImage"
 import photos from "../../data/photos"
 import projects from "../../data/projects"
@@ -26,7 +27,7 @@ import {
 } from "../../theme/tokens"
 import { trackBunnyModalOpen } from "../../utils/analytics"
 import FlowerScene from "./FlowerScene"
-import { HomeDesktopEstRail, HomeDesktopScrollProgress, HomeIntroPanel } from "./HomeSections"
+import { HomeDesktopScrollProgress, HomeIntroPanel } from "./HomeSections"
 import { useHomeIntroSequence, useHomeViewportState } from "./home.hooks"
 
 const BunnyModal = lazy(() => import("../../features/bunny"))
@@ -35,6 +36,7 @@ const HOME_TALL_PAGE_THRESHOLD_PX = 8
 const HOME_SHOWCASE_DESKTOP_MAX_WIDTH = 1000
 const HOME_SHOWCASE_RAIL_CLEARANCE_PX = 96
 const HOME_SIDE_RAIL_BREAKPOINT_PX = 1024
+const HOME_INTRO_DESKTOP_OFFSET_BREAKPOINT_PX = 1366
 const HOME_SINGLE_COLUMN_BREAKPOINT_PX = 767
 const HOME_SCROLL_GUIDE_FLOWER_GAP_PX = 24
 const HOME_SCROLL_GUIDE_TEXT_GAP_PX = 4
@@ -112,18 +114,12 @@ const HomeProjectPreviewImage: React.FC<HomeProjectPreviewImageProps> = ({ src, 
 interface HomeProps {
   theme: ThemeType
   phase: number
-  roleTop: string
-  roleBot: string
-  onScramble: () => void
   isNavigatingFromPage?: boolean
 }
 
 const Home: React.FC<HomeProps> = ({
   theme,
   phase,
-  roleTop,
-  roleBot,
-  onScramble,
   isNavigatingFromPage = false,
 }) => {
   const navigate = useNavigate()
@@ -145,21 +141,21 @@ const Home: React.FC<HomeProps> = ({
   const scrollPageRefs = useRef<Array<HTMLElement | null>>([])
   const scrollPageContentRefs = useRef<Array<HTMLElement | null>>([])
 
-  const { windowWidth, windowHeight, isMobile, isSmallScreen, footerHeight, estTime } =
+  const { windowWidth, windowHeight, isMobile, isSmallScreen, footerHeight, footerCopyrightHeight } =
     useHomeViewportState()
   const [sectionHeight, setSectionHeight] = useState<number>(windowHeight || 760)
 
   const { typingRef, typingText, isAnimationComplete } = useHomeIntroSequence({
     phase,
-    onScramble,
     isNavigatingFromPage,
   })
 
   const themes = HOME_THEME_TOKENS
   const currentTheme = themes[theme]
   const contentTheme = CONTENT_THEME_TOKENS[theme]
-  const textColor = currentTheme["--color-text"]
+  const textColor = theme === "bunny" ? "rgb(86, 43, 122)" : currentTheme["--color-text"]
   const accentColor = currentTheme["--color-accent-primary"]
+  const homeScrollProgressColor = theme === "bunny" ? accentColor : textColor
   const linkColor = currentTheme["--link-color"]
   const homeScrollCueColor =
     theme === "bunny" ? "rgba(121, 85, 189, 0.74)" : "rgba(170, 214, 255, 0.6)"
@@ -173,11 +169,11 @@ const Home: React.FC<HomeProps> = ({
     theme === "bunny" ? "rgba(223, 30, 155, 0.34)" : "rgba(173, 214, 255, 0.46)"
   const homeActionBackground =
     theme === "bunny"
-      ? "linear-gradient(180deg, rgba(137, 112, 183, 0.4) 0%, rgba(223, 30, 155, 0.32) 100%)"
+      ? "linear-gradient(180deg, rgba(131, 95, 199, 0.78) 0%, rgba(138, 90, 191, 0.76) 54%, rgba(173, 62, 156, 0.74) 100%)"
       : "linear-gradient(180deg, rgba(15, 58, 104, 0.78) 0%, rgba(24, 77, 132, 0.72) 100%)"
   const homeActionBackgroundHover =
     theme === "bunny"
-      ? "linear-gradient(180deg, rgba(121, 85, 189, 0.5) 0%, rgba(223, 30, 155, 0.42) 100%)"
+      ? "linear-gradient(180deg, rgba(139, 103, 207, 0.9) 0%, rgba(149, 98, 199, 0.88) 54%, rgba(190, 70, 171, 0.86) 100%)"
       : "linear-gradient(180deg, rgba(21, 70, 120, 0.84) 0%, rgba(34, 93, 154, 0.78) 100%)"
   const homeActionText =
     theme === "bunny" ? contentTheme["--button-text"] : "rgba(214, 238, 255, 0.96)"
@@ -185,11 +181,6 @@ const Home: React.FC<HomeProps> = ({
     theme === "bunny"
       ? "inset 0 0 0 1px rgba(255, 255, 255, 0.14), 0 10px 28px rgba(223, 30, 155, 0.22)"
       : "inset 0 0 0 1px rgba(255, 255, 255, 0.12), 0 10px 28px rgba(79, 153, 223, 0.25)"
-
-  const imageSize = useMemo(() => {
-    if (isSmallScreen) return isMobile ? "120px" : "180px"
-    return isMobile ? "160px" : "220px"
-  }, [isSmallScreen, isMobile])
 
   const showHomeScrollProgress = windowWidth > HOME_SINGLE_COLUMN_BREAKPOINT_PX
   const showHomeSideRails = windowWidth > HOME_SIDE_RAIL_BREAKPOINT_PX
@@ -200,6 +191,7 @@ const Home: React.FC<HomeProps> = ({
     if (windowWidth <= HOME_SIDE_RAIL_BREAKPOINT_PX) return 42
     return 52
   }, [windowWidth])
+  const artworkToFlowerGap = Math.round(showcaseSectionGapHalf / 8)
 
   const introHorizontalPadding = useMemo(() => {
     if (windowWidth < 510) return 11
@@ -212,17 +204,18 @@ const Home: React.FC<HomeProps> = ({
 
   const scrollCueBottom = useMemo(() => {
     const baseFooterHeight = footerHeight || 70
+    const lowerScreenBandOffset = Math.round(sectionHeight * 0.15)
 
     if (windowWidth <= HOME_SINGLE_COLUMN_BREAKPOINT_PX) {
-      return Math.max(baseFooterHeight - 42, 18)
+      return Math.max(lowerScreenBandOffset, baseFooterHeight - 42, 18)
     }
 
     if (windowWidth <= HOME_SIDE_RAIL_BREAKPOINT_PX) {
-      return Math.max(baseFooterHeight - 22, 36)
+      return Math.max(lowerScreenBandOffset, baseFooterHeight - 22, 36)
     }
 
-    return Math.max(baseFooterHeight - 16, 44)
-  }, [footerHeight, windowWidth])
+    return Math.max(lowerScreenBandOffset, baseFooterHeight - 16, 44)
+  }, [footerHeight, sectionHeight, windowWidth])
 
   const showcaseHorizontalPadding = useMemo(() => {
     if (windowWidth <= HOME_SIDE_RAIL_BREAKPOINT_PX) return introHorizontalPadding
@@ -230,14 +223,14 @@ const Home: React.FC<HomeProps> = ({
   }, [introHorizontalPadding, windowWidth])
 
   const artworkPadding = useMemo(() => {
-    if (windowWidth < 510) return `${showcaseSectionGapHalf}px 11px ${showcaseSectionGapHalf}px`
+    if (windowWidth < 510) return `${showcaseSectionGapHalf}px 11px ${artworkToFlowerGap}px`
     if (windowWidth <= HOME_SIDE_RAIL_BREAKPOINT_PX) {
-      return `${showcaseSectionGapHalf}px ${introHorizontalPadding}px ${showcaseSectionGapHalf}px`
+      return `${showcaseSectionGapHalf}px ${introHorizontalPadding}px ${artworkToFlowerGap}px`
     }
     return isMobile
-      ? `${showcaseSectionGapHalf}px 14px ${showcaseSectionGapHalf}px`
-      : `${showcaseSectionGapHalf}px 20px ${showcaseSectionGapHalf}px`
-  }, [introHorizontalPadding, isMobile, showcaseSectionGapHalf, windowWidth])
+      ? `${showcaseSectionGapHalf}px 14px ${artworkToFlowerGap}px`
+      : `${showcaseSectionGapHalf}px 20px ${artworkToFlowerGap}px`
+  }, [artworkToFlowerGap, introHorizontalPadding, isMobile, showcaseSectionGapHalf, windowWidth])
 
   const projectsPadding = useMemo(() => {
     if (windowWidth < 510) return `14px 11px ${showcaseSectionGapHalf}px`
@@ -249,7 +242,7 @@ const Home: React.FC<HomeProps> = ({
       : `20px 20px ${showcaseSectionGapHalf}px`
   }, [introHorizontalPadding, isMobile, showcaseSectionGapHalf, windowWidth])
 
-  const flowerPadding = `${showcaseSectionGapHalf}px 0 0`
+  const flowerPadding = `${artworkToFlowerGap}px 0 0`
 
   const clampedFlowerStageHeight = useMemo(() => {
     if (!shouldClampFlowerHeight) return null
@@ -265,8 +258,13 @@ const Home: React.FC<HomeProps> = ({
     const maxGuard = Math.max(windowWidth - minWidth, 0)
     const guard = Math.min(desiredGuard, maxGuard)
     const candidateWidth = Math.max(windowWidth - guard, 0)
-    return Math.min(maxWidth, candidateWidth)
-  }, [isMobile, windowWidth])
+    if (!showHomeSideRails) return Math.min(maxWidth, candidateWidth)
+
+    const safeViewportWidth =
+      windowWidth - HOME_SHOWCASE_RAIL_CLEARANCE_PX * 2 - introHorizontalPadding * 2
+
+    return Math.max(Math.min(maxWidth, candidateWidth, safeViewportWidth), minWidth)
+  }, [introHorizontalPadding, isMobile, showHomeSideRails, windowWidth])
 
   const showcaseMaxWidth = useMemo(() => {
     if (!showHomeSideRails) return contentMaxWidth
@@ -326,7 +324,7 @@ const Home: React.FC<HomeProps> = ({
       return
     }
 
-    if (phase < 4 || !isAnimationComplete) {
+    if (phase < 2 || !isAnimationComplete) {
       setIsScrollUnlocked(false)
       return
     }
@@ -595,7 +593,7 @@ const Home: React.FC<HomeProps> = ({
       const cueHeight = scrollCue.offsetHeight
       let nextBottom = scrollCueBottom
 
-      if (phase >= 4 && isAnimationComplete && introBioRef.current) {
+      if (phase >= 2 && isAnimationComplete && introBioRef.current) {
         const bioRect = introBioRef.current.getBoundingClientRect()
         const bioBottom = bioRect.bottom - sectionRect.top
         const maxBottomWithoutOverlap = Math.max(
@@ -764,22 +762,15 @@ const Home: React.FC<HomeProps> = ({
         ["--home-inline-button-hover-text" as string]: homeActionText,
         ["--home-section-height" as string]: `${sectionHeight}px`,
         ["--home-footer-height" as string]: `${footerHeight}px`,
+        ["--home-footer-copyright-height" as string]: `${footerCopyrightHeight}px`,
+        ["--home-bio-secondary-opacity" as string]: theme === "bunny" ? "0.8" : "0.5",
+        ["--home-scroll-progress-stroke-width" as string]: theme === "bunny" ? "2px" : "1px",
         ["--home-scroll-guide-top" as string]: `${scrollGuideMetrics.top}px`,
         ["--home-scroll-guide-height" as string]: `${scrollGuideMetrics.height}px`,
         ["--home-showcase-max-width" as string]: `${showcaseMaxWidth}px`,
         ["--home-flower-stage-height" as string]: clampedFlowerStageHeight ?? undefined,
       }}
     >
-      {showHomeSideRails && (
-        <>
-          <HomeDesktopEstRail
-            estTime={estTime}
-            phase={phase}
-            isAnimationComplete={isAnimationComplete}
-            textColor={textColor}
-          />
-        </>
-      )}
       {showHomeScrollProgress && (
         <>
           <HomeDesktopScrollProgress
@@ -787,7 +778,8 @@ const Home: React.FC<HomeProps> = ({
             pageCount={HOME_SCROLL_PAGE_COUNT}
             phase={phase}
             isAnimationComplete={isAnimationComplete}
-            textColor={textColor}
+            textColor={homeScrollProgressColor}
+            alignment="left"
             onSelectPage={scrollToPage}
           />
         </>
@@ -810,20 +802,16 @@ const Home: React.FC<HomeProps> = ({
               scrollPageContentRefs.current[0] = node
             }}
             className="home-intro-click-surface"
-            onClick={() => {
-              if (isAnimationComplete) onScramble()
-            }}
           >
             <HomeIntroPanel
-              theme={theme}
               phase={phase}
-              roleTop={roleTop}
-              roleBot={roleBot}
               typingText={typingText}
               typingRef={typingRef}
               isMobile={isMobile}
-              imageSize={imageSize}
               contentMaxWidth={contentMaxWidth}
+              desktopOffset={
+                showHomeSideRails && windowWidth > HOME_INTRO_DESKTOP_OFFSET_BREAKPOINT_PX ? 64 : 0
+              }
               isFlowerRevealed={false}
               isAnimationComplete={isAnimationComplete}
               isNavigatingFromPage={isNavigatingFromPage}
@@ -1036,6 +1024,8 @@ const Home: React.FC<HomeProps> = ({
           </div>
         </section>
       </div>
+
+      <Footer theme={theme} controlsVisible={phase >= 4} />
 
       {showAwards && <AwardsModal onClose={() => setShowAwards(false)} theme={theme} />}
       {showBunny && (

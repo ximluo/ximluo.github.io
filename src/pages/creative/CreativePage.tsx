@@ -1,5 +1,6 @@
 import React from "react"
 import { useSearchParams } from "react-router-dom"
+import Footer from "../../components/Footer"
 import OptimizedImage from "../../components/ui/OptimizedImage"
 import useIsMobile from "../../hooks/useIsMobile"
 import photos from "../../data/photos"
@@ -121,6 +122,8 @@ const Creative: React.FC<CreativeProps> = ({ theme }) => {
           )}
         </div>
       </div>
+
+      <Footer theme={theme} />
 
       {selectedPhoto && (
         <PhotoModal photo={selectedPhoto} onClose={handlePhotoClose} theme={theme} />

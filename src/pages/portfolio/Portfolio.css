@@ -1,8 +1,8 @@
 .portfolio-container {
   width: 100%;
-  height: 100%;
+  min-height: 0;
   padding: 20px;
-  overflow: auto;
+  overflow: visible;
   box-sizing: border-box;
   color: var(--portfolio-text);
   scrollbar-width: thin;

@@ -1,22 +1,15 @@
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useLayoutEffect, useRef, useState } from "react"
 import { useLocation, useNavigate, Link } from "react-router-dom"
 import "./App.css"
 import "./components/gradientAnimation.css"
 import GradientBackground from "./components/GradientBackground"
-import Footer from "./components/Footer"
 import AppRoutes from "./app/routes"
 import { APP_THEME_TOKENS, THEME_VISUAL_TOKENS, type ThemeType } from "./theme/tokens"
-import { scrambleText, type ScrambleSet } from "./utils/scramble"
 import useViewportSize from "./hooks/useViewportSize"
 import { dispatchHomeFlowerTemporaryHide } from "./pages/home/home.events"
 
 const themes = APP_THEME_TOKENS
 const GA_MEASUREMENT_ID = "G-1QHSNH5G8L"
-
-const SCRAMBLE_SETS_BY_THEME: Record<ThemeType, { top: ScrambleSet; bottom: ScrambleSet }> = {
-  bunny: { top: "code", bottom: "japanese" },
-  water: { top: "matrix", bottom: "symbols" },
-}
 
 const THEME_TOGGLE_ICON: Record<ThemeType, string> = {
   bunny: "☾",
@@ -113,6 +106,7 @@ function App() {
   const location = useLocation()
   const navigate = useNavigate()
   const hasTrackedInitialPageRef = useRef(false)
+  const mainContentScrollRef = useRef<HTMLDivElement | null>(null)
   const { width: viewportWidth } = useViewportSize({
     width: typeof window !== "undefined" ? window.innerWidth : 0,
     height: typeof window !== "undefined" ? window.innerHeight : 0,
@@ -128,11 +122,6 @@ function App() {
   const isHomeRoute = location.pathname === "/"
 
   const [phase, setPhase] = useState(0)
-
-  const [roleTop, setTop] = useState("SOFTWARE ENGINEER")
-  const [roleBot, setBot] = useState("DEVELOPER & DESIGNER")
-  const [originalTop] = useState("SOFTWARE ENGINEER")
-  const [originalBot] = useState("DEVELOPER & DESIGNER")
 
   const isMobile = viewportWidth <= 480
   const isTablet = viewportWidth <= 768 && viewportWidth > 480
@@ -153,30 +142,17 @@ function App() {
   useEffect(() => {
     setPhase(1)
     const t1 = setTimeout(() => setPhase(2), 600)
-    const t2 = setTimeout(() => {
-      scrambleText(originalTop, "code", setTop, 45)
-      scrambleText(originalBot, "japanese", setBot, 45)
-      setPhase(3)
-    }, 1200)
+    const t2 = setTimeout(() => setPhase(3), 1200)
     const t3 = setTimeout(() => setPhase(4), 2450)
     return () => {
       clearTimeout(t1)
       clearTimeout(t2)
       clearTimeout(t3)
     }
-  }, [originalTop, originalBot])
+  }, [])
 
   const toggleTheme = () => {
-    setTheme((prevTheme) => {
-      const newTheme = prevTheme === "bunny" ? "water" : "bunny"
-
-      const { top: topSet, bottom: botSet } = SCRAMBLE_SETS_BY_THEME[newTheme]
-
-      scrambleText(originalTop, topSet, setTop, 30).then(() => {})
-      scrambleText(originalBot, botSet, setBot, 30).then(() => {})
-
-      return newTheme
-    })
+    setTheme((prevTheme) => (prevTheme === "bunny" ? "water" : "bunny"))
   }
 
   const handleNavClick = (tab: string) => {
@@ -185,15 +161,6 @@ function App() {
     if (tab === "PROJECTS") path = "/portfolio"
     if (tab === "ARTWORK") path = "/creative"
     navigate(path)
-  }
-
-  const handleHomeScramble = () => {
-    if (location.pathname === "/") {
-      const { top: topSet, bottom: botSet } = SCRAMBLE_SETS_BY_THEME[theme]
-
-      scrambleText(originalTop, topSet, setTop, 30).then(() => {})
-      scrambleText(originalBot, botSet, setBot, 30).then(() => {})
-    }
   }
 
   useEffect(() => {
@@ -215,6 +182,12 @@ function App() {
       page_location: window.location.href,
     })
   }, [location.hash, location.pathname, location.search])
+
+  useLayoutEffect(() => {
+    const container = mainContentScrollRef.current
+    if (!container) return
+    container.scrollTop = 0
+  }, [location.pathname, location.search, location.hash])
 
   return (
     <>
@@ -287,21 +260,10 @@ function App() {
               </div>
 
               <div
+                ref={mainContentScrollRef}
                 className={`main-content-scroll ${isHomeRoute ? "main-content-scroll--home" : "main-content-scroll--page"}`}
               >
-                <AppRoutes
-                  theme={theme}
-                  phase={phase}
-                  roleTop={roleTop}
-                  roleBot={roleBot}
-                  onScramble={handleHomeScramble}
-                />
-              </div>
-
-              <div
-                className={`fade app-footer-shell ${isHomeRoute ? "app-footer-shell--home" : ""} ${phase >= 4 ? "show" : ""}`}
-              >
-                <Footer theme={theme} />
+                <AppRoutes theme={theme} phase={phase} />
               </div>
             </div>
           </GradientBackground>

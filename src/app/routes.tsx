@@ -5,9 +5,6 @@ import { type ThemeType } from "../theme/tokens"
 interface AppRoutesProps {
   theme: ThemeType
   phase: number
-  roleTop: string
-  roleBot: string
-  onScramble: () => void
 }
 
 const Home = lazy(() => import("../pages/home"))
@@ -16,22 +13,11 @@ const Creative = lazy(() => import("../pages/creative"))
 const ProjectDetail = lazy(() => import("../pages/project-detail"))
 const NotFound = lazy(() => import("../pages/not-found"))
 
-const AppRoutes: React.FC<AppRoutesProps> = ({ theme, phase, roleTop, roleBot, onScramble }) => {
+const AppRoutes: React.FC<AppRoutesProps> = ({ theme, phase }) => {
   return (
     <Suspense fallback={null}>
       <Routes>
-        <Route
-          path="/"
-          element={
-            <Home
-              theme={theme}
-              phase={phase}
-              roleTop={roleTop}
-              roleBot={roleBot}
-              onScramble={onScramble}
-            />
-          }
-        />
+        <Route path="/" element={<Home theme={theme} phase={phase} />} />
         <Route path="/portfolio" element={<Portfolio theme={theme} />} />
         <Route path="/portfolio/:projectId" element={<ProjectDetail theme={theme} />} />
         <Route path="/creative" element={<Creative theme={theme} />} />

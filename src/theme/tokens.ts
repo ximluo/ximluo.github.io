@@ -141,17 +141,17 @@ export const APP_THEME_TOKENS = {
     ...pickTokens(BASE_THEME_TOKENS.bunny, CONTENT_THEME_KEYS),
     "--outer-bg": "#a892e7",
     "--cursor-color": "rgba(223, 30, 155, 0.7)",
-    "--cursor-glow": "0 0 8px rgba(223, 30, 155, 0.6)",
+    "--cursor-glow": "0 0 8px rgba(223, 30, 155, 0.5)",
     "--cursor-hover-color": "rgba(223, 30, 155, 0.6)",
-    "--cursor-hover-glow": "0 0 12px rgba(223, 30, 155, 0.6)",
+    "--cursor-hover-glow": "0 0 12px rgba(223, 30, 155, 0.5)",
   },
   water: {
     ...pickTokens(BASE_THEME_TOKENS.water, CONTENT_THEME_KEYS),
     "--outer-bg": "#1d0298",
     "--cursor-color": "rgba(230, 214, 251, 0.7)",
-    "--cursor-glow": "0 0 8px rgba(230, 214, 251, 0.6)",
+    "--cursor-glow": "0 0 8px rgba(230, 214, 251, 0.5)",
     "--cursor-hover-color": "rgba(230, 214, 251, 0.6)",
-    "--cursor-hover-glow": "0 0 12px rgba(230, 214, 251, 0.6)",
+    "--cursor-hover-glow": "0 0 12px rgba(230, 214, 251, 0.5)",
   },
 } as const
 

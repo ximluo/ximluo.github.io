@@ -1,7 +1,9 @@
 import type React from "react"
 import { lazy, Suspense, useEffect, useState } from "react"
+import { useLocation } from "react-router-dom"
 import { Github, Mail, Linkedin } from "lucide-react"
 import { FOOTER_THEME_TOKENS, THEME_VISUAL_TOKENS, type ThemeType } from "../theme/tokens"
+import useMediaQuery from "../hooks/useMediaQuery"
 import useIsMobile from "../hooks/useIsMobile"
 import { trackBunnyModalOpen, trackExternalLinkClick } from "../utils/analytics"
 import "./Footer.css"
@@ -27,6 +29,7 @@ const prefetchBunnyFeature = () => {
 
 interface FooterProps {
   theme: ThemeType
+  controlsVisible?: boolean
 }
 
 interface FooterLinkItem {
@@ -60,10 +63,17 @@ const FOOTER_LINK_ITEMS: FooterLinkItem[] = [
   },
 ]
 
-const Footer: React.FC<FooterProps> = ({ theme }) => {
+const Footer: React.FC<FooterProps> = ({ theme, controlsVisible = true }) => {
   const [showBunny, setShowBunny] = useState(false)
-  const isMobile = useIsMobile(768)
-  const isDesktop = !isMobile
+  const location = useLocation()
+  const isMobile = useIsMobile(767)
+  const isTablet = useMediaQuery(
+    "(min-width: 768px) and (max-width: 1024px)",
+    typeof window !== "undefined" ? window.innerWidth >= 768 && window.innerWidth <= 1024 : false,
+  )
+  const isGalleryPage = location.pathname === "/portfolio" || location.pathname === "/creative"
+  const layoutMode = isMobile ? "mobile" : isTablet && isGalleryPage ? "inline" : "floating"
+  const usesSplitControls = layoutMode !== "mobile"
 
   const themeTokens = FOOTER_THEME_TOKENS[theme]
   const visualTokens = THEME_VISUAL_TOKENS[theme]
@@ -99,7 +109,7 @@ const Footer: React.FC<FooterProps> = ({ theme }) => {
 
   return (
     <footer
-      className={`footer-root ${isDesktop ? "footer-root--desktop" : "footer-root--mobile"}`}
+      className={`footer-root footer-root--${layoutMode}`}
       style={{
         ["--footer-padding" as string]: isMobile ? "10px 15px" : "15px 20px",
         ["--footer-text" as string]: themeTokens["--color-text"],
@@ -115,40 +125,45 @@ const Footer: React.FC<FooterProps> = ({ theme }) => {
         ["--footer-bunny-slot-width" as string]: isMobile ? "100px" : "120px",
       }}
     >
-      {isDesktop && <div className="footer-bunny-slot">{bunnyButton}</div>}
-
       <div
-        className={`footer-icons ${isDesktop ? "footer-icons--desktop" : "footer-icons--mobile"}`}
+        className={`footer-controls footer-controls--${layoutMode} fade ${controlsVisible ? "show" : ""}`}
+        style={{
+          pointerEvents: controlsVisible ? "auto" : "none",
+        }}
       >
-        {!isDesktop && bunnyButton}
+        {usesSplitControls ? (
+          <div className="footer-bunny-slot">{bunnyButton}</div>
+        ) : null}
 
-        {FOOTER_LINK_ITEMS.map((item) => {
-          const Icon = item.icon
-          return (
-            <a
-              key={item.id}
-              href={item.href}
-              aria-label={item.label}
-              className="footer-icon-button"
-              target={item.external ? "_blank" : undefined}
-              rel={item.external ? "noopener noreferrer" : undefined}
-              onClick={() => {
-                trackExternalLinkClick({
-                  linkId: item.id,
-                  href: item.href,
-                  uiRegion: "footer_icons",
-                })
-              }}
-            >
-              <Icon size={iconSize} />
-            </a>
-          )
-        })}
+        <div className={`footer-icons footer-icons--${layoutMode}`}>
+          {!usesSplitControls && bunnyButton}
+
+          {FOOTER_LINK_ITEMS.map((item) => {
+            const Icon = item.icon
+            return (
+              <a
+                key={item.id}
+                href={item.href}
+                aria-label={item.label}
+                className="footer-icon-button"
+                target={item.external ? "_blank" : undefined}
+                rel={item.external ? "noopener noreferrer" : undefined}
+                onClick={() => {
+                  trackExternalLinkClick({
+                    linkId: item.id,
+                    href: item.href,
+                    uiRegion: "footer_icons",
+                  })
+                }}
+              >
+                <Icon size={iconSize} />
+              </a>
+            )
+          })}
+        </div>
       </div>
 
-      <div
-        className={`footer-copyright ${isDesktop ? "footer-copyright--desktop" : "footer-copyright--mobile"}`}
-      >
+      <div className={`footer-copyright footer-copyright--${layoutMode}`}>
         © 2026 Ximing Luo •{" "}
         <a
           href="https://github.com/ximluo/ximluo.github.io"

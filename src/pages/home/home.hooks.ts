@@ -3,7 +3,6 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import * as THREE from "three"
 import useViewportSize from "../../hooks/useViewportSize"
 import {
-  useEstClock,
   useHomeFlowerBridge,
   useHomeFooterMeasurement,
   useHomeScrollLock,
@@ -17,12 +16,11 @@ export function useHomeViewportState() {
     height: typeof window !== "undefined" ? window.innerHeight : 0,
   })
   const [footerHeight, setFooterHeight] = useState(0)
-  const [estTime, setEstTime] = useState("")
+  const [footerCopyrightHeight, setFooterCopyrightHeight] = useState(0)
   const isMobile = windowWidth <= 768
   const isSmallScreen = windowHeight <= 700
 
-  useHomeFooterMeasurement(setFooterHeight)
-  useEstClock(setEstTime)
+  useHomeFooterMeasurement(setFooterHeight, setFooterCopyrightHeight)
 
   return {
     windowWidth,
@@ -30,27 +28,22 @@ export function useHomeViewportState() {
     isMobile,
     isSmallScreen,
     footerHeight,
-    estTime,
+    footerCopyrightHeight,
   }
 }
 
 interface UseHomeIntroSequenceOptions {
   phase: number
-  onScramble: () => void
   isNavigatingFromPage: boolean
 }
 
 export function useHomeIntroSequence({
   phase,
-  onScramble,
   isNavigatingFromPage,
 }: UseHomeIntroSequenceOptions) {
   const [typingText, setTypingText] = useState("")
   const [isTypingComplete, setIsTypingComplete] = useState(false)
-  const [isScrambleComplete, setIsScrambleComplete] = useState(false)
-  const [isImageLoaded, setIsImageLoaded] = useState(false)
   const [isAnimationComplete, setIsAnimationComplete] = useState(false)
-  const [shouldScramble, setShouldScramble] = useState(false)
 
   const typingRef = useRef<HTMLDivElement>(null)
   const animationRunningRef = useRef(false)
@@ -91,67 +84,23 @@ export function useHomeIntroSequence({
   }, [phase, isNavigatingFromPage])
 
   useEffect(() => {
-    if (phase < 1 || isImageLoaded) return
-
-    const img = new Image()
-    let didResolve = false
-
-    const markLoaded = () => {
-      if (didResolve) return
-      didResolve = true
-      setIsImageLoaded(true)
-    }
-
-    img.decoding = "async"
-    img.onload = markLoaded
-    img.onerror = markLoaded
-    img.src = "/images/ximing.jpg"
-
-    if (typeof img.decode === "function") {
-      void img.decode().then(markLoaded).catch(() => {
-      })
-    }
-
-    const failSafe = setTimeout(markLoaded, 1200)
-    return () => clearTimeout(failSafe)
-  }, [phase, isImageLoaded])
-
-  useEffect(() => {
-    if (isImageLoaded && (isTypingComplete || isNavigatingFromPage)) {
-      setShouldScramble(true)
-    }
-  }, [isImageLoaded, isTypingComplete, isNavigatingFromPage])
-
-  useEffect(() => {
-    if (!shouldScramble || isScrambleComplete) return
-
-    onScramble()
-    const done = setTimeout(() => setIsScrambleComplete(true), 500)
-    return () => clearTimeout(done)
-  }, [shouldScramble, isScrambleComplete, onScramble])
-
-  useEffect(() => {
-    if (phase < 1 || isAnimationComplete) return
+    if (phase < 1 || isTypingComplete) return
 
     const force = setTimeout(() => {
       setTypingText(HOME_INTRO_GREETING)
       setIsTypingComplete(true)
-      setIsScrambleComplete(true)
-      setIsImageLoaded(true)
-      setShouldScramble(true)
-      setIsAnimationComplete(true)
     }, 1200)
 
     return () => clearTimeout(force)
-  }, [phase, isAnimationComplete])
+  }, [phase, isTypingComplete])
 
   useEffect(() => {
-    if (!isTypingComplete || !isScrambleComplete || !isImageLoaded) return
+    if (!isTypingComplete || isAnimationComplete) return
 
     typingRef.current?.style.setProperty("opacity", "0")
     const timer = setTimeout(() => setIsAnimationComplete(true), 300)
     return () => clearTimeout(timer)
-  }, [isTypingComplete, isScrambleComplete, isImageLoaded])
+  }, [isAnimationComplete, isTypingComplete])
 
   return {
     typingRef,

@@ -1,5 +1,6 @@
 import React from "react"
 import { useNavigate, useParams } from "react-router-dom"
+import Footer from "../../components/Footer"
 import projects from "../../data/projects"
 import { CONTENT_THEME_TOKENS, THEME_VISUAL_TOKENS, type ThemeType } from "../../theme/tokens"
 import NotFound from "../not-found/NotFoundPage"
@@ -91,6 +92,8 @@ const ProjectDetail: React.FC<ProjectDetailProps> = ({ theme }) => {
           </button>
         </div>
       </div>
+
+      <Footer theme={theme} />
     </div>
   )
 }

@@ -4,12 +4,14 @@ interface GradientCirclesProps {
   useSafariMode: boolean
   isMobileOrTablet: boolean
   interBubbleRef: React.RefObject<HTMLDivElement | null>
+  opacityScale?: number
 }
 
 export const GradientCircles = ({
   useSafariMode,
   isMobileOrTablet,
   interBubbleRef,
+  opacityScale = 1,
 }: GradientCirclesProps) => {
   const circle = (
     className: string,
@@ -22,7 +24,7 @@ export const GradientCircles = ({
         position: "absolute",
         width: "var(--circle-size)",
         height: "var(--circle-size)",
-        background: `radial-gradient(circle at center, rgba(var(${varName}),0.6) 0%, rgba(var(${varName}),0) 50%) no-repeat`,
+        background: `radial-gradient(circle at center, rgba(var(${varName}),${0.6 * opacityScale}) 0%, rgba(var(${varName}),0) 50%) no-repeat`,
         mixBlendMode: "var(--blending)" as React.CSSProperties["mixBlendMode"],
         filter: useSafariMode ? "blur(40px)" : "none",
         ...extra,
@@ -44,28 +46,28 @@ export const GradientCircles = ({
         left: "calc(90% - var(--circle-size)/2)",
         transformOrigin: "center",
         animation: "moveVertical 30s ease infinite",
-        opacity: 0.5,
+        opacity: 0.5 * opacityScale,
       })}
       {circle("g2", "--color2", {
         top: "calc(50% - var(--circle-size)/2)",
         left: "calc(50% - var(--circle-size)/2)",
         transformOrigin: "calc(50% - 400px)",
         animation: "moveInCircle 20s reverse infinite",
-        opacity: 0.5,
+        opacity: 0.5 * opacityScale,
       })}
       {circle("g3", "--color3", {
         top: "calc(50% - var(--circle-size)/2 + 200px)",
         left: "calc(50% - var(--circle-size)/2 - 500px)",
         transformOrigin: "calc(50% + 400px)",
         animation: "moveInCircle 40s linear infinite",
-        opacity: 0.5,
+        opacity: 0.5 * opacityScale,
       })}
       {circle("g4", "--color4", {
         top: "calc(50% - var(--circle-size)/2)",
         left: "calc(50% - var(--circle-size)/2)",
         transformOrigin: "calc(50% - 200px)",
         animation: "moveHorizontal 40s ease infinite",
-        opacity: 0.5,
+        opacity: 0.5 * opacityScale,
       })}
       {circle("g5", "--color5", {
         width: "calc(var(--circle-size) * 2)",
@@ -74,7 +76,7 @@ export const GradientCircles = ({
         left: "calc(50% - var(--circle-size))",
         transformOrigin: "calc(50% - 800px) calc(50% + 200px)",
         animation: "moveInCircle 20s ease infinite",
-        opacity: 0.5,
+        opacity: 0.5 * opacityScale,
       })}
 
       {!isMobileOrTablet && (
@@ -83,13 +85,13 @@ export const GradientCircles = ({
           style={{
             position: "absolute",
             background:
-              "radial-gradient(circle at center, rgba(var(--color-interactive),0.5) 0%, rgba(var(--color-interactive),0) 50%)",
+              `radial-gradient(circle at center, rgba(var(--color-interactive),${0.5 * opacityScale}) 0%, rgba(var(--color-interactive),0) 50%)`,
             mixBlendMode: "var(--blending)" as React.CSSProperties["mixBlendMode"],
             width: "140%",
             height: "140%",
             top: "-70%",
             left: "-70%",
-            opacity: 0.6,
+            opacity: 0.6 * opacityScale,
             filter: useSafariMode ? "blur(40px)" : "none",
           }}
         />
