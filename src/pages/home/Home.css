@@ -724,9 +724,6 @@
     min-width: 0;
     padding: 12px 14px;
     letter-spacing: 0.12em;
-  }
-
-  .home-showcase-action {
     font-size: 12px;
   }
 
@@ -1031,6 +1028,7 @@
   color: var(--home-bio-color);
   margin-bottom: 20px;
   padding: var(--home-bio-padding, 0);
+  box-sizing: border-box;
   transition:
     opacity 0.8s ease,
     transform 0.8s ease;

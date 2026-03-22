@@ -439,7 +439,7 @@ const Home: React.FC<HomeProps> = ({
     const getMaxScrollTop = () => {
       const flowerPage = scrollPageRefs.current[HOME_SCROLL_PAGE_COUNT - 1]
       if (!flowerPage) return null
-      return Math.max(flowerPage.offsetTop, 0)
+      return Math.max(parent.scrollHeight - parent.clientHeight, 0)
     }
 
     const clampScrollPosition = () => {

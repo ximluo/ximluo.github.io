@@ -229,17 +229,27 @@ function App() {
                   </div>
                 )}
 
-                <div className="app-top-nav-row">
-                  {["HOME", "PROJECTS", "ARTWORK"].map((lbl) => (
-                    <NavButton
-                      key={lbl}
-                      label={lbl}
-                      isActive={activeTab === lbl}
-                      theme={theme}
-                      onClick={() => handleNavClick(lbl)}
-                      isMobile={isMobile}
-                    />
-                  ))}
+                <div
+                  className="app-top-nav-row"
+                  style={{
+                    ...(isMobile && {
+                      justifyContent: "space-between",
+                      padding: "0 28px",
+                    })
+                  }}
+                >
+                  <div style={{ display: "flex", gap: "var(--app-nav-gap, 12px)" }}>
+                    {["HOME", "PROJECTS", "ARTWORK"].map((lbl) => (
+                      <NavButton
+                        key={lbl}
+                        label={isMobile && lbl === "ARTWORK" ? "ART" : lbl}
+                        isActive={activeTab === lbl}
+                        theme={theme}
+                        onClick={() => handleNavClick(lbl)}
+                        isMobile={isMobile}
+                      />
+                    ))}
+                  </div>
 
                   {isMobile ? (
                     <ThemeToggle

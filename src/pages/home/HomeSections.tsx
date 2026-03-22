@@ -77,7 +77,7 @@ export function HomeNavigationBubbles({
 }: HomeNavigationBubblesProps) {
   const items = [
     { label: "Projects", onClick: onOpenPortfolio },
-    { label: "Artwork", onClick: onOpenCreative },
+    { label: isMobile ? "Art" : "Artwork", onClick: onOpenCreative },
     { label: "Awards", onClick: onOpenAwards },
   ]
 
@@ -192,9 +192,9 @@ export function HomeIntroPanel({
         style={{
           ["--home-hero-direction" as string]: "row",
           ["--home-hero-gap" as string]: "0px",
-          ["--home-hero-margin-top" as string]: `${isMobile ? 30 : 20}px`,
+          ["--home-hero-margin-top" as string]: `${isMobile ? 0 : 20}px`,
           ["--home-hero-margin-bottom" as string]: `${isMobile ? 12 : 0}px`,
-          ["--home-hero-copy-padding" as string]: isMobile ? "0 10px" : "0 14px",
+          ["--home-hero-copy-padding" as string]: isMobile ? "0 24px" : "0 14px",
           ["--home-hero-text-align" as string]: "left",
           ["--home-hero-line-color" as string]: textColor,
           ["--home-hero-line-top-size" as string]: `${isMobile ? 14 : 16}px`,
@@ -218,12 +218,12 @@ export function HomeIntroPanel({
         ref={bioRef}
         className={`fade home-bio ${phase >= 2 && isAnimationComplete ? "show" : ""}`}
         style={{
-          ["--home-bio-font-size" as string]: isMobile ? "14px" : "16px",
+          ["--home-bio-font-size" as string]: isMobile ? "13.5px" : "16px",
           ["--home-bio-line-height" as string]: "1.5",
           ["--home-bio-color" as string]: textColor,
-          ["--home-bio-padding" as string]: isMobile ? "2px 10px" : "14px",
+          ["--home-bio-padding" as string]: isMobile ? "2px 24px" : "14px",
           ["--home-bio-list-gap" as string]: isMobile ? "0px" : "0px",
-          ["--home-bio-section-gap" as string]: isMobile ? "30px" : "40px",
+          ["--home-bio-section-gap" as string]: isMobile ? "25px" : "40px",
           ["--home-link-color" as string]: linkColor,
         }}
       >
@@ -237,7 +237,7 @@ export function HomeIntroPanel({
           >
             Digital Media Design
           </a>
-          ) & Economics 
+          ) & Economics
         </p>
         <div className="home-bio-list" aria-label="Highlights">
           <div className="home-bio-line">
@@ -305,18 +305,9 @@ export function HomeIntroPanel({
             target="_blank"
             rel="noopener noreferrer"
           >
-            Penn Women in Computer Science
+            Women in Computer Science
           </a>
-          , Director of{" "}
-          <a
-            className="home-link"
-            href="https://www.femmehacks.io"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            FemmeHacks
-          </a>
-          , developer for{" "}
+          ,{" "}
           <a
             className="home-link"
             href="https://pennlabs.org/"
@@ -334,7 +325,16 @@ export function HomeIntroPanel({
           >
             Penn Spark
           </a>
-          ,{" "}
+          {" "}developer,{" "}
+          <a
+            className="home-link"
+            href="https://www.femmehacks.io"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            FemmeHacks
+          </a>
+          {" "}Director,{" "}
           <a
             className="home-link"
             href="https://snfpaideia.upenn.edu/fellowships/fellowship-information/"
@@ -343,7 +343,7 @@ export function HomeIntroPanel({
           >
             SNF Paideia Fellow
           </a>
-          , Prev TA for{" "}
+          , Prev TA of{" "}
           <a
             className="home-link"
             href="https://cis4120.seas.upenn.edu/"
@@ -352,7 +352,7 @@ export function HomeIntroPanel({
           >
             CIS 5120
           </a>{" "}
-          Human Computer Interaction &{" "}
+          HCI &{" "}
           <a
             className="home-link"
             href="https://www.cis.upenn.edu/~cis4600/current/"
