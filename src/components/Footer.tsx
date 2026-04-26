@@ -103,7 +103,7 @@ const Footer: React.FC<FooterProps> = ({ theme, controlsVisible = true }) => {
       }}
       className="footer-icon-button footer-icon-button--bunny"
     >
-      🐰
+      Ი𐑼
     </button>
   )
 
@@ -131,9 +131,7 @@ const Footer: React.FC<FooterProps> = ({ theme, controlsVisible = true }) => {
           pointerEvents: controlsVisible ? "auto" : "none",
         }}
       >
-        {usesSplitControls ? (
-          <div className="footer-bunny-slot">{bunnyButton}</div>
-        ) : null}
+        {usesSplitControls ? <div className="footer-bunny-slot">{bunnyButton}</div> : null}
 
         <div className={`footer-icons footer-icons--${layoutMode}`}>
           {!usesSplitControls && bunnyButton}
@@ -163,7 +161,12 @@ const Footer: React.FC<FooterProps> = ({ theme, controlsVisible = true }) => {
         </div>
       </div>
 
-      <div className={`footer-copyright footer-copyright--${layoutMode}`}>
+      <div
+        className={`footer-copyright footer-copyright--${layoutMode} fade ${controlsVisible ? "show" : ""}`}
+        style={{
+          pointerEvents: controlsVisible ? "auto" : "none",
+        }}
+      >
         © 2026 Ximing Luo •{" "}
         <a
           href="https://github.com/ximluo/ximluo.github.io"

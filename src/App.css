@@ -61,18 +61,19 @@
   width: 100%;
   padding: var(--app-nav-padding, 20px 0);
   display: flex;
-  justify-content: center;
+  justify-content: flex-end;
   align-items: center;
   position: relative;
   flex-shrink: 0;
   z-index: 60;
+  box-sizing: border-box;
 }
 
 .app-top-nav-title {
   position: absolute;
   left: 28px;
   font-family: monospace;
-  font-size: 16px;
+  font-size: 17px;
   font-weight: bold;
   color: var(--app-nav-title-color, inherit);
   display: var(--app-nav-title-display, block);
@@ -83,52 +84,41 @@
   text-decoration: none;
 }
 
-.app-top-nav-row {
+.app-top-nav-links {
   display: flex;
   gap: var(--app-nav-gap, 12px);
   align-items: center;
-  justify-content: center;
-  width: 100%;
+  justify-content: flex-end;
+  margin-left: auto;
 }
 
-.app-top-nav-theme-slot {
-  position: absolute;
-  right: 20px;
-}
-
-.app-nav-button {
-  padding: var(--app-nav-button-padding, 10px 14px);
+.app-nav-text-link {
+  color: var(--app-nav-title-color, inherit);
   font-family: monospace;
-  font-size: var(--app-nav-button-font-size, 14px);
-  font-weight: bold;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  line-height: 1.2;
+  text-decoration: none;
   text-transform: uppercase;
-  letter-spacing: var(--app-nav-button-letter-spacing, 0.1em);
-  background-color: var(--app-nav-button-bg);
-  color: var(--app-nav-button-color);
-  border: none;
-  outline: none;
-  border-radius: 20px;
-  cursor: pointer;
-  margin: var(--app-nav-button-margin, 0 5px);
+  border: 1px solid transparent;
+  border-radius: 999px;
+  padding: 4px 11px 5px;
   transition:
-    transform 0.2s ease,
-    box-shadow 0.2s ease,
-    background-color 0.2s ease,
-    color 0.2s ease,
-    opacity 0.3s ease;
-  box-shadow: var(--app-nav-button-shadow, none);
-  opacity: var(--app-nav-button-opacity, 1);
-  pointer-events: var(--app-nav-button-pointer-events, auto);
+    border-color 0.2s ease,
+    opacity 0.2s ease;
 }
 
-.app-nav-button:hover {
-  transform: scale(1.05);
-  box-shadow: var(--app-nav-button-shadow-hover, var(--app-nav-button-shadow, none));
+.app-nav-text-link.is-active {
+  border-color: transparent;
 }
 
-.app-nav-button--suppressed:hover {
-  transform: none;
-  box-shadow: var(--app-nav-button-shadow, none);
+.app-nav-text-link:not(.is-active) {
+  opacity: 0.72;
+}
+
+.app-nav-text-link:not(.is-active):hover {
+  opacity: 1;
 }
 
 .App-logo {

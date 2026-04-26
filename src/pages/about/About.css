@@ -1,0 +1,170 @@
+.about-container {
+  width: 100%;
+  min-height: 0;
+  padding: 20px;
+  box-sizing: border-box;
+  color: var(--about-text);
+}
+
+.about-shell {
+  width: min(1080px, 100%);
+  margin: 0 auto 48px;
+  padding: clamp(22px, 5vw, 56px) clamp(12px, 3vw, 28px);
+  box-sizing: border-box;
+  font-family: monospace;
+  text-align: left;
+}
+
+.about-title {
+  margin: 0 0 28px;
+  color: var(--about-text);
+  font-family: monospace;
+  font-size: clamp(24px, 4vw, 40px);
+  line-height: 1.1;
+  letter-spacing: 0;
+}
+
+.about-content {
+  display: grid;
+  grid-template-columns: minmax(260px, 0.86fr) minmax(0, 1.14fr);
+  align-items: center;
+  gap: clamp(28px, 5vw, 58px);
+}
+
+.about-flower-panel {
+  min-width: 0;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.about-flower-stage {
+  width: min(380px, 100%);
+  height: clamp(360px, 58vh, 560px);
+  min-height: 320px;
+  overflow: visible;
+  pointer-events: none;
+  transition: opacity 0.4s ease;
+}
+
+.about-flower-canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+  pointer-events: none;
+}
+
+.about-bio {
+  border: 1px solid var(--about-border);
+  border-radius: 2px;
+  background: var(--about-surface);
+  padding: clamp(20px, 4vw, 34px);
+  box-sizing: border-box;
+  font-size: clamp(13.5px, 1.45vw, 16px);
+  line-height: 1.55;
+}
+
+.about-paragraph {
+  margin: 0;
+}
+
+.about-paragraph--spaced,
+.about-list,
+.about-paragraph--secondary {
+  margin-bottom: clamp(24px, 4vw, 40px);
+}
+
+.about-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.about-line {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.about-line-bullet {
+  flex: 0 0 auto;
+  font-size: 1.15em;
+  font-weight: 700;
+  line-height: 1.1;
+  padding-right: 8px;
+}
+
+.about-line-copy {
+  min-width: 0;
+}
+
+.about-paragraph--secondary {
+  font-size: 0.92em;
+  opacity: 0.78;
+}
+
+.about-link {
+  color: var(--about-link);
+  text-decoration: underline;
+}
+
+.about-inline-link-button {
+  display: inline-flex;
+  align-items: center;
+  margin: 0 3px;
+  border: 1px solid var(--about-button-border);
+  border-radius: 999px;
+  padding: 3px 10px;
+  background: var(--about-button-bg);
+  color: var(--about-button-text);
+  cursor: pointer;
+  font-family: inherit;
+  font-size: inherit;
+  font-weight: 700;
+  line-height: 1.2;
+  white-space: nowrap;
+  vertical-align: baseline;
+}
+
+.about-inline-link-button:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 2px;
+}
+
+.about-email-link {
+  color: var(--about-link);
+  text-decoration: none;
+  margin-left: 4px;
+}
+
+@media (max-width: 900px) {
+  .about-shell {
+    width: min(760px, 100%);
+  }
+
+  .about-content {
+    grid-template-columns: 1fr;
+    gap: 22px;
+  }
+
+  .about-flower-stage {
+    width: min(460px, 100%);
+    height: clamp(280px, 40vh, 380px);
+    min-height: 260px;
+  }
+}
+
+@media (max-width: 767px) {
+  .about-container {
+    padding: 12px;
+  }
+
+  .about-shell {
+    padding-top: 20px;
+  }
+
+  .about-bio {
+    padding: 18px;
+  }
+}

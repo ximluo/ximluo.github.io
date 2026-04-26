@@ -2,7 +2,6 @@ import React from "react"
 import { useSearchParams } from "react-router-dom"
 import Footer from "../../components/Footer"
 import OptimizedImage from "../../components/ui/OptimizedImage"
-import useIsMobile from "../../hooks/useIsMobile"
 import photos from "../../data/photos"
 import { CONTENT_THEME_TOKENS, THEME_VISUAL_TOKENS, type ThemeType } from "../../theme/tokens"
 import "./Creative.css"
@@ -75,7 +74,6 @@ const PhotoModal = React.memo<ModalProps>(({ photo, onClose, theme }) => {
 PhotoModal.displayName = "PhotoModal"
 
 const Creative: React.FC<CreativeProps> = ({ theme }) => {
-  const isMobile = useIsMobile()
   const [searchParams, setSearchParams] = useSearchParams()
 
   const colors = CONTENT_THEME_TOKENS[theme]
@@ -115,11 +113,7 @@ const Creative: React.FC<CreativeProps> = ({ theme }) => {
         </div>
 
         <div className="creative-content">
-          {isMobile ? (
-            <MobileList photos={photos} onPhotoClick={handlePhotoClick} />
-          ) : (
-            <Grid photos={photos} onPhotoClick={handlePhotoClick} />
-          )}
+          <Grid photos={photos} onPhotoClick={handlePhotoClick} />
         </div>
       </div>
 
@@ -137,43 +131,6 @@ interface ListProps {
   onPhotoClick: (photo: (typeof photos)[number]) => void
 }
 
-function getPhotoMedium(description: string) {
-  return description.split("|")[0]?.trim() || description
-}
-
-const AspectImage: React.FC<{ photo: (typeof photos)[number] }> = ({ photo }) => (
-  <div className="creative-aspect-image">
-    <OptimizedImage
-      src={photo.image || "/placeholder.svg"}
-      alt={photo.title}
-      className="creative-aspect-image-inner"
-    />
-  </div>
-)
-
-const ArtworkCardOverlay: React.FC<{ photo: (typeof photos)[number] }> = ({ photo }) => (
-  <>
-    <div className="artwork-card-overlay" />
-    <div className="artwork-card-meta">
-      <h3 className="artwork-card-title">{photo.title}</h3>
-      <p className="artwork-card-medium">{getPhotoMedium(photo.description)}</p>
-    </div>
-  </>
-)
-
-const MobileList: React.FC<ListProps> = ({ photos, onPhotoClick }) => (
-  <div className="creative-mobile-list">
-    {photos.map((photo) => (
-      <div key={photo.id} onClick={() => onPhotoClick(photo)} className="artwork-card">
-        <div className="artwork-card-image">
-          <AspectImage photo={photo} />
-        </div>
-        <ArtworkCardOverlay photo={photo} />
-      </div>
-    ))}
-  </div>
-)
-
 interface GridCardProps {
   photo: (typeof photos)[number]
   onPhotoClick: (photo: (typeof photos)[number]) => void
@@ -181,11 +138,23 @@ interface GridCardProps {
 
 const GridCard: React.FC<GridCardProps> = ({ photo, onPhotoClick }) => {
   return (
-    <div onClick={() => onPhotoClick(photo)} className="artwork-card artwork-card--grid">
-      <div className="artwork-card-image">
-        <AspectImage photo={photo} />
+    <div onClick={() => onPhotoClick(photo)} className="artwork-card">
+      <div className="artwork-card-image-frame">
+        <OptimizedImage
+          src={photo.image || "/placeholder.svg"}
+          alt={photo.title}
+          className="artwork-card-image"
+          sizes="(max-width: 640px) 100vw, (max-width: 960px) 50vw, 33vw"
+        />
+        <div className="artwork-card-hover" aria-hidden>
+          <span className="artwork-card-view">View</span>
+        </div>
       </div>
-      <ArtworkCardOverlay photo={photo} />
+
+      <div className="artwork-card-info">
+        <h3 className="artwork-card-title">{photo.title}</h3>
+        <p className="artwork-card-description">{photo.description}</p>
+      </div>
     </div>
   )
 }

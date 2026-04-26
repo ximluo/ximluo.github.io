@@ -31,12 +31,7 @@ const CONTENT_THEME_KEYS = [
   "--border-color",
 ] as const
 
-const HOME_THEME_KEYS = [
-  "--color-text",
-  "--color-accent-primary",
-  "--button-bg",
-  "--button-bg-light",
-] as const
+const HOME_THEME_KEYS = ["--color-text", "--color-accent-primary", "--button-bg"] as const
 
 const FOOTER_THEME_KEYS = [
   "--color-text",

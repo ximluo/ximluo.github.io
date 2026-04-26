@@ -27,8 +27,8 @@
 }
 
 .creative-shell {
-  width: 100%;
-  max-width: 940px;
+  width: 90%;
+  max-width: 1440px;
   margin: 0 auto;
   padding: 0 20px 20px;
   box-sizing: border-box;
@@ -156,115 +156,134 @@
 }
 
 .photo-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 20px;
+  column-count: 3;
+  column-gap: 20px;
   width: 100%;
-}
-
-.creative-mobile-list {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  width: 100%;
-  max-width: 500px;
-  margin: 0 auto;
 }
 
 .artwork-card {
-  border-radius: 12px;
-  overflow: hidden;
-  background-color: var(--creative-card-bg);
+  display: inline-flex;
+  flex-direction: column;
+  align-self: start;
+  width: 100%;
+  margin-bottom: 30px;
+  border-radius: 2px;
+  background: transparent;
+  color: var(--creative-text);
   cursor: pointer;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-  position: relative;
+  text-align: left;
+  break-inside: avoid;
+  page-break-inside: avoid;
 }
 
-.artwork-card--grid {
-  transform-origin: center;
-  transition:
-    transform 0.28s ease,
-    box-shadow 0.28s ease;
-  will-change: transform;
-}
-
-.creative-aspect-image {
+.artwork-card-image-frame {
   width: 100%;
   position: relative;
-  padding-bottom: 100%;
-  height: auto;
   overflow: hidden;
+  border-radius: 2px;
+  background-color: var(--creative-card-bg);
+  transform: translateZ(0);
 }
 
-.creative-aspect-image-inner {
-  position: absolute;
+.artwork-card-image {
   width: 100%;
-  height: 100%;
-  object-fit: cover;
+  height: auto;
   display: block;
-  transition: transform 0.28s ease;
+  transition: transform 0.26s ease;
+  transform: translateZ(0);
+  backface-visibility: hidden;
   will-change: transform;
 }
 
-.artwork-card-overlay {
+.artwork-card-hover {
   position: absolute;
   inset: 0;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.28);
+  opacity: 0;
+  transition: opacity 0.2s ease;
   pointer-events: none;
-  background: linear-gradient(
-    to top,
-    rgba(0, 0, 0, 0.85) 0%,
-    rgba(0, 0, 0, 0.55) 36%,
-    rgba(0, 0, 0, 0.08) 68%,
-    rgba(0, 0, 0, 0.04) 100%
-  );
-  transition: background 0.28s ease;
 }
 
-.artwork-card-meta {
-  position: absolute;
-  left: 14px;
-  right: 14px;
-  bottom: 14px;
-  z-index: 1;
+.artwork-card-view {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 70px;
+  padding: 7px 16px;
+  border: 1px solid rgba(255, 255, 255, 0.86);
+  border-radius: 999px;
+  color: rgba(255, 255, 255, 0.96);
+  background: rgba(0, 0, 0, 0.16);
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  backdrop-filter: blur(5px);
+}
+
+.artwork-card-info {
   display: flex;
+  min-width: 0;
   flex-direction: column;
-  gap: 5px;
-  pointer-events: none;
+  gap: 4px;
+  margin-top: 10px;
 }
 
 .artwork-card-title {
   margin: 0;
   font-family: monospace;
-  font-size: 14px;
-  color: rgba(255, 255, 255, 0.98);
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.25;
+  color: var(--creative-text);
   text-align: left;
-  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.45);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
 
-.artwork-card-medium {
+.artwork-card-description {
   margin: 0;
   font-family: monospace;
-  font-size: 12px;
+  font-size: 11px;
   line-height: 1.35;
-  color: rgba(255, 255, 255, 0.84);
+  color: var(--creative-text);
+  opacity: 0.72;
   text-align: left;
-  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.35);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
 
 @media (min-width: 1025px) {
-  .artwork-card--grid:hover {
+  .artwork-card:hover .artwork-card-image {
     transform: scale(1.04) translateZ(0);
-    z-index: 2;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
   }
 
-  .artwork-card--grid:hover .artwork-card-image img {
-    transform: scale(1.08) translateZ(0);
+  .artwork-card:hover .artwork-card-hover {
+    opacity: 1;
+  }
+}
+
+@media (max-width: 960px) {
+  .photo-grid {
+    column-count: 2;
+  }
+}
+
+@media (max-width: 640px) {
+  .creative-container {
+    padding: 20px 14px;
+  }
+
+  .creative-shell {
+    padding-inline: 0;
+  }
+
+  .photo-grid {
+    column-count: 1;
+  }
+
+  .artwork-card {
+    margin-bottom: 28px;
   }
 }

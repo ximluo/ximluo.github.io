@@ -1,59 +1,24 @@
 import type React from "react"
-import {
-  lazy,
-  Suspense,
-  useCallback,
-  useEffect,
-  useLayoutEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react"
+import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { useNavigate } from "react-router-dom"
-import { Canvas } from "@react-three/fiber"
 import "./Home.css"
 
-import AwardsModal from "../../components/AwardsModal"
 import Footer from "../../components/Footer"
 import OptimizedImage from "../../components/ui/OptimizedImage"
 import photos from "../../data/photos"
 import projects from "../../data/projects"
 import useIntersectionOnce from "../../hooks/useIntersectionOnce"
-import {
-  CONTENT_THEME_TOKENS,
-  HOME_THEME_TOKENS,
-  THEME_VISUAL_TOKENS,
-  type ThemeType,
-} from "../../theme/tokens"
-import { trackBunnyModalOpen } from "../../utils/analytics"
-import FlowerScene from "./FlowerScene"
-import { HomeDesktopScrollProgress, HomeIntroPanel } from "./HomeSections"
-import { useHomeIntroSequence, useHomeViewportState } from "./home.hooks"
+import { HOME_THEME_TOKENS, type ThemeType } from "../../theme/tokens"
+import { HomeIntroPanel } from "./HomeSections"
+import { useHomeViewportState } from "./home.hooks"
 
-const BunnyModal = lazy(() => import("../../features/bunny"))
-const HOME_SCROLL_PAGE_COUNT = 4
+const HOME_SCROLL_PAGE_COUNT = 3
 const HOME_TALL_PAGE_THRESHOLD_PX = 8
-const HOME_SHOWCASE_DESKTOP_MAX_WIDTH = 1000
+const HOME_SHOWCASE_DESKTOP_MAX_WIDTH = 1280
 const HOME_SHOWCASE_RAIL_CLEARANCE_PX = 96
 const HOME_SIDE_RAIL_BREAKPOINT_PX = 1024
 const HOME_INTRO_DESKTOP_OFFSET_BREAKPOINT_PX = 1366
 const HOME_SINGLE_COLUMN_BREAKPOINT_PX = 767
-const HOME_SCROLL_GUIDE_FLOWER_GAP_PX = 24
-const HOME_SCROLL_GUIDE_TEXT_GAP_PX = 4
-const HOME_SCROLL_CUE_BIO_GAP_PX = 18
-const HOME_SCROLL_UNLOCK_DELAY_MS = 0
-const HOME_FLOWER_SCROLL_STOP_EPSILON_PX = 2
-const HOME_FLOWER_HEIGHT_CLAMP_BREAKPOINT_PX = 480
-const HOME_SCROLL_LOCK_KEYS = new Set([
-  "ArrowUp",
-  "ArrowDown",
-  "PageUp",
-  "PageDown",
-  "Home",
-  "End",
-  " ",
-  "Spacebar",
-])
 
 function isGifAsset(source: string) {
   return /\.gif(?:$|[?#])/i.test(source)
@@ -64,6 +29,16 @@ function getShortCardDescription(text: string) {
   if (!trimmed) return ""
   const firstSentenceMatch = trimmed.match(/.*?[.!?](?:\s|$)/)
   return (firstSentenceMatch?.[0] ?? trimmed).trim()
+}
+
+function getFewWordDescription(text: string, maxWords = 7) {
+  const words = getShortCardDescription(text).replace(/\s+/g, " ").split(" ").filter(Boolean)
+  if (words.length <= maxWords) return words.join(" ")
+  return `${words.slice(0, maxWords).join(" ")}...`
+}
+
+function getPhotoMedium(description: string) {
+  return description.split("|")[0]?.trim() || description
 }
 
 interface HomeProjectPreviewImageProps {
@@ -105,7 +80,7 @@ const HomeProjectPreviewImage: React.FC<HomeProjectPreviewImageProps> = ({ src, 
         preferPosterForGif={isGif && !isInView}
         preferAnimatedGifVariant={isGif && isInView}
         animatedGifVariantTier="thumb"
-        sizes="(max-width: 900px) 100vw, 33vw"
+        sizes="(max-width: 767px) 80vw, 40vw"
       />
     </span>
   )
@@ -114,84 +89,42 @@ const HomeProjectPreviewImage: React.FC<HomeProjectPreviewImageProps> = ({ src, 
 interface HomeProps {
   theme: ThemeType
   phase: number
-  isNavigatingFromPage?: boolean
 }
 
-const Home: React.FC<HomeProps> = ({
-  theme,
-  phase,
-  isNavigatingFromPage = false,
-}) => {
+const Home: React.FC<HomeProps> = ({ theme, phase }) => {
   const navigate = useNavigate()
-  const [showAwards, setShowAwards] = useState(false)
-  const [showBunny, setShowBunny] = useState(false)
-  const [shouldMountFlowerScene, setShouldMountFlowerScene] = useState(false)
-  const [isFlowerSceneReady, setIsFlowerSceneReady] = useState(false)
-  const [isScrollUnlocked, setIsScrollUnlocked] = useState(isNavigatingFromPage)
-  const [activePageIndex, setActivePageIndex] = useState(0)
-  const [resolvedScrollCueBottom, setResolvedScrollCueBottom] = useState(44)
-  const [scrollGuideMetrics, setScrollGuideMetrics] = useState({ top: 0, height: 0 })
-  const [tallPageFlags, setTallPageFlags] = useState<boolean[]>(
-    () => Array.from({ length: HOME_SCROLL_PAGE_COUNT }, () => false),
+  const [tallPageFlags, setTallPageFlags] = useState<boolean[]>(() =>
+    Array.from({ length: HOME_SCROLL_PAGE_COUNT }, () => false),
   )
   const homeContainerRef = useRef<HTMLDivElement | null>(null)
-  const introBioRef = useRef<HTMLDivElement | null>(null)
   const scrollCueRef = useRef<HTMLButtonElement | null>(null)
-  const flowerActionsAnchorRef = useRef<HTMLDivElement | null>(null)
   const scrollPageRefs = useRef<Array<HTMLElement | null>>([])
   const scrollPageContentRefs = useRef<Array<HTMLElement | null>>([])
 
-  const { windowWidth, windowHeight, isMobile, isSmallScreen, footerHeight, footerCopyrightHeight } =
-    useHomeViewportState()
+  const { windowWidth, windowHeight, isMobile, footerHeight } = useHomeViewportState()
   const [sectionHeight, setSectionHeight] = useState<number>(windowHeight || 760)
-
-  const { typingRef, typingText, isAnimationComplete } = useHomeIntroSequence({
-    phase,
-    isNavigatingFromPage,
-  })
 
   const themes = HOME_THEME_TOKENS
   const currentTheme = themes[theme]
-  const contentTheme = CONTENT_THEME_TOKENS[theme]
-  const textColor = theme === "bunny" ? "rgb(86, 43, 122)" : currentTheme["--color-text"]
+  const textColor = currentTheme["--color-text"]
   const accentColor = currentTheme["--color-accent-primary"]
-  const homeScrollProgressColor = theme === "bunny" ? accentColor : textColor
-  const linkColor = currentTheme["--link-color"]
-  const homeScrollCueColor =
-    theme === "bunny" ? "rgba(121, 85, 189, 0.74)" : "rgba(170, 214, 255, 0.6)"
-  const homeScrollGuideGradient =
-    theme === "bunny"
-      ? "linear-gradient(to bottom, rgba(121, 85, 189, 0.74) 0%, rgba(223, 30, 155, 0.26) 58%, rgba(223, 30, 155, 0.12) 100%)"
-      : "linear-gradient(to bottom, rgba(170, 214, 255, 0.72) 0%, rgba(170, 214, 255, 0.28) 58%, rgba(170, 214, 255, 0.14) 100%)"
-  const homeScrollGuideDotBorder =
-    theme === "bunny" ? "rgba(121, 85, 189, 0.5)" : "rgba(170, 214, 255, 0.5)"
-  const homeActionBorder =
-    theme === "bunny" ? "rgba(223, 30, 155, 0.34)" : "rgba(173, 214, 255, 0.46)"
+  const homeScrollCueColor = "rgba(170, 214, 255, 0.6)"
+  const homeActionBorder = "rgba(173, 214, 255, 0.46)"
   const homeActionBackground =
-    theme === "bunny"
-      ? "linear-gradient(180deg, rgba(131, 95, 199, 0.78) 0%, rgba(138, 90, 191, 0.76) 54%, rgba(173, 62, 156, 0.74) 100%)"
-      : "linear-gradient(180deg, rgba(15, 58, 104, 0.78) 0%, rgba(24, 77, 132, 0.72) 100%)"
+    "linear-gradient(180deg, rgba(15, 58, 104, 0.78) 0%, rgba(24, 77, 132, 0.72) 100%)"
   const homeActionBackgroundHover =
-    theme === "bunny"
-      ? "linear-gradient(180deg, rgba(139, 103, 207, 0.9) 0%, rgba(149, 98, 199, 0.88) 54%, rgba(190, 70, 171, 0.86) 100%)"
-      : "linear-gradient(180deg, rgba(21, 70, 120, 0.84) 0%, rgba(34, 93, 154, 0.78) 100%)"
-  const homeActionText =
-    theme === "bunny" ? contentTheme["--button-text"] : "rgba(214, 238, 255, 0.96)"
+    "linear-gradient(180deg, rgba(21, 70, 120, 0.84) 0%, rgba(34, 93, 154, 0.78) 100%)"
+  const homeActionText = "rgba(214, 238, 255, 0.96)"
   const homeActionShadow =
-    theme === "bunny"
-      ? "inset 0 0 0 1px rgba(255, 255, 255, 0.14), 0 10px 28px rgba(223, 30, 155, 0.22)"
-      : "inset 0 0 0 1px rgba(255, 255, 255, 0.12), 0 10px 28px rgba(79, 153, 223, 0.25)"
+    "inset 0 0 0 1px rgba(255, 255, 255, 0.12), 0 10px 28px rgba(79, 153, 223, 0.25)"
 
-  const showHomeScrollProgress = windowWidth > HOME_SINGLE_COLUMN_BREAKPOINT_PX
   const showHomeSideRails = windowWidth > HOME_SIDE_RAIL_BREAKPOINT_PX
-  const shouldClampFlowerHeight = windowWidth > HOME_FLOWER_HEIGHT_CLAMP_BREAKPOINT_PX
 
   const showcaseSectionGapHalf = useMemo(() => {
     if (windowWidth < 510) return 32
     if (windowWidth <= HOME_SIDE_RAIL_BREAKPOINT_PX) return 42
     return 52
   }, [windowWidth])
-  const artworkToFlowerGap = Math.round(showcaseSectionGapHalf / 8)
 
   const introHorizontalPadding = useMemo(() => {
     if (windowWidth < 510) return 11
@@ -223,14 +156,14 @@ const Home: React.FC<HomeProps> = ({
   }, [introHorizontalPadding, windowWidth])
 
   const artworkPadding = useMemo(() => {
-    if (windowWidth < 510) return `${showcaseSectionGapHalf}px 11px ${artworkToFlowerGap}px`
+    if (windowWidth < 510) return `${showcaseSectionGapHalf}px 11px ${showcaseSectionGapHalf}px`
     if (windowWidth <= HOME_SIDE_RAIL_BREAKPOINT_PX) {
-      return `${showcaseSectionGapHalf}px ${introHorizontalPadding}px ${artworkToFlowerGap}px`
+      return `${showcaseSectionGapHalf}px ${introHorizontalPadding}px ${showcaseSectionGapHalf}px`
     }
     return isMobile
-      ? `${showcaseSectionGapHalf}px 14px ${artworkToFlowerGap}px`
-      : `${showcaseSectionGapHalf}px 20px ${artworkToFlowerGap}px`
-  }, [artworkToFlowerGap, introHorizontalPadding, isMobile, showcaseSectionGapHalf, windowWidth])
+      ? `${showcaseSectionGapHalf}px 14px ${showcaseSectionGapHalf}px`
+      : `${showcaseSectionGapHalf}px 20px ${showcaseSectionGapHalf}px`
+  }, [introHorizontalPadding, isMobile, showcaseSectionGapHalf, windowWidth])
 
   const projectsPadding = useMemo(() => {
     if (windowWidth < 510) return `14px 11px ${showcaseSectionGapHalf}px`
@@ -241,15 +174,6 @@ const Home: React.FC<HomeProps> = ({
       ? `16px 14px ${showcaseSectionGapHalf}px`
       : `20px 20px ${showcaseSectionGapHalf}px`
   }, [introHorizontalPadding, isMobile, showcaseSectionGapHalf, windowWidth])
-
-  const flowerPadding = `${artworkToFlowerGap}px 0 0`
-
-  const clampedFlowerStageHeight = useMemo(() => {
-    if (!shouldClampFlowerHeight) return null
-
-    const reservedHeight = windowWidth <= HOME_SIDE_RAIL_BREAKPOINT_PX ? 188 : 168
-    return `${Math.max(sectionHeight - reservedHeight, 360)}px`
-  }, [sectionHeight, shouldClampFlowerHeight, windowWidth])
 
   const contentMaxWidth = useMemo(() => {
     const desiredGuard = isMobile ? 0 : 160
@@ -267,34 +191,30 @@ const Home: React.FC<HomeProps> = ({
   }, [introHorizontalPadding, isMobile, showHomeSideRails, windowWidth])
 
   const showcaseMaxWidth = useMemo(() => {
-    if (!showHomeSideRails) return contentMaxWidth
+    const desiredWidth = Math.max(Math.round(windowWidth * 0.8), 260)
+    if (!showHomeSideRails) return Math.min(HOME_SHOWCASE_DESKTOP_MAX_WIDTH, desiredWidth)
+
     const safeViewportWidth =
       windowWidth - HOME_SHOWCASE_RAIL_CLEARANCE_PX * 2 - showcaseHorizontalPadding * 2
-    return Math.max(Math.min(HOME_SHOWCASE_DESKTOP_MAX_WIDTH, safeViewportWidth), 320)
-  }, [contentMaxWidth, showHomeSideRails, showcaseHorizontalPadding, windowWidth])
+    return Math.max(Math.min(HOME_SHOWCASE_DESKTOP_MAX_WIDTH, desiredWidth, safeViewportWidth), 320)
+  }, [showHomeSideRails, showcaseHorizontalPadding, windowWidth])
 
   const featuredProjects = useMemo(() => projects.slice(0, 6), [])
   const featuredArtworks = useMemo(() => photos.slice(0, 3), [])
   const { ref: setProjectsSectionRef, hasIntersected: hasProjectsIntersected } =
     useIntersectionOnce<HTMLDivElement>({
-      rootMargin: "-10% 0px -15% 0px",
-      threshold: 0.2,
+      rootMargin: "0px 0px 0px 0px",
+      threshold: 0.01,
     })
   const { ref: setArtworkSectionRef, hasIntersected: hasArtworkIntersected } =
     useIntersectionOnce<HTMLDivElement>({
-      rootMargin: "-10% 0px -15% 0px",
-      threshold: 0.2,
+      rootMargin: "0px 0px 0px 0px",
+      threshold: 0.01,
     })
-  const { ref: setFlowerSectionRef, hasIntersected: hasFlowerIntersected } =
-    useIntersectionOnce<HTMLDivElement>({
-      rootMargin: "-10% 0px -15% 0px",
-      threshold: 0.2,
-    })
-
-  const flowerCanvasDpr: [number, number] = isMobile ? [1, 1.35] : [1, 1.35]
 
   const scrollToPage = useCallback((pageIndex: number) => {
     const parent = homeContainerRef.current?.parentElement
+    const containerOffset = homeContainerRef.current?.offsetTop ?? 0
     const clampedIndex = Math.max(0, Math.min(pageIndex, HOME_SCROLL_PAGE_COUNT - 1))
     const page = scrollPageRefs.current[clampedIndex]
     if (!parent || !page) return
@@ -305,33 +225,10 @@ const Home: React.FC<HomeProps> = ({
       window.matchMedia("(prefers-reduced-motion: reduce)").matches
 
     parent.scrollTo({
-      top: page.offsetTop,
+      top: containerOffset + page.offsetTop,
       behavior: prefersReducedMotion ? "auto" : "smooth",
     })
   }, [])
-
-  useEffect(() => {
-    if (shouldMountFlowerScene) return
-    if (isAnimationComplete) {
-      setShouldMountFlowerScene(true)
-      return
-    }
-  }, [isAnimationComplete, shouldMountFlowerScene])
-
-  useEffect(() => {
-    if (isNavigatingFromPage) {
-      setIsScrollUnlocked(true)
-      return
-    }
-
-    if (phase < 2 || !isAnimationComplete) {
-      setIsScrollUnlocked(false)
-      return
-    }
-
-    const timer = window.setTimeout(() => setIsScrollUnlocked(true), HOME_SCROLL_UNLOCK_DELAY_MS)
-    return () => window.clearTimeout(timer)
-  }, [isAnimationComplete, isNavigatingFromPage, phase])
 
   useEffect(() => {
     if (typeof window === "undefined") return
@@ -339,7 +236,8 @@ const Home: React.FC<HomeProps> = ({
     if (!parent) return
 
     const updateHeight = () => {
-      const nextHeight = Math.max(parent.clientHeight, 320)
+      const containerOffset = homeContainerRef.current?.offsetTop ?? 0
+      const nextHeight = Math.max(parent.clientHeight - containerOffset, 320)
       setSectionHeight((prev) => (prev === nextHeight ? prev : nextHeight))
     }
 
@@ -364,45 +262,22 @@ const Home: React.FC<HomeProps> = ({
 
     const updatePageMetrics = () => {
       frameId = 0
-      const viewportHeight = Math.max(parent.clientHeight, 1)
+      const containerOffset = homeContainerRef.current?.offsetTop ?? 0
+      const viewportHeight = Math.max(parent.clientHeight - containerOffset, 1)
       const nextTallFlags = Array.from({ length: HOME_SCROLL_PAGE_COUNT }, (_, index) => {
-        if (index === HOME_SCROLL_PAGE_COUNT - 1 && shouldClampFlowerHeight) {
-          return false
-        }
-
         const pageNode = scrollPageRefs.current[index]
         const contentNode = scrollPageContentRefs.current[index]
-        const measuredHeight = Math.max(
-          pageNode?.scrollHeight ?? 0,
-          contentNode?.scrollHeight ?? 0,
-        )
+        const measuredHeight = Math.max(pageNode?.scrollHeight ?? 0, contentNode?.scrollHeight ?? 0)
 
         return measuredHeight > viewportHeight + HOME_TALL_PAGE_THRESHOLD_PX
       })
-      const scrollMidpoint = parent.scrollTop + viewportHeight / 2
-      let nextPageIndex = 0
-
-      scrollPageRefs.current.forEach((page, index) => {
-        if (!page) return
-
-        const pageTop = page.offsetTop
-        const pageBottom = pageTop + page.offsetHeight
-
-        if (scrollMidpoint >= pageTop) {
-          nextPageIndex = index
-        }
-
-        if (scrollMidpoint >= pageTop && scrollMidpoint < pageBottom) {
-          nextPageIndex = index
-        }
-      })
 
       setTallPageFlags((prev) =>
-        prev.length === nextTallFlags.length && prev.every((flag, index) => flag === nextTallFlags[index])
+        prev.length === nextTallFlags.length &&
+        prev.every((flag, index) => flag === nextTallFlags[index])
           ? prev
           : nextTallFlags,
       )
-      setActivePageIndex((prev) => (prev === nextPageIndex ? prev : nextPageIndex))
     }
 
     const schedulePageMetrics = () => {
@@ -426,309 +301,7 @@ const Home: React.FC<HomeProps> = ({
       parent.removeEventListener("scroll", schedulePageMetrics)
       window.removeEventListener("resize", schedulePageMetrics)
     }
-  }, [sectionHeight, isAnimationComplete, shouldClampFlowerHeight])
-
-  useEffect(() => {
-    if (typeof window === "undefined" || shouldClampFlowerHeight) return
-    const parent = homeContainerRef.current?.parentElement
-    if (!parent) return
-
-    let frameId = 0
-    let touchStartY: number | null = null
-
-    const getMaxScrollTop = () => {
-      const flowerPage = scrollPageRefs.current[HOME_SCROLL_PAGE_COUNT - 1]
-      if (!flowerPage) return null
-      return Math.max(parent.scrollHeight - parent.clientHeight, 0)
-    }
-
-    const clampScrollPosition = () => {
-      frameId = 0
-      const maxScrollTop = getMaxScrollTop()
-      if (maxScrollTop === null) return
-      if (parent.scrollTop > maxScrollTop + HOME_FLOWER_SCROLL_STOP_EPSILON_PX) {
-        parent.scrollTop = maxScrollTop
-      }
-    }
-
-    const scheduleScrollClamp = () => {
-      if (frameId) return
-      frameId = window.requestAnimationFrame(clampScrollPosition)
-    }
-
-    const stopAtFlowerBoundary = (deltaY: number) => {
-      if (deltaY <= 0) return false
-
-      const maxScrollTop = getMaxScrollTop()
-      if (maxScrollTop === null) return false
-
-      const remainingScroll = maxScrollTop - parent.scrollTop
-      if (remainingScroll > HOME_FLOWER_SCROLL_STOP_EPSILON_PX && deltaY < remainingScroll) {
-        return false
-      }
-
-      parent.scrollTop = maxScrollTop
-      return true
-    }
-
-    const isEditableTarget = (target: EventTarget | null) => {
-      const element = target as HTMLElement | null
-      if (!element) return false
-
-      const tagName = element.tagName
-      return (
-        element.isContentEditable ||
-        tagName === "INPUT" ||
-        tagName === "TEXTAREA" ||
-        tagName === "SELECT"
-      )
-    }
-
-    const preventWheelPastFlower = (event: WheelEvent) => {
-      if (!event.cancelable) return
-      if (stopAtFlowerBoundary(event.deltaY)) event.preventDefault()
-    }
-
-    const preventKeyboardPastFlower = (event: KeyboardEvent) => {
-      if (isEditableTarget(event.target)) return
-
-      let requestedDelta = 0
-
-      if (event.key === "ArrowDown") {
-        requestedDelta = 48
-      } else if (
-        event.key === "PageDown" ||
-        event.key === " " ||
-        event.key === "Spacebar" ||
-        event.code === "Space"
-      ) {
-        requestedDelta = parent.clientHeight * 0.9
-      } else if (event.key === "End") {
-        requestedDelta = Number.POSITIVE_INFINITY
-      }
-
-      if (requestedDelta <= 0) return
-      if (stopAtFlowerBoundary(requestedDelta)) event.preventDefault()
-    }
-
-    const handleTouchStart = (event: TouchEvent) => {
-      touchStartY = event.touches[0]?.clientY ?? null
-    }
-
-    const preventTouchPastFlower = (event: TouchEvent) => {
-      const currentY = event.touches[0]?.clientY
-      if (touchStartY === null || currentY == null) return
-
-      const deltaY = touchStartY - currentY
-      touchStartY = currentY
-
-      if (!event.cancelable) return
-      if (stopAtFlowerBoundary(deltaY)) event.preventDefault()
-    }
-
-    const resetTouchTracking = () => {
-      touchStartY = null
-    }
-
-    clampScrollPosition()
-    parent.addEventListener("wheel", preventWheelPastFlower, { passive: false })
-    window.addEventListener("keydown", preventKeyboardPastFlower)
-    parent.addEventListener("touchstart", handleTouchStart, { passive: true })
-    parent.addEventListener("touchmove", preventTouchPastFlower, { passive: false })
-    parent.addEventListener("touchend", resetTouchTracking)
-    parent.addEventListener("touchcancel", resetTouchTracking)
-    parent.addEventListener("scroll", scheduleScrollClamp, { passive: true })
-    window.addEventListener("resize", scheduleScrollClamp)
-
-    const resizeObserver =
-      typeof ResizeObserver === "undefined" ? null : new ResizeObserver(scheduleScrollClamp)
-    resizeObserver?.observe(parent)
-    scrollPageRefs.current.forEach((page) => page && resizeObserver?.observe(page))
-
-    return () => {
-      if (frameId) window.cancelAnimationFrame(frameId)
-      resizeObserver?.disconnect()
-      parent.removeEventListener("wheel", preventWheelPastFlower)
-      window.removeEventListener("keydown", preventKeyboardPastFlower)
-      parent.removeEventListener("touchstart", handleTouchStart)
-      parent.removeEventListener("touchmove", preventTouchPastFlower)
-      parent.removeEventListener("touchend", resetTouchTracking)
-      parent.removeEventListener("touchcancel", resetTouchTracking)
-      parent.removeEventListener("scroll", scheduleScrollClamp)
-      window.removeEventListener("resize", scheduleScrollClamp)
-    }
-  }, [sectionHeight, shouldClampFlowerHeight, windowWidth])
-
-  useLayoutEffect(() => {
-    const parent = homeContainerRef.current?.parentElement
-    if (!parent) return
-
-    parent.classList.toggle("main-content-scroll--home-locked", !isScrollUnlocked)
-
-    if (!isScrollUnlocked) {
-      parent.scrollTop = 0
-    }
-
-    return () => {
-      parent.classList.remove("main-content-scroll--home-locked")
-    }
-  }, [isScrollUnlocked])
-
-  useLayoutEffect(() => {
-    if (typeof window === "undefined") return
-
-    const introSection = scrollPageRefs.current[0]
-    const scrollCue = scrollCueRef.current
-    if (!introSection || !scrollCue) {
-      setResolvedScrollCueBottom(scrollCueBottom)
-      return
-    }
-
-    let frameId = 0
-
-    const updateScrollCueBottom = () => {
-      frameId = 0
-
-      const sectionRect = introSection.getBoundingClientRect()
-      const cueHeight = scrollCue.offsetHeight
-      let nextBottom = scrollCueBottom
-
-      if (phase >= 2 && isAnimationComplete && introBioRef.current) {
-        const bioRect = introBioRef.current.getBoundingClientRect()
-        const bioBottom = bioRect.bottom - sectionRect.top
-        const maxBottomWithoutOverlap = Math.max(
-          sectionRect.height - cueHeight - bioBottom - HOME_SCROLL_CUE_BIO_GAP_PX,
-          0,
-        )
-
-        nextBottom = Math.min(scrollCueBottom, maxBottomWithoutOverlap)
-      }
-
-      setResolvedScrollCueBottom((prev) => {
-        const roundedBottom = Math.round(nextBottom)
-        return prev === roundedBottom ? prev : roundedBottom
-      })
-    }
-
-    const scheduleScrollCueUpdate = () => {
-      if (frameId) return
-      frameId = window.requestAnimationFrame(updateScrollCueBottom)
-    }
-
-    scheduleScrollCueUpdate()
-    window.addEventListener("resize", scheduleScrollCueUpdate)
-
-    const resizeObserver =
-      typeof ResizeObserver === "undefined" ? null : new ResizeObserver(scheduleScrollCueUpdate)
-    resizeObserver?.observe(introSection)
-    resizeObserver?.observe(scrollCue)
-    if (introBioRef.current) resizeObserver?.observe(introBioRef.current)
-
-    return () => {
-      if (frameId) window.cancelAnimationFrame(frameId)
-      resizeObserver?.disconnect()
-      window.removeEventListener("resize", scheduleScrollCueUpdate)
-    }
-  }, [isAnimationComplete, phase, scrollCueBottom, sectionHeight, windowWidth])
-
-  useEffect(() => {
-    if (typeof window === "undefined" || isScrollUnlocked) return
-
-    const preventWheel = (event: WheelEvent) => {
-      if (event.cancelable) event.preventDefault()
-    }
-
-    const preventTouchMove = (event: TouchEvent) => {
-      if (event.cancelable) event.preventDefault()
-    }
-
-    const preventKeyboardScroll = (event: KeyboardEvent) => {
-      const target = event.target as HTMLElement | null
-      if (target) {
-        const tagName = target.tagName
-        if (
-          target.isContentEditable ||
-          tagName === "INPUT" ||
-          tagName === "TEXTAREA" ||
-          tagName === "SELECT"
-        ) {
-          return
-        }
-      }
-
-      if (HOME_SCROLL_LOCK_KEYS.has(event.key) || event.code === "Space") {
-        event.preventDefault()
-      }
-    }
-
-    window.addEventListener("wheel", preventWheel, { passive: false })
-    window.addEventListener("touchmove", preventTouchMove, { passive: false })
-    window.addEventListener("keydown", preventKeyboardScroll)
-
-    return () => {
-      window.removeEventListener("wheel", preventWheel)
-      window.removeEventListener("touchmove", preventTouchMove)
-      window.removeEventListener("keydown", preventKeyboardScroll)
-    }
-  }, [isScrollUnlocked])
-
-  useEffect(() => {
-    if (typeof window === "undefined") return
-    const container = homeContainerRef.current
-    const scrollCue = scrollCueRef.current
-    const flowerActionsAnchor = flowerActionsAnchorRef.current
-    if (!container || !scrollCue || !flowerActionsAnchor) return
-
-    let frameId = 0
-
-    const updateScrollGuide = () => {
-      frameId = 0
-
-      const containerRect = container.getBoundingClientRect()
-      const scrollCueRect = scrollCue.getBoundingClientRect()
-      const flowerActionsAnchorRect = flowerActionsAnchor.getBoundingClientRect()
-
-      const nextTop = Math.max(
-        scrollCueRect.bottom - containerRect.top + HOME_SCROLL_GUIDE_TEXT_GAP_PX,
-        0,
-      )
-      const nextBottom = Math.max(
-        flowerActionsAnchorRect.top - containerRect.top - HOME_SCROLL_GUIDE_FLOWER_GAP_PX,
-        nextTop,
-      )
-      const nextHeight = Math.max(nextBottom - nextTop, 0)
-
-      setScrollGuideMetrics((prev) => {
-        const roundedTop = Math.round(nextTop)
-        const roundedHeight = Math.round(nextHeight)
-
-        if (prev.top === roundedTop && prev.height === roundedHeight) return prev
-        return { top: roundedTop, height: roundedHeight }
-      })
-    }
-
-    const scheduleScrollGuide = () => {
-      if (frameId) return
-      frameId = window.requestAnimationFrame(updateScrollGuide)
-    }
-
-    scheduleScrollGuide()
-    window.addEventListener("resize", scheduleScrollGuide)
-
-    const resizeObserver =
-      typeof ResizeObserver === "undefined" ? null : new ResizeObserver(scheduleScrollGuide)
-    resizeObserver?.observe(container)
-    resizeObserver?.observe(scrollCue)
-    resizeObserver?.observe(flowerActionsAnchor)
-    scrollPageRefs.current.forEach((page) => page && resizeObserver?.observe(page))
-    scrollPageContentRefs.current.forEach((content) => content && resizeObserver?.observe(content))
-
-    return () => {
-      if (frameId) window.cancelAnimationFrame(frameId)
-      resizeObserver?.disconnect()
-      window.removeEventListener("resize", scheduleScrollGuide)
-    }
-  }, [footerHeight, isAnimationComplete, phase, sectionHeight, windowWidth])
+  }, [sectionHeight])
 
   return (
     <div
@@ -740,55 +313,19 @@ const Home: React.FC<HomeProps> = ({
         boxSizing: "border-box",
         position: "relative",
         touchAction: "auto",
-        ["--home-accent" as string]: accentColor,
-        ["--home-preview-border" as string]: currentTheme["--button-bg-light"],
-        ["--home-preview-surface" as string]: THEME_VISUAL_TOKENS[theme].surfacePortfolioCard,
         ["--home-preview-text" as string]: textColor,
-        ["--home-preview-accent" as string]: accentColor,
         ["--home-preview-button-bg" as string]: currentTheme["--button-bg"],
         ["--home-preview-button-text" as string]: textColor,
         ["--home-scroll-cue-color" as string]: homeScrollCueColor,
-        ["--home-scroll-guide-gradient" as string]: homeScrollGuideGradient,
-        ["--home-scroll-guide-dot-border" as string]: homeScrollGuideDotBorder,
         ["--home-action-border" as string]: homeActionBorder,
         ["--home-action-bg" as string]: homeActionBackground,
         ["--home-action-bg-hover" as string]: homeActionBackgroundHover,
         ["--home-action-text" as string]: homeActionText,
         ["--home-action-shadow" as string]: homeActionShadow,
-        ["--home-inline-button-rest-text" as string]:
-          theme === "bunny" ? "rgba(223, 30, 155, 0.96)" : "rgba(214, 238, 255, 0.96)",
-        ["--home-inline-button-hover-bg" as string]:
-          theme === "bunny" ? "rgba(223, 30, 155, 0.78)" : "rgba(34, 93, 154, 0.78)",
-        ["--home-inline-button-hover-text" as string]: homeActionText,
         ["--home-section-height" as string]: `${sectionHeight}px`,
-        ["--home-footer-height" as string]: `${footerHeight}px`,
-        ["--home-footer-copyright-height" as string]: `${footerCopyrightHeight}px`,
-        ["--home-bio-secondary-opacity" as string]: theme === "bunny" ? "0.8" : "0.5",
-        ["--home-scroll-progress-stroke-width" as string]: theme === "bunny" ? "2px" : "1px",
-        ["--home-scroll-guide-top" as string]: `${scrollGuideMetrics.top}px`,
-        ["--home-scroll-guide-height" as string]: `${scrollGuideMetrics.height}px`,
         ["--home-showcase-max-width" as string]: `${showcaseMaxWidth}px`,
-        ["--home-flower-stage-height" as string]: clampedFlowerStageHeight ?? undefined,
       }}
     >
-      {showHomeScrollProgress && (
-        <>
-          <HomeDesktopScrollProgress
-            activePageIndex={activePageIndex}
-            pageCount={HOME_SCROLL_PAGE_COUNT}
-            phase={phase}
-            isAnimationComplete={isAnimationComplete}
-            textColor={homeScrollProgressColor}
-            alignment="left"
-            onSelectPage={scrollToPage}
-          />
-        </>
-      )}
-      <div
-        className={`home-scroll-guide ${phase >= 3 && isAnimationComplete && scrollGuideMetrics.height > 0 ? "is-visible" : ""}`}
-        aria-hidden
-      />
-
       <div className="home-scroll-pages">
         <section
           ref={(node) => {
@@ -805,33 +342,24 @@ const Home: React.FC<HomeProps> = ({
           >
             <HomeIntroPanel
               phase={phase}
-              typingText={typingText}
-              typingRef={typingRef}
               isMobile={isMobile}
               contentMaxWidth={contentMaxWidth}
               desktopOffset={
                 showHomeSideRails && windowWidth > HOME_INTRO_DESKTOP_OFFSET_BREAKPOINT_PX ? 64 : 0
               }
-              isFlowerRevealed={false}
-              isAnimationComplete={isAnimationComplete}
-              isNavigatingFromPage={isNavigatingFromPage}
-              textColor={textColor}
               accentColor={accentColor}
-              linkColor={linkColor}
-              onOpenAwards={() => setShowAwards(true)}
-              bioRef={introBioRef}
             />
           </div>
 
           <button
             ref={scrollCueRef}
             type="button"
-            className={`fade home-native-scroll-cue ${phase >= 3 && isAnimationComplete ? "show" : ""}`}
+            className={`fade home-native-scroll-cue ${phase >= 3 ? "show" : ""}`}
             aria-label="Scroll to projects"
-            disabled={!(phase >= 3 && isAnimationComplete)}
+            disabled={phase < 3}
             onClick={() => scrollToPage(1)}
             style={{
-              ["--home-scroll-side-bottom" as string]: `${resolvedScrollCueBottom}px`,
+              ["--home-scroll-side-bottom" as string]: `${scrollCueBottom}px`,
             }}
           >
             SCROLL
@@ -864,23 +392,30 @@ const Home: React.FC<HomeProps> = ({
                     <button
                       key={project.id}
                       type="button"
-                      className="home-preview-card home-preview-card--project"
+                      className="home-project-card"
                       onClick={() => navigate(`/portfolio/${project.id}`)}
                     >
-                      <HomeProjectPreviewImage src={project.image} alt={project.name} />
-                      <span className="home-preview-card-overlay" />
-                      <span className="home-project-preview-meta-panel">
-                        <span className="home-project-preview-meta-row">
-                          <span className="home-preview-card-copy">
-                            <span className="home-preview-card-title">{project.name}</span>
-                            <span className="home-preview-card-meta">
-                              {project.languages.slice(0, 2).join(" / ")}
-                            </span>
-                          </span>
-                          <span className="home-project-preview-arrow">→</span>
+                      <span className="home-project-card-media-frame">
+                        <HomeProjectPreviewImage src={project.image} alt={project.name} />
+                        <span className="home-project-card-hover" aria-hidden>
+                          <span className="home-project-card-view">View</span>
                         </span>
-                        <span className="home-project-preview-description">
-                          {getShortCardDescription(project.description)}
+                      </span>
+
+                      <span className="home-project-card-info">
+                        <span className="home-project-card-copy">
+                          <span className="home-project-card-title">{project.name}</span>
+                          <span className="home-project-card-description">
+                            {getFewWordDescription(project.description)}
+                          </span>
+                        </span>
+
+                        <span className="home-project-card-languages" aria-label="Languages">
+                          {project.languages.slice(0, 3).map((lang) => (
+                            <span key={lang} className="home-project-card-language">
+                              {lang}
+                            </span>
+                          ))}
                         </span>
                       </span>
                     </button>
@@ -925,18 +460,28 @@ const Home: React.FC<HomeProps> = ({
                     <button
                       key={photo.id}
                       type="button"
-                      className="home-preview-card home-preview-card--artwork"
+                      className="home-project-card home-project-card--artwork"
                       onClick={() => navigate(`/creative?photo=${encodeURIComponent(photo.id)}`)}
                     >
-                      <OptimizedImage
-                        src={photo.image}
-                        alt={photo.title}
-                        className="home-preview-card-image"
-                        sizes="(max-width: 900px) 100vw, 33vw"
-                      />
-                      <span className="home-preview-card-overlay" />
-                      <span className="home-preview-card-copy">
-                        <span className="home-preview-card-title">{photo.title}</span>
+                      <span className="home-project-card-media-frame home-project-card-media-frame--square">
+                        <OptimizedImage
+                          src={photo.image}
+                          alt={photo.title}
+                          className="home-preview-card-image"
+                          sizes="(max-width: 767px) 80vw, 33vw"
+                        />
+                        <span className="home-project-card-hover" aria-hidden>
+                          <span className="home-project-card-view">View</span>
+                        </span>
+                      </span>
+
+                      <span className="home-project-card-info">
+                        <span className="home-project-card-copy">
+                          <span className="home-project-card-title">{photo.title}</span>
+                          <span className="home-project-card-description">
+                            {getPhotoMedium(photo.description)}
+                          </span>
+                        </span>
                       </span>
                     </button>
                   ))}
@@ -953,86 +498,9 @@ const Home: React.FC<HomeProps> = ({
             </div>
           </div>
         </section>
-
-        <section
-          ref={(node) => {
-            scrollPageRefs.current[3] = node
-          }}
-          className={`home-scroll-page home-scroll-page--flower ${shouldClampFlowerHeight ? "home-scroll-page--flower-clamped" : ""} ${tallPageFlags[3] ? "home-scroll-page--content-tall" : ""}`}
-          style={{ padding: flowerPadding }}
-        >
-          <div ref={flowerActionsAnchorRef} className="home-showcase-actions-anchor" aria-hidden />
-          <div
-            ref={setFlowerSectionRef}
-            className={`home-showcase-flower-shell home-scroll-reveal ${hasFlowerIntersected ? "is-visible" : ""}`}
-          >
-            <div className="home-showcase-actions home-showcase-actions--floating">
-              <button
-                type="button"
-                className="home-showcase-action"
-                onClick={() => setShowAwards(true)}
-              >
-                Awards
-              </button>
-              <button
-                type="button"
-                className="home-showcase-action"
-                onClick={() => {
-                  trackBunnyModalOpen("home_flower_button")
-                  setShowBunny(true)
-                }}
-              >
-                🐰
-              </button>
-            </div>
-
-            <div
-              ref={(node) => {
-                scrollPageContentRefs.current[3] = node
-              }}
-              className="home-showcase-flower-stack"
-            >
-              <div
-                className="home-showcase-flower-stage"
-                style={{
-                  opacity: isFlowerSceneReady ? 1 : 0.15,
-                }}
-              >
-                {shouldMountFlowerScene && (
-                  <Canvas
-                    className="home-showcase-flower-canvas"
-                    gl={{
-                      alpha: true,
-                      antialias: true,
-                      preserveDrawingBuffer: false,
-                      powerPreference: "high-performance",
-                    }}
-                    dpr={flowerCanvasDpr}
-                    frameloop="always"
-                    camera={{ fov: 35, near: 0.1, far: 1000, position: [0, 0, 3] }}
-                  >
-                    <Suspense fallback={null}>
-                      <FlowerScene
-                        layout={{ isMobile, isSmallScreen, windowWidth, focusScale: 1.34 }}
-                        onSceneReady={() => setIsFlowerSceneReady(true)}
-                      />
-                    </Suspense>
-                  </Canvas>
-                )}
-              </div>
-            </div>
-          </div>
-        </section>
       </div>
 
-      <Footer theme={theme} controlsVisible={phase >= 3} />
-
-      {showAwards && <AwardsModal onClose={() => setShowAwards(false)} theme={theme} />}
-      {showBunny && (
-        <Suspense fallback={null}>
-          <BunnyModal onClose={() => setShowBunny(false)} theme={theme} />
-        </Suspense>
-      )}
+      <Footer theme={theme} />
     </div>
   )
 }

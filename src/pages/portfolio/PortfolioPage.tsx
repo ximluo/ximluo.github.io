@@ -5,7 +5,6 @@ import Footer from "../../components/Footer"
 import OptimizedImage from "../../components/ui/OptimizedImage"
 import projects from "../../data/projects"
 import useIntersectionOnce from "../../hooks/useIntersectionOnce"
-import useMediaQuery from "../../hooks/useMediaQuery"
 import { CONTENT_THEME_TOKENS, THEME_VISUAL_TOKENS, type ThemeType } from "../../theme/tokens"
 import { trackProjectCardClick } from "../../utils/analytics"
 import "./Portfolio.css"
@@ -106,10 +105,6 @@ const LazyImage: React.FC<{
 
 const Portfolio: React.FC<PortfolioProps> = ({ theme }) => {
   const [activeFilter, setActiveFilter] = useState<string | null>(null)
-  const isDesktop = useMediaQuery(
-    "(min-width: 1025px)",
-    typeof window !== "undefined" ? window.innerWidth > 1024 : false,
-  )
   const navigate = useNavigate()
 
   const filteredProjects = useMemo(() => {
@@ -182,9 +177,8 @@ const Portfolio: React.FC<PortfolioProps> = ({ theme }) => {
             key={project.id}
             onClick={() => handleProjectClick(project.id, project.name)}
             className="project-card"
-            style={{ height: isDesktop ? "290px" : "240px" }}
           >
-            <div className="project-card-media">
+            <div className="project-card-media-frame">
               <LazyImage
                 projectId={project.id}
                 src={project.image || "/placeholder.svg"}
@@ -196,27 +190,25 @@ const Portfolio: React.FC<PortfolioProps> = ({ theme }) => {
                   willChange: "transform",
                 }}
               />
-              <div className="project-card-overlay" />
-              <div className="project-card-meta-panel">
-                <div className="project-card-meta-row">
-                  <div className="project-card-copy">
-                    <h3 className="project-card-title">{project.name}</h3>
+              <div className="project-card-hover" aria-hidden>
+                <span className="project-card-view">View</span>
+              </div>
+            </div>
 
-                    <div className="project-card-languages">
-                      {project.languages.map((lang, index) => (
-                        <span key={lang} className="project-card-language">
-                          {lang}
-                          {index < project.languages.length - 1 ? " / " : ""}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-
-                  <div className="project-card-arrow">→</div>
-                </div>
-                <p className="project-card-hover-description">
+            <div className="project-card-info">
+              <div className="project-card-copy">
+                <h3 className="project-card-title">{project.name}</h3>
+                <p className="project-card-description">
                   {getShortCardDescription(project.description)}
                 </p>
+              </div>
+
+              <div className="project-card-languages" aria-label="Languages">
+                {project.languages.slice(0, 3).map((lang) => (
+                  <span key={lang} className="project-card-language">
+                    {lang}
+                  </span>
+                ))}
               </div>
             </div>
           </div>

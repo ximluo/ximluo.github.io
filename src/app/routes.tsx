@@ -10,6 +10,7 @@ interface AppRoutesProps {
 const Home = lazy(() => import("../pages/home"))
 const Portfolio = lazy(() => import("../pages/portfolio"))
 const Creative = lazy(() => import("../pages/creative"))
+const About = lazy(() => import("../pages/about"))
 const ProjectDetail = lazy(() => import("../pages/project-detail"))
 const NotFound = lazy(() => import("../pages/not-found"))
 
@@ -21,6 +22,7 @@ const AppRoutes: React.FC<AppRoutesProps> = ({ theme, phase }) => {
         <Route path="/portfolio" element={<Portfolio theme={theme} />} />
         <Route path="/portfolio/:projectId" element={<ProjectDetail theme={theme} />} />
         <Route path="/creative" element={<Creative theme={theme} />} />
+        <Route path="/about" element={<About theme={theme} />} />
         <Route path="*" element={<NotFound theme={theme} />} />
       </Routes>
     </Suspense>
