@@ -3,116 +3,154 @@
   min-height: 100%;
   padding: 20px;
   box-sizing: border-box;
-  overflow: auto;
   color: var(--project-detail-text);
   display: flex;
   flex-direction: column;
-  scrollbar-width: thin;
-  scrollbar-color: var(--project-detail-scrollbar-thumb) transparent;
-}
-
-.project-detail-container::-webkit-scrollbar {
-  width: 8px;
-}
-
-.project-detail-container::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.project-detail-container::-webkit-scrollbar-thumb {
-  border-radius: 4px;
-  background: var(--project-detail-scrollbar-thumb);
 }
 
 .project-detail-shell {
   width: 100%;
-  max-width: 800px;
+  max-width: 960px;
   margin: 0 auto;
   flex: 1 0 auto;
   color: var(--project-detail-text);
   font-family: "Raleway", sans-serif;
+  font-size: 16px;
 }
 
-.project-detail-back-button,
 .project-detail-cta-button {
-  border: none;
-  border-radius: 20px;
+  border: 1px solid transparent;
+  border-radius: 2px;
   font-family: "Raleway", sans-serif;
   cursor: pointer;
 }
 
-.project-detail-back-button {
-  display: flex;
-  align-items: center;
-  width: fit-content;
-  margin-bottom: 20px;
-  padding: 8px 16px;
-  background: var(--project-detail-button-bg-light);
-  color: var(--project-detail-text);
+.project-detail-hero {
+  display: block;
+  margin-bottom: 0;
+}
+
+.project-detail-hero-main,
+.project-detail-body {
+  min-width: 0;
+}
+
+.project-detail-body {
+  margin-left: 0;
+}
+
+.project-detail-intro {
+  margin: clamp(22px, 4vw, 42px) 0 clamp(32px, 5vw, 56px);
+  text-align: left;
 }
 
 .project-detail-title {
-  margin: 0 0 20px;
+  margin: 0 0 10px;
   font-family: "Bodoni Moda", serif;
   font-optical-sizing: auto;
+  font-size: clamp(34px, 6vw, 46px);
   font-weight: 400;
   font-style: normal;
   color: var(--project-detail-accent);
+  line-height: 0.98;
+}
+
+.project-detail-summary {
+  max-width: 680px;
+  margin: 0 0 24px;
+  color: var(--project-detail-text);
+  font-size: inherit;
+  line-height: 1.5;
+  opacity: 0.78;
+}
+
+.project-detail-meta {
+  display: grid;
+  gap: 12px;
+  margin: 0;
+}
+
+.project-detail-meta-row {
+  display: grid;
+  grid-template-columns: minmax(120px, auto) minmax(0, 1fr);
+  gap: 16px;
+  align-items: baseline;
+}
+
+.project-detail-meta-row dt,
+.project-detail-meta-row dd {
+  margin: 0;
+}
+
+.project-detail-meta-row dt {
+  color: var(--project-detail-text);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  opacity: 0.62;
+}
+
+.project-detail-meta-row dd {
+  display: flex;
+  justify-content: flex-start;
+  min-width: 0;
+  color: var(--project-detail-text);
+  line-height: 1.4;
+  opacity: 0.82;
 }
 
 .project-detail-chips {
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
-  margin-bottom: 20px;
+  justify-content: flex-start;
+  gap: 8px;
+  margin: 0;
 }
 
 .project-detail-chip {
-  padding: 5px 10px;
-  background: var(--project-detail-button-bg-light);
+  padding: 4px 9px;
+  background: transparent;
   color: var(--project-detail-text);
-  border-radius: 15px;
-  font-size: 14px;
+  border: 1px solid rgba(152, 213, 255, 0.74);
+  border-radius: 999px;
+  font-size: 13px;
+  line-height: 1.25;
 }
 
 .project-detail-media-frame {
   width: 100%;
-  aspect-ratio: 16 / 9;
-  border-radius: 12px;
+  border-radius: 2px;
   overflow: hidden;
 }
 
 .project-detail-media-frame--hero {
-  margin-bottom: 30px;
+  aspect-ratio: 16 / 9;
+  margin: 0;
 }
 
 .project-detail-media-frame--section {
-  margin: 30px 0;
+  margin: 30px 0 16px;
   content-visibility: auto;
   contain-intrinsic-size: 360px;
 }
 
 .project-detail-image {
+  display: block;
   width: 100%;
+  height: auto;
+}
+
+.project-detail-media-frame--hero .project-detail-image {
   height: 100%;
   object-fit: cover;
 }
 
-.project-detail-overview {
-  margin-bottom: 30px;
-  padding: 20px;
-  border-radius: 12px;
-  background: var(--project-detail-overview-surface);
-}
-
-.project-detail-overview-title {
-  margin: 0;
-  color: var(--project-detail-accent);
-}
-
 .project-detail-paragraph {
+  font-size: inherit;
   line-height: 1.6;
   margin: 0 0 1.2em;
+  text-align: left;
 }
 
 .project-detail-paragraph--compact {
@@ -127,9 +165,9 @@
 .project-detail-embed {
   position: relative;
   width: 100%;
-  max-width: 600px;
-  margin: 30px auto;
-  border-radius: 8px;
+  max-width: 100%;
+  margin: 30px 0;
+  border-radius: 2px;
   overflow: hidden;
   background: var(--project-detail-embed-surface);
   border: 1px solid var(--project-detail-border);
@@ -143,10 +181,13 @@
 
 .project-detail-embed--video {
   aspect-ratio: 16 / 9;
-  contain-intrinsic-size: 338px;
+  contain-intrinsic-size: 540px;
 }
 
 .project-detail-embed-frame {
+  display: block;
+  width: 100%;
+  height: 100%;
   border: none;
 }
 
@@ -163,11 +204,25 @@
   padding: 6px 10px;
   background: var(--project-detail-button-bg-light);
   color: var(--project-detail-text);
-  border-radius: 16px;
+  border-radius: 2px;
   text-decoration: none;
   font-family: "Raleway", sans-serif;
   font-size: 12px;
   border: 1px solid var(--project-detail-border);
+}
+
+.project-detail-pdf-link {
+  display: inline-flex;
+  width: fit-content;
+  margin: 18px 0 30px;
+  padding: 7px 12px;
+  border: 1px solid rgba(152, 213, 255, 0.74);
+  border-radius: 999px;
+  color: var(--project-detail-text);
+  font-family: "Raleway", sans-serif;
+  font-size: 13px;
+  line-height: 1.25;
+  text-decoration: none;
 }
 
 .project-detail-cta {
@@ -181,11 +236,36 @@
 
 .project-detail-cta-button {
   padding: 10px 20px;
-  background: var(--project-detail-button-bg);
-  color: var(--project-detail-button-text);
+  background: transparent;
+  color: var(--project-detail-text);
+  border-color: rgba(152, 213, 255, 0.74);
+  border-radius: 999px;
   font-weight: 700;
 }
 
 .project-detail-container > .footer-root--floating {
   padding-bottom: calc(env(safe-area-inset-bottom) + 8px);
+}
+
+@media (max-width: 767px) {
+  .project-detail-container {
+    padding: 14px;
+  }
+
+  .project-detail-body {
+    margin-left: 0;
+  }
+
+  .project-detail-intro {
+    text-align: left;
+  }
+
+  .project-detail-meta-row {
+    grid-template-columns: 1fr;
+    gap: 6px;
+  }
+
+  .project-detail-meta-row dd {
+    justify-content: flex-start;
+  }
 }

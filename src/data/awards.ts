@@ -12,20 +12,20 @@ const awardsData: AwardsBySection = {
     {
       title: "Adobe Digital Edge Awards Winner",
       year: "2024",
-      description: "App design featured at Adobe MAX 2024 Conference",
-      link: "https://www.behance.net/gallery/205694787/Computer-Science-Pennsylvania-USA",
+      description: "Selected from 2,400+ entries; Featured at Adobe MAX 2024 Conference",
+      link: "https://www.adobe.com/max.html",
     },
     {
       title: "Stavros Niarchos Foundation Paideia Fellow",
       year: "2024",
-      description: "Interdisciplinary fellowship at the University of Pennsylvania",
-      link: "https://snfpaideia.upenn.edu/people/ximing-luo/",
+      description: "Interdisciplinary fellowship, 1 of 26 selected",
+      link: "https://snfpaideia.upenn.edu/fellowships/fellowship-information/",
     },
     {
       title: "Wharton Directed Reading Program",
       year: "2025",
-      description: "One of five projects in selective Wharton research program",
-      link: "https://sites.google.com/view/wharton-drp/previous/spring-2025",
+      description: "1 of 5 projects selected",
+      link: "https://sites.google.com/view/wharton-drp/about?authuser=0",
     },
     {
       title: "MIT Reality Hacks 2025 Winner",
@@ -38,12 +38,6 @@ const awardsData: AwardsBySection = {
       year: "2024",
       description: "Intersystems Challenge Winner",
       link: "",
-    },
-    {
-      title: "NCWIT Aspirations for Computing Award Winner",
-      year: "2023",
-      description: "Recognized for excellence and leadership in computing",
-      link: "https://www.aspirations.org/people/ximing-l/129010",
     },
   ],
   SCHOLARSHIPS: [
@@ -85,8 +79,8 @@ const awardsData: AwardsBySection = {
     {
       title: "SIGGRAPH Conference SpaceTime Gallery",
       year: "2022",
-      description: "International 2022 SpaceTime Competition",
-      link: "https://education.siggraph.org/spacetime/gallery/2022",
+      description: "International Competition",
+      link: "",
     },
     {
       title: "The World Art Institute of Youth – Centre for UNESCO",
@@ -103,19 +97,8 @@ const awardsData: AwardsBySection = {
       year: "2022",
       description: "",
     },
-    {
-      title: "Celebrating Art National Art Anthologies",
-      year: "2020-2022",
-      description: "",
-      link: "",
-    },
   ],
   AWARDS: [
-    {
-      title: "American Computer Science League State 1st Place",
-      year: "2022",
-      description: "",
-    },
     {
       title: "Scholastic Art and Writing Awards",
       year: "2023",
@@ -123,10 +106,21 @@ const awardsData: AwardsBySection = {
       link: "",
     },
     {
+      title: "NCWIT Aspirations for Computing Award Winner",
+      year: "2023",
+      description: "",
+      link: "https://www.aspirations.org/people/ximing-l/129010",
+    },
+    {
+      title: "American Computer Science League State 1st Place",
+      year: "2022",
+      description: "",
+    },
+    {
       title: "Winner, Illustrators of the Future",
       year: "2022",
-      description: " ~$20,000 & Art published in bestselling anthology",
-      link: "https://writersofthefuture.com/introducing-the-illustrators-of-the-future-winners-of-2023/",
+      description: "",
+      link: "",
     },
     {
       title: "1st place, Reflections Visual Arts Outstanding Interpretation",
@@ -145,20 +139,21 @@ const awardsData: AwardsBySection = {
       description: "",
     },
     {
-      title: "1st place, Space Foundation International Student Art Contest",
+      title: "1st place, Space Foundation International Art Contest",
       year: "2021",
       description: "",
       link: "",
     },
     {
-      title: "1st place, 11th Annual International Children's Art Contest",
-      year: "2021",
-      description: "",
-    },
-    {
       title: "Winner, International Creative Karuta Award",
       year: "2020",
       description: "",
+    },
+    {
+      title: "Celebrating Art National Art Anthologies",
+      year: "2020-2022",
+      description: "",
+      link: "",
     },
   ],
 }

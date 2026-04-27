@@ -39,7 +39,7 @@
   color: var(--about-text);
   font-family: "Bodoni Moda", serif;
   font-optical-sizing: auto;
-  font-size: clamp(14px, 1.6vw, 18px);
+  font-size: clamp(34px, 6vw, 46px);
   font-weight: 400;
   font-style: normal;
   line-height: 1.35;
@@ -75,31 +75,8 @@
   text-underline-offset: 0.16em;
 }
 
-.about-inline-link-button {
-  margin: 0;
-  border: 0;
-  border-radius: 0;
-  padding: 0;
-  background: transparent;
-  color: inherit;
-  cursor: pointer;
-  font-family: inherit;
-  font-size: inherit;
-  font-weight: inherit;
-  line-height: inherit;
-  text-decoration: underline;
-  text-decoration-thickness: 1px;
-  text-underline-offset: 0.16em;
-  vertical-align: baseline;
-}
-
-.about-inline-link-button:focus-visible {
-  outline: 2px solid currentColor;
-  outline-offset: 3px;
-}
-
 .about-detail-section {
-  margin-top: clamp(30px, 5vw, 52px);
+  margin-top: clamp(24px, 4vw, 42px);
 }
 
 .about-section-title {
@@ -114,16 +91,32 @@
   letter-spacing: 0;
 }
 
+.about-subsection-title {
+  margin: 18px 0 6px;
+  color: var(--about-text);
+  font-family: "Raleway", sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.35;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  opacity: 0.62;
+}
+
+.about-awards-group:first-child .about-subsection-title {
+  margin-top: 0;
+}
+
 .about-row {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
   gap: 18px;
   align-items: baseline;
-  padding: 12px 0 14px;
-  border-bottom: 1px solid var(--about-border);
+  padding: 7px 0 8px;
+  border-bottom: 1px solid rgba(152, 213, 255, 0.42);
   color: var(--about-text);
   font-size: 16px;
-  line-height: 1.6;
+  line-height: 1.45;
   opacity: 0.68;
 }
 
@@ -140,6 +133,10 @@
   white-space: nowrap;
   font: inherit;
   text-align: right;
+}
+
+.about-award-row {
+  font-size: 15px;
 }
 
 @media (max-width: 960px) {
@@ -167,10 +164,6 @@
     font-size: 16px;
   }
 
-  .about-title {
-    font-size: clamp(14px, 1.6vw, 18px);
-  }
-
   .about-row {
     grid-template-columns: 1fr;
     gap: 4px;
@@ -179,6 +172,15 @@
 
   .about-row time {
     text-align: left;
+  }
+
+  .about-detail-section--mobile-inline-years .about-row {
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 18px;
+  }
+
+  .about-detail-section--mobile-inline-years .about-row time {
+    text-align: right;
   }
 
 }

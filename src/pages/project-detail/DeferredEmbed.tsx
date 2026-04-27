@@ -4,6 +4,7 @@ import { CONTENT_THEME_TOKENS, THEME_VISUAL_TOKENS, type ThemeType } from "../..
 import {
   PDF_EMBED_LOAD_AHEAD_MARGIN,
   VIDEO_EMBED_LOAD_AHEAD_MARGIN,
+  getPdfLinkLabel,
   isPdfSource,
   preconnectToEmbedOrigin,
 } from "./projectDetail.shared"
@@ -60,7 +61,7 @@ const DeferredEmbed = ({ src, title, theme }: DeferredEmbedProps) => {
             rel="noopener noreferrer"
             className="project-detail-embed-open"
           >
-            {isPdf ? "Open PDF" : "Open"}
+            {isPdf ? getPdfLinkLabel(src, title) : "Open video"}
           </a>
         </>
       )}

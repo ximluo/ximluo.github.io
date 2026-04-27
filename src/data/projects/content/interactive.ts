@@ -9,6 +9,7 @@ const interactiveProjects: ProjectContent[] = [
       "Web Exploratorium is a playground of mini interactive experiments built with React Three Fiber and Vite. Explore a 3D TV model with clickable hotspots that launch creative demos powered by p5.js and smooth CSS animations.",
     languages: ["JavaScript", "Vite", "React Three Fiber"],
     tagline: "Interactive web experiments",
+    timeline: "",
     categories: ["software", "web", "interactive", "3D"],
     sections: [
       {
@@ -66,6 +67,7 @@ const interactiveProjects: ProjectContent[] = [
       "Lost@Penn is a web platform that helps the Penn community report and find lost items across campus. Built with React.js, Firebase, and Tailwind, it offers a centralized, easy to use solution to a common student problem. Through user research and iterative design, we created a trustworthy and intuitive platform focused on usability and real needs.",
     languages: ["React.js", "Tailwind", "Firebase"],
     tagline: "Penn lost item platform",
+    timeline: "2024",
     categories: ["software", "web", "ux", "community"],
     sections: [
       {
@@ -93,6 +95,7 @@ const interactiveProjects: ProjectContent[] = [
       "Two immersive 360 degree VR experiences for Meta Quest 3 built in Unreal Engine 5.5. Both feature spatial audio, interactive elements, and NavMesh based locomotion: “Portals through the Season” with seamless level streaming portals; “DreamScape” with grabbable crystals in a mushroom forest.",
     languages: ["Unreal Engine", "Blueprints", "C++"],
     tagline: "Meta Quest VR scenes",
+    timeline: "2025",
     categories: ["graphics", "VR", "Unreal", "Quest"],
     sections: [
       {
@@ -115,6 +118,7 @@ const interactiveProjects: ProjectContent[] = [
       "A collection of real time GLSL shaders written in C++ and OpenGL. Each shader demonstrates a different visual effect or lighting model, including vertex displacement, lighting, and post processing filters.",
     languages: ["C++", "OpenGL", "GLSL"],
     tagline: "OpenGL shader collection",
+    timeline: "2024",
     categories: ["graphics", "shaders"],
     sections: [
       {

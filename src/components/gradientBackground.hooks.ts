@@ -98,6 +98,7 @@ const paintNoiseCanvas = (
 interface UseGradientNoiseCanvasOptions {
   noiseCanvasRef: RefObject<HTMLCanvasElement | null>
   interBubbleRef: RefObject<HTMLDivElement | null>
+  enableInteractiveBubble: boolean
   isMobileOrTablet: boolean
   viewportWidth: number
   viewportHeight: number
@@ -106,6 +107,7 @@ interface UseGradientNoiseCanvasOptions {
 export const useGradientNoiseCanvas = ({
   noiseCanvasRef,
   interBubbleRef,
+  enableInteractiveBubble,
   isMobileOrTablet,
   viewportWidth,
   viewportHeight,
@@ -121,7 +123,7 @@ export const useGradientNoiseCanvas = ({
 
     paintNoiseCanvas(canvas, ctx, viewportWidth, viewportHeight)
 
-    if (isMobileOrTablet) return
+    if (isMobileOrTablet || !enableInteractiveBubble) return
 
     let curX = 0
     let curY = 0
@@ -150,7 +152,14 @@ export const useGradientNoiseCanvas = ({
       window.removeEventListener("mousemove", onMouseMove)
       cancelAnimationFrame(rafId)
     }
-  }, [interBubbleRef, isMobileOrTablet, noiseCanvasRef, viewportHeight, viewportWidth])
+  }, [
+    enableInteractiveBubble,
+    interBubbleRef,
+    isMobileOrTablet,
+    noiseCanvasRef,
+    viewportHeight,
+    viewportWidth,
+  ])
 }
 
 interface UseHomeFlowerOverlayOptions {

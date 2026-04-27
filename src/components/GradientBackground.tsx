@@ -45,12 +45,15 @@ const GradientBackground: React.FC<GradientBackgroundProps> = ({ theme, children
   const isMobileViewport = viewportWidth <= 767
   const isHomePage = location.pathname === "/"
   const isAboutPage = location.pathname.startsWith("/about")
-  const shouldShowRightEdgeOverlay = isAboutPage
+  const shouldShowRightEdgeOverlay =
+    isAboutPage && !isMobileOrTablet && viewportWidth > LAPTOP_BREAKPOINT
+  const gradientGlowOpacityScale = isHomePage ? 0.7 : isAboutPage ? 0.75 : 1
   const { overlayOpacity } = useHomeFlowerOverlay({ isHomePage })
 
   useGradientNoiseCanvas({
     noiseCanvasRef,
     interBubbleRef,
+    enableInteractiveBubble: isHomePage,
     isMobileOrTablet,
     viewportWidth,
     viewportHeight,
@@ -108,8 +111,9 @@ const GradientBackground: React.FC<GradientBackgroundProps> = ({ theme, children
       <GradientCircles
         useSafariMode={useSafariMode}
         isMobileOrTablet={isMobileOrTablet}
+        showInteractiveBubble={isHomePage}
         interBubbleRef={interBubbleRef}
-        opacityScale={isHomePage ? 0.7 : 1}
+        opacityScale={gradientGlowOpacityScale}
       />
 
       {shouldShowRightEdgeOverlay && (

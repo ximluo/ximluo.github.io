@@ -3,6 +3,7 @@ import type React from "react"
 interface GradientCirclesProps {
   useSafariMode: boolean
   isMobileOrTablet: boolean
+  showInteractiveBubble: boolean
   interBubbleRef: React.RefObject<HTMLDivElement | null>
   opacityScale?: number
 }
@@ -10,6 +11,7 @@ interface GradientCirclesProps {
 export const GradientCircles = ({
   useSafariMode,
   isMobileOrTablet,
+  showInteractiveBubble,
   interBubbleRef,
   opacityScale = 1,
 }: GradientCirclesProps) => {
@@ -26,7 +28,7 @@ export const GradientCircles = ({
         width: "var(--circle-size)",
         height: "var(--circle-size)",
         background: `radial-gradient(circle at center, rgba(var(${varName}),${0.6 * glowScale}) 0%, rgba(var(${varName}),0) 50%) no-repeat`,
-        mixBlendMode: "var(--blending)" as React.CSSProperties["mixBlendMode"],
+        mixBlendMode: "normal",
         filter: useSafariMode ? "blur(40px)" : "none",
         ...extra,
       }}
@@ -80,14 +82,14 @@ export const GradientCircles = ({
         opacity: 0.5 * glowScale,
       })}
 
-      {!isMobileOrTablet && (
+      {showInteractiveBubble && !isMobileOrTablet && (
         <div
           ref={interBubbleRef}
           style={{
             position: "absolute",
             background:
               `radial-gradient(circle at center, rgba(var(--color-interactive),${0.5 * glowScale}) 0%, rgba(var(--color-interactive),0) 50%)`,
-            mixBlendMode: "var(--blending)" as React.CSSProperties["mixBlendMode"],
+            mixBlendMode: "normal",
             width: "140%",
             height: "140%",
             top: "-70%",

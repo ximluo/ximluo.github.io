@@ -2,7 +2,12 @@ import type React from "react"
 import type { ThemeType } from "../../theme/tokens"
 import DeferredEmbed from "./DeferredEmbed"
 import ProgressiveDetailImage from "./ProgressiveDetailImage"
-import { isPdfSource, parseTextWithLinks, type ProjectRecord } from "./projectDetail.shared"
+import {
+  getPdfLinkLabel,
+  isPdfSource,
+  parseTextWithLinks,
+  type ProjectRecord,
+} from "./projectDetail.shared"
 
 interface ProjectDetailSectionsProps {
   project: ProjectRecord
@@ -22,7 +27,19 @@ const ProjectDetailSections: React.FC<ProjectDetailSectionsProps> = ({ project, 
         }
 
         if (section.video) {
-          if (isPdfSource(section.video)) return null
+          if (isPdfSource(section.video)) {
+            return (
+              <a
+                key={`pdf-${idx}`}
+                className="project-detail-pdf-link"
+                href={section.video}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {getPdfLinkLabel(section.video, project.name)}
+              </a>
+            )
+          }
 
           return (
             <DeferredEmbed

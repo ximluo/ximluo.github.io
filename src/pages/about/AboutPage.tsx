@@ -1,7 +1,7 @@
-import type React from "react"
-import { useState } from "react"
-import AwardsModal from "../../components/AwardsModal"
+import React from "react"
 import Footer from "../../components/Footer"
+import { aboutContent, type AboutRow, type AboutTextPart } from "../../data/about"
+import awardsData from "../../data/awards"
 import {
   CONTENT_THEME_TOKENS,
   HOME_THEME_TOKENS,
@@ -14,8 +14,85 @@ interface AboutProps {
   theme: ThemeType
 }
 
+function renderTextParts(parts: AboutTextPart[], uiRegion: string) {
+  return parts.map((part, index) => {
+    if (typeof part === "string") {
+      return <React.Fragment key={`${uiRegion}-${index}`}>{part}</React.Fragment>
+    }
+
+    const isEmail = part.href.startsWith("mailto:")
+
+    return (
+      <a
+        key={`${uiRegion}-${part.text}-${index}`}
+        className={isEmail ? "about-email-link" : "about-link"}
+        href={part.href}
+        target={isEmail ? undefined : "_blank"}
+        rel={isEmail ? undefined : "noopener noreferrer"}
+        onClick={
+          part.analyticsId
+            ? () => {
+                trackExternalLinkClick({
+                  linkId: part.analyticsId ?? part.text,
+                  href: part.href,
+                  uiRegion,
+                })
+              }
+            : undefined
+        }
+      >
+        {part.text}
+      </a>
+    )
+  })
+}
+
+interface AboutRowLineProps {
+  row: AboutRow
+  className?: string
+}
+
+const AboutRowLine: React.FC<AboutRowLineProps> = ({ row, className = "" }) => {
+  const title = row.href ? (
+    <a className="about-link" href={row.href} target="_blank" rel="noopener noreferrer">
+      {row.title}
+    </a>
+  ) : (
+    row.title
+  )
+
+  return (
+    <div className={`about-row ${className}`.trim()}>
+      <span>
+        {title}
+        {row.detail && <span> / {row.detail}</span>}
+      </span>
+      <time>{row.year}</time>
+    </div>
+  )
+}
+
+interface AboutRowsSectionProps {
+  id: string
+  title: string
+  rows: AboutRow[]
+}
+
+const AboutRowsSection: React.FC<AboutRowsSectionProps> = ({ id, title, rows }) => (
+  <section
+    className="about-detail-section about-detail-section--mobile-inline-years"
+    aria-labelledby={id}
+  >
+    <h2 id={id} className="about-section-title">
+      {title}
+    </h2>
+    {rows.map((row) => (
+      <AboutRowLine key={`${title}-${row.title}-${row.year}`} row={row} />
+    ))}
+  </section>
+)
+
 const About: React.FC<AboutProps> = ({ theme }) => {
-  const [showAwards, setShowAwards] = useState(false)
   const colors = CONTENT_THEME_TOKENS[theme]
   const homeColors = HOME_THEME_TOKENS[theme]
 
@@ -34,182 +111,61 @@ const About: React.FC<AboutProps> = ({ theme }) => {
       <main className="about-shell">
         <div className="about-content">
           <section className="about-bio" aria-label="About Ximing Luo">
-            <h1 className="about-title">Hi, I'm Ximing!</h1>
+            <h1 className="about-title">{aboutContent.title}</h1>
 
             <p className="about-paragraph about-paragraph--intro">
-              I'm based at UPenn, studying Computer Science (
-              <a
-                className="about-link"
-                href="http://cg.cis.upenn.edu/dmd.html"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                Digital Media Design
-              </a>
-              ) and Economics. I build software, interfaces, and immersive tools across mobile,
-              graphics, XR, and visual systems.
+              {renderTextParts(aboutContent.intro, "about_intro")}
             </p>
-
-            <p className="about-paragraph">Outside of classes and building I'm:</p>
-            <ul className="about-list" aria-label="Highlights">
-              <li>
-                Instructor for iOS Programming{" "}
-                <a
-                  className="about-link"
-                  href="https://www.seas.upenn.edu/~cis1951/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  (CIS 1951)
-                </a>{" "}
-                @ Penn
-              </li>
-              <li>
-                President of{" "}
-                <a
-                  className="about-link"
-                  href="https://wics.cis.upenn.edu"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  Women in Computer Science
-                </a>
-              </li>
-              <li>
-                Developer at{" "}
-                <a
-                  className="about-link"
-                  href="https://pennlabs.org/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  Penn Labs
-                </a>{" "}
-                and{" "}
-                <a
-                  className="about-link"
-                  href="https://pennspark.org/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  Penn Spark
-                </a>
-              </li>
-              <li>
-                FemmeHacks Director and{" "}
-                <a
-                  className="about-link"
-                  href="https://snfpaideia.upenn.edu/fellowships/fellowship-information/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  SNF Paideia Fellow
-                </a>
-              </li>
-            </ul>
 
             <p className="about-paragraph about-paragraph--contact">
-              Say hello at{" "}
-              <a
-                className="about-email-link"
-                href="mailto:ximluo@upenn.edu"
-                onClick={() => {
-                  trackExternalLinkClick({
-                    linkId: "email",
-                    href: "mailto:ximluo@upenn.edu",
-                    uiRegion: "about_bio",
-                  })
-                }}
-              >
-                ximluo@upenn.edu
-              </a>
-              . My work has been recognized by{" "}
-              <a
-                className="about-link"
-                href="https://www.adobe.com/creativecloud/buy/students.html?"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                Adobe
-              </a>{" "}
-              and{" "}
-              <button
-                className="about-inline-link-button"
-                type="button"
-                onClick={() => setShowAwards(true)}
-              >
-                other awards
-              </button>
-              .
+              {renderTextParts(aboutContent.contact, "about_bio")}
             </p>
 
-            <section className="about-detail-section" aria-labelledby="about-experience-title">
-              <h2 id="about-experience-title" className="about-section-title">
-                Experience
-              </h2>
-              <div className="about-row">
-                <span>
-                  Apple <span>/ Incoming</span>
-                </span>
-                <time>2026</time>
-              </div>
-              <div className="about-row">
-                <span>
-                  Apollo Global Management <span>/ Software Engineer</span>
-                </span>
-                <time>Prev</time>
-              </div>
-              <div className="about-row">
-                <span>
-                  Penn Labs <span>/ Developer</span>
-                </span>
-                <time>Penn</time>
-              </div>
-              <div className="about-row">
-                <span>
-                  Penn Spark <span>/ Developer</span>
-                </span>
-                <time>Penn</time>
-              </div>
-              <div className="about-row">
-                <span>
-                  CIS 1951 <span>/ iOS Programming Instructor</span>
-                </span>
-                <time>Penn</time>
-              </div>
-            </section>
+            <AboutRowsSection
+              id="about-experience-title"
+              title="Experience"
+              rows={aboutContent.experience}
+            />
 
-            <section className="about-detail-section" aria-labelledby="about-education-title">
-              <h2 id="about-education-title" className="about-section-title">
-                Education
+            <AboutRowsSection
+              id="about-activities-title"
+              title="Activities"
+              rows={aboutContent.activities}
+            />
+
+            <section className="about-detail-section" aria-labelledby="about-awards-title">
+              <h2 id="about-awards-title" className="about-section-title">
+                Awards &amp; Recognition
               </h2>
-              <div className="about-row">
-                <span>
-                  University of Pennsylvania <span>/ Computer Science DMD + Economics</span>
-                </span>
-                <time>2027</time>
-              </div>
-              <div className="about-row">
-                <span>
-                  SNF Paideia <span>/ Fellow</span>
-                </span>
-                <time>Penn</time>
-              </div>
-              <div className="about-row">
-                <span>
-                  CIS 5120 and CIS 5600 <span>/ Previous TA</span>
-                </span>
-                <time>Penn</time>
+              <div className="about-awards-sections">
+                {Object.entries(awardsData).map(([section, awards]) => (
+                  <section key={section} className="about-awards-group">
+                    <h3 className="about-subsection-title">{section}</h3>
+                    {awards.map((award) => {
+                      const hasLink = Boolean(award.link?.trim())
+
+                      return (
+                        <AboutRowLine
+                          key={`${section}-${award.title}-${award.year}`}
+                          className="about-award-row"
+                          row={{
+                            title: award.title,
+                            detail: award.description,
+                            year: award.year,
+                            href: hasLink ? award.link : undefined,
+                          }}
+                        />
+                      )
+                    })}
+                  </section>
+                ))}
               </div>
             </section>
           </section>
-
         </div>
       </main>
 
       <Footer theme={theme} />
-
-      {showAwards && <AwardsModal onClose={() => setShowAwards(false)} theme={theme} />}
     </div>
   )
 }
