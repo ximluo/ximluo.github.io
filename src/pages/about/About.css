@@ -53,18 +53,8 @@
 }
 
 .about-paragraph--intro,
-.about-list,
 .about-paragraph--contact {
   margin-bottom: clamp(28px, 4vw, 48px);
-}
-
-.about-list {
-  padding-left: 1.25em;
-  opacity: 0.68;
-}
-
-.about-list li {
-  padding-left: 0.18em;
 }
 
 .about-link,

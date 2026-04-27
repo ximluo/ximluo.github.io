@@ -54,13 +54,6 @@ export const THEME_VISUAL_TOKENS = {
     surfaceProjectEmbed: "rgba(121, 85, 189, 0.08)",
     projectEmbedSkeletonGradient:
       "linear-gradient(120deg, rgba(121, 85, 189, 0.06), rgba(121, 85, 189, 0.14), rgba(121, 85, 189, 0.06))",
-    asciiGlow: "rgba(223, 30, 155, 0.5)",
-    asciiBorder: "rgba(223, 30, 155, 1)",
-    asciiText: "rgba(223, 30, 155, 1)",
-    homeBubbleBase: "rgba(255, 255, 255, 0.18)",
-    homeBubbleHover: "rgba(255, 255, 255, 0.28)",
-    homeBubbleBorder: "rgba(255, 255, 255, 0.55)",
-    homeBubbleGlow: "rgba(223, 30, 155, 0.35)",
   },
   water: {
     navGlowActive: "0 0 15px rgba(134, 196, 240, 0.4)",
@@ -75,13 +68,6 @@ export const THEME_VISUAL_TOKENS = {
     surfaceProjectEmbed: "rgba(8, 34, 163, 0.08)",
     projectEmbedSkeletonGradient:
       "linear-gradient(120deg, rgba(8, 34, 163, 0.05), rgba(8, 34, 163, 0.12), rgba(8, 34, 163, 0.05))",
-    asciiGlow: "rgba(134, 196, 240, 0.5)",
-    asciiBorder: "rgb(134, 196, 240)",
-    asciiText: "rgb(134, 196, 240)",
-    homeBubbleBase: "rgba(10, 40, 90, 0.28)",
-    homeBubbleHover: "rgba(20, 70, 130, 0.35)",
-    homeBubbleBorder: "rgba(255, 255, 255, 0.35)",
-    homeBubbleGlow: "rgba(134, 196, 240, 0.3)",
   },
 } as const
 

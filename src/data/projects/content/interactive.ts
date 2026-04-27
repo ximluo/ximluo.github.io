@@ -83,7 +83,7 @@ const interactiveProjects: ProjectContent[] = [
         text: "Read more at: [Lost@Penn Case Study](https://medium.com/@ximingluo/lost-penn-863d1706a193)",
       },
       {
-        video: "/images/lost.pdf",
+        video: "/images/Lost-at-Penn.pdf",
       },
     ],
   },

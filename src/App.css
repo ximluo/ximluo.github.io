@@ -123,26 +123,6 @@
   opacity: 1;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
-}
-
-.App-link {
-  color: #61dafb;
-}
-
 .main-content-scroll {
   scrollbar-width: none;
   -ms-overflow-style: none;
@@ -186,20 +166,6 @@
   background-color: var(--button-bg);
 }
 
-.main-content-scroll--home.main-content-scroll--home-locked {
-  overflow: hidden;
-  scroll-snap-type: none;
-  scroll-behavior: auto;
-  overscroll-behavior-y: none;
-  scrollbar-width: none;
-  -ms-overflow-style: none;
-}
-
-.main-content-scroll--home.main-content-scroll--home-locked::-webkit-scrollbar {
-  width: 0;
-  height: 0;
-}
-
 .main-content-scroll--page {
   overflow: auto;
   align-items: stretch;
@@ -219,19 +185,6 @@
     scroll-behavior: auto;
     overscroll-behavior-y: auto;
   }
-}
-
-.app-footer-shell {
-  width: 100%;
-  margin-top: auto;
-  flex-shrink: 0;
-  position: relative;
-  z-index: 50;
-  background: transparent;
-}
-
-.app-footer-shell--home {
-  background: transparent;
 }
 
 .fade {
