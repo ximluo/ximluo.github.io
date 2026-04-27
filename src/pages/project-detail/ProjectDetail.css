@@ -153,10 +153,6 @@
   text-align: left;
 }
 
-.project-detail-paragraph--compact {
-  margin: 0;
-}
-
 .project-detail-inline-link {
   color: inherit;
   text-decoration: underline;

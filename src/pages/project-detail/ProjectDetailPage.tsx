@@ -63,7 +63,6 @@ const ProjectDetail: React.FC<ProjectDetailProps> = ({ theme }) => {
         ["--project-detail-text" as string]: themeTokens["--color-text"],
         ["--project-detail-border" as string]: themeTokens["--border-color"],
         ["--project-detail-accent" as string]: themeTokens["--color-accent-primary"],
-        ["--project-detail-button-bg-light" as string]: themeTokens["--button-bg-light"],
       }}
     >
       <div className="project-detail-shell">

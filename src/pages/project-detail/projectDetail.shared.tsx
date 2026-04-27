@@ -1,10 +1,9 @@
 import type { JSX } from "react"
-import projects from "../../data/projects"
+import type { Project } from "../../data/projects"
 
-export type ProjectRecord = (typeof projects)[number]
+export type ProjectRecord = Project
 
 export const DETAIL_IMAGE_SIZES = "(max-width: 840px) calc(100vw - 40px), 800px"
-export const DETAIL_EMBED_MAX_WIDTH = "600px"
 export const GIF_LOAD_AHEAD_MARGIN = "650px 0px"
 export const VIDEO_EMBED_LOAD_AHEAD_MARGIN = "900px 0px"
 export const PDF_EMBED_LOAD_AHEAD_MARGIN = "800px 0px"

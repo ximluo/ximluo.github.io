@@ -101,9 +101,7 @@ const Creative: React.FC<CreativeProps> = ({ theme }) => {
     <div
       className="creative-container"
       style={{
-        ["--creative-scrollbar-thumb" as string]: colors["--button-bg"],
         ["--creative-text" as string]: colors["--color-text"],
-        ["--creative-border" as string]: colors["--border-color"],
         ["--creative-card-bg" as string]: cardBackground,
       }}
     >

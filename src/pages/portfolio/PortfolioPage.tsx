@@ -117,9 +117,7 @@ const Portfolio: React.FC<PortfolioProps> = ({ theme }) => {
     <div
       className="portfolio-container"
       style={{
-        ["--portfolio-scrollbar-thumb" as string]: currentTheme["--button-bg"],
         ["--portfolio-text" as string]: currentTheme["--color-text"],
-        ["--portfolio-border" as string]: currentTheme["--border-color"],
         ["--portfolio-card-bg" as string]: cardBackground,
       }}
     >

@@ -2,11 +2,7 @@ import React from "react"
 import Footer from "../../components/Footer"
 import { aboutContent, type AboutRow, type AboutTextPart } from "../../data/about"
 import awardsData from "../../data/awards"
-import {
-  CONTENT_THEME_TOKENS,
-  HOME_THEME_TOKENS,
-  type ThemeType,
-} from "../../theme/tokens"
+import { CONTENT_THEME_TOKENS, type ThemeType } from "../../theme/tokens"
 import { trackExternalLinkClick } from "../../utils/analytics"
 import "./About.css"
 
@@ -94,18 +90,12 @@ const AboutRowsSection: React.FC<AboutRowsSectionProps> = ({ id, title, rows }) 
 
 const About: React.FC<AboutProps> = ({ theme }) => {
   const colors = CONTENT_THEME_TOKENS[theme]
-  const homeColors = HOME_THEME_TOKENS[theme]
 
   return (
     <div
       className="about-container"
       style={{
         ["--about-text" as string]: colors["--color-text"],
-        ["--about-link" as string]: homeColors["--link-color"],
-        ["--about-border" as string]: colors["--border-color"],
-        ["--about-button-border" as string]: colors["--button-bg-light"],
-        ["--about-button-bg" as string]: colors["--button-bg"],
-        ["--about-button-text" as string]: colors["--button-text"],
       }}
     >
       <main className="about-shell">

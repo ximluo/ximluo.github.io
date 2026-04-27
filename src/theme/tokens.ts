@@ -52,9 +52,6 @@ export const THEME_VISUAL_TOKENS = {
     surfaceCreativeCard: "rgba(121, 85, 189, 0.1)",
     surfacePortfolioCard: "rgba(121, 85, 189, 0.1)",
     surfaceProjectEmbed: "rgba(121, 85, 189, 0.08)",
-    surfaceProjectOverview: "rgba(121, 85, 189, 0.1)",
-    surfaceAwardsModal: "rgba(121, 85, 189, 0.4)",
-    surfaceAwardsItem: "rgba(121, 85, 189, 0.2)",
     projectEmbedSkeletonGradient:
       "linear-gradient(120deg, rgba(121, 85, 189, 0.06), rgba(121, 85, 189, 0.14), rgba(121, 85, 189, 0.06))",
     asciiGlow: "rgba(223, 30, 155, 0.5)",
@@ -76,9 +73,6 @@ export const THEME_VISUAL_TOKENS = {
     surfaceCreativeCard: "rgba(8, 34, 163, 0.1)",
     surfacePortfolioCard: "rgba(8, 34, 163, 0.25)",
     surfaceProjectEmbed: "rgba(8, 34, 163, 0.08)",
-    surfaceProjectOverview: "rgba(8, 34, 163, 0.1)",
-    surfaceAwardsModal: "rgba(8, 34, 163, 0.2)",
-    surfaceAwardsItem: "rgba(8, 34, 163, 0.1)",
     projectEmbedSkeletonGradient:
       "linear-gradient(120deg, rgba(8, 34, 163, 0.05), rgba(8, 34, 163, 0.12), rgba(8, 34, 163, 0.05))",
     asciiGlow: "rgba(134, 196, 240, 0.5)",
@@ -169,17 +163,6 @@ export const HOME_THEME_TOKENS = {
 export const FOOTER_THEME_TOKENS = {
   bunny: pickTokens(BASE_THEME_TOKENS.bunny, FOOTER_THEME_KEYS),
   water: pickTokens(BASE_THEME_TOKENS.water, FOOTER_THEME_KEYS),
-} as const
-
-export const AWARDS_THEME_TOKENS = {
-  bunny: {
-    ...pickTokens(BASE_THEME_TOKENS.bunny, CONTENT_THEME_KEYS),
-    "--color-text": "rgb(172, 149, 216)",
-    "--color-accent-primary": "rgb(214, 129, 231)",
-    "--button-bg": "rgba(180, 82, 205, 0.8)",
-    "--button-bg-light": "rgba(180, 82, 205, 0.2)",
-  },
-  water: pickTokens(BASE_THEME_TOKENS.water, CONTENT_THEME_KEYS),
 } as const
 
 export const BUNNY_MODAL_THEME_TOKENS = {
