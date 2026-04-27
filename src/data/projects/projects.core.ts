@@ -1,7 +1,7 @@
 import projectsContent from "./projects.content"
-import type { Project } from "./types"
+import type { ProjectContent } from "./types"
 
-export type ProjectCore = Omit<Project, "sections">
+export type ProjectCore = Omit<ProjectContent, "sections">
 
 const projectsCore: ProjectCore[] = projectsContent.map(({ sections, ...core }) => core)
 

@@ -35,7 +35,7 @@
   left: var(--bunny-modal-counter-left, 30px);
   padding: 8px 16px;
   border-radius: 999px;
-  font-family: monospace;
+  font-family: "Raleway", sans-serif;
   font-size: var(--bunny-modal-counter-size, 0.8rem);
   letter-spacing: 0.1em;
   color: var(--bunny-modal-text);

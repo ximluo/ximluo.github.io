@@ -42,7 +42,7 @@ export function HomeIntroPanel({
             <span className="home-hero-name">Ximing Luo</span>
             <span className="home-hero-subtitle">CS and Digital Media Design @ UPenn</span>
             <span className="home-hero-subtitle">Incoming @ Apple</span>
-            <span className="home-hero-emote">Make it real. 𐔌՞. .՞𐦯</span>
+            <span className="home-hero-emote">Make it real. . ݁₊ ⊹ . ݁ ⟡ ݁ . ⊹ ₊ ݁.</span>
           </h1>
         </div>
       </div>

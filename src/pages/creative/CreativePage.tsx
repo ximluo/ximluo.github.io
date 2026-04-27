@@ -109,7 +109,10 @@ const Creative: React.FC<CreativeProps> = ({ theme }) => {
     >
       <div className="creative-shell">
         <div className="creative-header">
-          <h3 className="creative-title">Artwork</h3>
+          <h1 className="creative-title">Artwork</h1>
+          <p className="creative-subtitle">
+            A collection of illustrations, photographs, and visual experiments
+          </p>
         </div>
 
         <div className="creative-content">

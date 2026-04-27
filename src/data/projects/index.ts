@@ -4,7 +4,7 @@ import projectsCore from "./projects.core"
 export const projects = projectsContent
 export { projectsCore }
 
-export type { Project, Section } from "./types"
+export type { Project, ProjectContent, Section } from "./types"
 export type { ProjectCore } from "./projects.core"
 
 export default projectsContent

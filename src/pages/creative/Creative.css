@@ -8,7 +8,7 @@
   flex-direction: column;
   align-items: stretch;
   color: var(--creative-text);
-  font-family: monospace;
+  font-family: "Raleway", sans-serif;
   scrollbar-width: thin;
   scrollbar-color: var(--creative-scrollbar-thumb) transparent;
 }
@@ -39,17 +39,34 @@
 
 .creative-header {
   width: 100%;
-  border-bottom: 1px solid var(--creative-border);
-  padding-bottom: 15px;
-  margin-bottom: 20px;
+  border-bottom: 0;
+  padding: 54px 0 22px;
+  margin-bottom: 34px;
   display: flex;
-  align-items: center;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
 }
 
 .creative-title {
-  margin: 0;
-  font-family: monospace;
+  margin: 0 0 0 -0.04em;
+  font-family: "Bodoni Moda", serif;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
   color: var(--creative-text);
+  font-size: clamp(14px, 1.6vw, 18px);
+  line-height: 1.35;
+}
+
+.creative-subtitle {
+  margin: 0;
+  color: var(--creative-text);
+  font-family: "Raleway", sans-serif;
+  font-size: clamp(14px, 1.6vw, 16px);
+  font-weight: 500;
+  line-height: 1.35;
+  opacity: 0.74;
 }
 
 .creative-content {
@@ -118,7 +135,7 @@
     rgba(0, 0, 0, 0) 100%
   );
   color: rgba(255, 255, 255, 0.96);
-  font-family: monospace;
+  font-family: "Raleway", sans-serif;
   text-align: left;
 }
 
@@ -236,7 +253,7 @@
 
 .artwork-card-title {
   margin: 0;
-  font-family: monospace;
+  font-family: "Raleway", sans-serif;
   font-size: 13px;
   font-weight: 700;
   line-height: 1.25;
@@ -246,8 +263,8 @@
 
 .artwork-card-description {
   margin: 0;
-  font-family: monospace;
-  font-size: 11px;
+  font-family: "Raleway", sans-serif;
+  font-size: 13px;
   line-height: 1.35;
   color: var(--creative-text);
   opacity: 0.72;
@@ -270,6 +287,12 @@
   }
 }
 
+@media (max-width: 1024px) {
+  .creative-title {
+    font-size: calc(clamp(14px, 1.6vw, 18px) + 3px);
+  }
+}
+
 @media (max-width: 640px) {
   .creative-container {
     padding: 20px 14px;
@@ -285,5 +308,9 @@
 
   .artwork-card {
     margin-bottom: 28px;
+  }
+
+  .artwork-card-description {
+    font-size: 12px;
   }
 }

@@ -1,6 +1,6 @@
-import type { Project } from "../types"
+import type { ProjectContent } from "../types"
 
-const researchProjects: Project[] = [
+const researchProjects: ProjectContent[] = [
   {
     id: "statistical-learning-returns",
     name: "Machine Learning in Asset Pricing",
@@ -8,6 +8,7 @@ const researchProjects: Project[] = [
     description:
       "This Wharton Directed Reading Program project investigates whether asset returns can be predicted using modern statistical learning methods. The research evaluates the efficiency of financial markets by applying both classical econometrics and advanced machine learning models to historical stock data.",
     languages: ["Python", "R"],
+    tagline: "Wharton Directed Reading Program project",
     categories: ["software", "finance", "machine learning", "research"],
     sections: [
       {
@@ -29,11 +30,12 @@ const researchProjects: Project[] = [
   },
   {
     id: "hci-research-jhu",
-    name: "Human AI Interaction Projects at JHU",
+    name: "Human AI Interaction at JHU",
     image: "/images/hci.png",
     description:
       "Conducted research in the Intuitive Computing Laboratory under Dr Chien Ming Huang. Contributed to projects on two areas of human AI interaction: end to end co creation of visual stories with generative models, and apology strategies to mitigate errors in voice assistants.",
     languages: ["Python", "React.js"],
+    tagline: "Human AI interaction research",
     categories: ["software", "HCI", "Generative AI", "User Studies"],
     sections: [
       {
@@ -54,6 +56,7 @@ const researchProjects: Project[] = [
     description:
       "Integrated pipeline automating conversion of patient brain MRIs into high quality 3D point cloud models for augmented reality. Enables collaborative visualization and annotation on Microsoft HoloLens head mounted displays.",
     languages: ["Python", "C#"],
+    tagline: "AR MRI visualization pipeline",
     categories: ["software", "Augmented Reality", "Medical Imaging", "Web Development"],
     sections: [
       {

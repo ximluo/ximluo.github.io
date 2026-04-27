@@ -219,9 +219,11 @@ export const useHomeFlowerOverlay = ({ isHomePage }: UseHomeFlowerOverlayOptions
   }, [])
 
   const overlayOpacity = useMemo(() => {
+    if (!isHomePage) return 0
+
     const baseOpacity = !pastIntroDelay ? 0 : (homeFlowerOpacity ?? (edgeVisible ? 1 : 0))
     return overlaySuppressed ? 0 : clampOpacity(baseOpacity)
-  }, [edgeVisible, homeFlowerOpacity, overlaySuppressed, pastIntroDelay])
+  }, [edgeVisible, homeFlowerOpacity, isHomePage, overlaySuppressed, pastIntroDelay])
 
   return { overlayOpacity }
 }

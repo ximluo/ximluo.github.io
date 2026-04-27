@@ -25,37 +25,46 @@
 .portfolio-header {
   width: 90%;
   max-width: 1440px;
-  margin: 0 auto 30px;
-  padding: 0 20px 15px;
+  margin: 0 auto 34px;
+  padding: 54px 20px 22px;
   box-sizing: border-box;
-  border-bottom: 1px solid var(--portfolio-border);
+  border-bottom: 0;
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 10px 20px;
+  align-items: flex-start;
+  flex-direction: column;
+  gap: 8px;
+  text-align: left;
+}
+
+.portfolio-heading-copy {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  text-align: left;
 }
 
 .portfolio-title {
-  font-family: monospace;
+  font-family: "Bodoni Moda", serif;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
   color: var(--portfolio-text);
+  margin: 0 0 0 -0.04em;
+  font-size: clamp(14px, 1.6vw, 18px);
+  line-height: 1.35;
+  text-align: left;
+}
+
+.portfolio-subtitle {
   margin: 0;
-}
-
-.portfolio-filters {
-  display: flex;
-  gap: 8px;
-}
-
-.portfolio-filter-button {
-  padding: 7px 14px;
-  background-color: var(--portfolio-filter-bg);
-  color: var(--portfolio-filter-text);
-  border: none;
-  border-radius: 20px;
-  font-family: monospace;
-  cursor: pointer;
-  text-transform: lowercase;
+  color: var(--portfolio-text);
+  font-family: "Raleway", sans-serif;
+  font-size: clamp(14px, 1.6vw, 16px);
+  font-weight: 500;
+  line-height: 1.35;
+  opacity: 0.74;
+  text-align: left;
 }
 
 .portfolio-grid {
@@ -65,7 +74,7 @@
   width: 90%;
   max-width: 1440px;
   margin: 0 auto;
-  padding: 0;
+  padding: 0 20px;
   box-sizing: border-box;
 }
 
@@ -78,7 +87,7 @@
   background: transparent;
   color: var(--portfolio-text);
   cursor: pointer;
-  font-family: monospace;
+  font-family: "Raleway", sans-serif;
   text-align: left;
 }
 
@@ -141,7 +150,7 @@
 
 .project-card-title {
   margin: 0;
-  font-family: monospace;
+  font-family: "Raleway", sans-serif;
   color: var(--portfolio-text);
   font-size: 13px;
   font-weight: 700;
@@ -152,7 +161,7 @@
 .project-card-description {
   margin: 0;
   color: var(--portfolio-text);
-  font-size: 11px;
+  font-size: 13px;
   line-height: 1.35;
   opacity: 0.72;
   text-align: left;
@@ -175,7 +184,7 @@
   border-radius: 999px;
   padding: 2px 8px;
   color: var(--portfolio-text);
-  font-family: monospace;
+  font-family: "Raleway", sans-serif;
   font-size: 10px;
   font-weight: 700;
   line-height: 1.2;
@@ -199,6 +208,12 @@
   }
 }
 
+@media (max-width: 1024px) {
+  .portfolio-title {
+    font-size: calc(clamp(14px, 1.6vw, 18px) + 3px);
+  }
+}
+
 @media (max-width: 640px) {
   .portfolio-container {
     padding: 20px 14px;
@@ -206,11 +221,13 @@
 
   .portfolio-header {
     padding-inline: 0;
+    align-items: flex-start;
   }
 
   .portfolio-grid {
     grid-template-columns: 1fr;
     gap: 28px;
+    padding-inline: 0;
   }
 
   .project-card-info {
@@ -219,5 +236,9 @@
 
   .project-card-languages {
     max-width: 45%;
+  }
+
+  .project-card-description {
+    font-size: 12px;
   }
 }

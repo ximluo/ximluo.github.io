@@ -1,5 +1,14 @@
 import type React from "react"
-import { useCallback, useEffect, useMemo, useRef, useState } from "react"
+import {
+  lazy,
+  Suspense,
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react"
 import { useNavigate } from "react-router-dom"
 import "./Home.css"
 
@@ -12,6 +21,8 @@ import { HOME_THEME_TOKENS, type ThemeType } from "../../theme/tokens"
 import { HomeIntroPanel } from "./HomeSections"
 import { useHomeViewportState } from "./home.hooks"
 
+const HomeFlowerModel = lazy(() => import("./HomeFlowerModel"))
+
 const HOME_SCROLL_PAGE_COUNT = 3
 const HOME_TALL_PAGE_THRESHOLD_PX = 8
 const HOME_SHOWCASE_DESKTOP_MAX_WIDTH = 1280
@@ -22,19 +33,6 @@ const HOME_SINGLE_COLUMN_BREAKPOINT_PX = 767
 
 function isGifAsset(source: string) {
   return /\.gif(?:$|[?#])/i.test(source)
-}
-
-function getShortCardDescription(text: string) {
-  const trimmed = text.trim()
-  if (!trimmed) return ""
-  const firstSentenceMatch = trimmed.match(/.*?[.!?](?:\s|$)/)
-  return (firstSentenceMatch?.[0] ?? trimmed).trim()
-}
-
-function getFewWordDescription(text: string, maxWords = 7) {
-  const words = getShortCardDescription(text).replace(/\s+/g, " ").split(" ").filter(Boolean)
-  if (words.length <= maxWords) return words.join(" ")
-  return `${words.slice(0, maxWords).join(" ")}...`
 }
 
 function getPhotoMedium(description: string) {
@@ -98,11 +96,13 @@ const Home: React.FC<HomeProps> = ({ theme, phase }) => {
   )
   const homeContainerRef = useRef<HTMLDivElement | null>(null)
   const scrollCueRef = useRef<HTMLButtonElement | null>(null)
+  const projectGridRef = useRef<HTMLDivElement | null>(null)
   const scrollPageRefs = useRef<Array<HTMLElement | null>>([])
   const scrollPageContentRefs = useRef<Array<HTMLElement | null>>([])
 
   const { windowWidth, windowHeight, isMobile, footerHeight } = useHomeViewportState()
   const [sectionHeight, setSectionHeight] = useState<number>(windowHeight || 760)
+  const [flowerLayerHeight, setFlowerLayerHeight] = useState<number>(windowHeight || 760)
 
   const themes = HOME_THEME_TOKENS
   const currentTheme = themes[theme]
@@ -253,6 +253,52 @@ const Home: React.FC<HomeProps> = ({ theme, phase }) => {
     return () => observer.disconnect()
   }, [windowHeight])
 
+  useLayoutEffect(() => {
+    if (typeof window === "undefined") return
+
+    let frameId = 0
+
+    const updateFlowerLayerHeight = () => {
+      frameId = 0
+      const containerNode = homeContainerRef.current
+      const gridNode = projectGridRef.current
+
+      if (!containerNode || !gridNode) {
+        setFlowerLayerHeight((prev) => (prev === sectionHeight ? prev : sectionHeight))
+        return
+      }
+
+      const containerTop = containerNode.getBoundingClientRect().top
+      const gridTop = gridNode.getBoundingClientRect().top
+      const nextHeight = Math.max(Math.round(gridTop - containerTop), sectionHeight)
+
+      setFlowerLayerHeight((prev) => (Math.abs(prev - nextHeight) <= 1 ? prev : nextHeight))
+    }
+
+    const scheduleFlowerLayerHeight = () => {
+      if (frameId) return
+      frameId = window.requestAnimationFrame(updateFlowerLayerHeight)
+    }
+
+    updateFlowerLayerHeight()
+    window.addEventListener("resize", scheduleFlowerLayerHeight)
+
+    const resizeObserver =
+      typeof ResizeObserver === "undefined"
+        ? null
+        : new ResizeObserver(scheduleFlowerLayerHeight)
+    if (resizeObserver) {
+      if (homeContainerRef.current) resizeObserver.observe(homeContainerRef.current)
+      if (projectGridRef.current) resizeObserver.observe(projectGridRef.current)
+    }
+
+    return () => {
+      if (frameId) window.cancelAnimationFrame(frameId)
+      resizeObserver?.disconnect()
+      window.removeEventListener("resize", scheduleFlowerLayerHeight)
+    }
+  }, [sectionHeight, windowHeight, windowWidth])
+
   useEffect(() => {
     if (typeof window === "undefined") return
     const parent = homeContainerRef.current?.parentElement
@@ -267,7 +313,7 @@ const Home: React.FC<HomeProps> = ({ theme, phase }) => {
       const nextTallFlags = Array.from({ length: HOME_SCROLL_PAGE_COUNT }, (_, index) => {
         const pageNode = scrollPageRefs.current[index]
         const contentNode = scrollPageContentRefs.current[index]
-        const measuredHeight = Math.max(pageNode?.scrollHeight ?? 0, contentNode?.scrollHeight ?? 0)
+        const measuredHeight = contentNode?.scrollHeight ?? pageNode?.scrollHeight ?? 0
 
         return measuredHeight > viewportHeight + HOME_TALL_PAGE_THRESHOLD_PX
       })
@@ -327,6 +373,18 @@ const Home: React.FC<HomeProps> = ({ theme, phase }) => {
       }}
     >
       <div className="home-scroll-pages">
+        {phase >= 2 && !isMobile && (
+          <Suspense fallback={null}>
+            <HomeFlowerModel
+              isMobile={isMobile}
+              isSmallScreen={windowHeight <= 700}
+              windowWidth={windowWidth}
+              windowHeight={windowHeight}
+              layerHeight={flowerLayerHeight}
+            />
+          </Suspense>
+        )}
+
         <section
           ref={(node) => {
             scrollPageRefs.current[0] = node
@@ -362,7 +420,7 @@ const Home: React.FC<HomeProps> = ({ theme, phase }) => {
               ["--home-scroll-side-bottom" as string]: `${scrollCueBottom}px`,
             }}
           >
-            SCROLL
+            SCROLL ˋ°•*⁀➷
           </button>
         </section>
 
@@ -387,7 +445,10 @@ const Home: React.FC<HomeProps> = ({ theme, phase }) => {
                 <div className="home-preview-header">
                   <h2 className="home-preview-title">Projects</h2>
                 </div>
-                <div className="home-preview-grid home-preview-grid--projects">
+                <div
+                  ref={projectGridRef}
+                  className="home-preview-grid home-preview-grid--projects"
+                >
                   {featuredProjects.map((project) => (
                     <button
                       key={project.id}
@@ -406,7 +467,7 @@ const Home: React.FC<HomeProps> = ({ theme, phase }) => {
                         <span className="home-project-card-copy">
                           <span className="home-project-card-title">{project.name}</span>
                           <span className="home-project-card-description">
-                            {getFewWordDescription(project.description)}
+                            {project.tagline}
                           </span>
                         </span>
 

@@ -1,13 +1,14 @@
-import type { Project } from "../types"
+import type { ProjectContent } from "../types"
 
-const featuredProjects: Project[] = [
+const featuredProjects: ProjectContent[] = [
   {
     id: "petsteps",
     name: "PetSteps",
     image: "/images/petsteps-app.png",
     description:
       "PetSteps is an award winning iOS app that keeps users active by caring for a virtual pet. Real world walking boosts your pet’s mood and health. It won the Adobe Digital Edge Standout Prize and was featured at Adobe MAX 2024 for its use of AI and AR in fitness. Adobe also featured PetSteps in a marketing campaign.",
-    languages: ["Adobe Digital Edge Winner", "Swift", "SwiftUI"],
+    languages: ["Swift", "SwiftUI"],
+    tagline: "Adobe Digital Edge Awards Winner",
     categories: ["software", "mobile", "AI", "AR"],
     sections: [
       {
@@ -36,7 +37,8 @@ const featuredProjects: Project[] = [
     image: "/images/mini-minecraft.gif",
     description:
       "Custom built 3D voxel game engine inspired by Minecraft, featuring procedural terrain, day night cycles, dynamic lighting, instanced rendering, and a post processing pipeline. I implemented the player physics, raycast based block interaction, and immersive visual effects such as a time interpolated sky with sun arcs, distance fog blending, and a post process system for water and lava overlays.",
-    languages: ["3D Voxel Engine", "C++", "OpenGL", "GLSL"],
+    languages: ["C++", "OpenGL", "GLSL"],
+    tagline: "C++ voxel game engine",
     categories: ["graphics"],
     sections: [
       {
@@ -62,7 +64,8 @@ const featuredProjects: Project[] = [
     image: "/images/mobile.png",
     description:
       "Penn Mobile is the University of Pennsylvania’s official student life app, serving 20,000+ users. Developed by Penn Labs, it brings campus essentials like dining hours, GSR reservations, laundry availability, and student resources directly to students’ phones.",
-    languages: ["Official University App", "Swift", "SwiftUI"],
+    languages: ["Swift", "SwiftUI"],
+    tagline: "Official Penn student app",
     categories: ["software", "mobile", "iOS", "student tools"],
     sections: [
       {
@@ -82,7 +85,8 @@ const featuredProjects: Project[] = [
     image: "/images/rewind.png",
     description:
       "Rewind is an AR memory recall app that won the InterSystems Challenge at HackMIT 2024, integrated with the Apple Vision Pro. It uses Gaussian splatting for 3D scene generation and a LangChain based RAG pipeline with InterSystems IRIS Vector Search for natural language memory queries.",
-    languages: ["HackMIT Winner", "WebXR", "LangChain", "IRIS Vector Search"],
+    languages: ["WebXR", "LangChain", "IRIS Vector Search"],
+    tagline: "HackMIT Winner - AR memory",
     categories: ["software", "AR", "AI", "healthtech"],
     sections: [
       {
@@ -102,7 +106,8 @@ const featuredProjects: Project[] = [
     image: "/images/neuroscent.jpg",
     description:
       "NeuroScent is an XR biofeedback system that promotes mental wellbeing, combining olfaction, vision, and biosensing. Built for MIT Reality Hack 2025, it won the Hardware: Smart Sensing prize and Best Use of OpenBCI.",
-    languages: ["MIT Reality Hack Winner", "C#", "Unity", "Arduino", "Fusion 360"],
+    languages: ["C#", "Unity", "Arduino", "Fusion 360"],
+    tagline: "MIT Reality Hack Winner - XR biosensing",
     categories: ["graphics", "XR", "hardware", "biosensing"],
     sections: [
       {
@@ -134,7 +139,8 @@ const featuredProjects: Project[] = [
     image: "/images/capsule-open.gif",
     description:
       "Penn Capsule transforms photo collections into interactive 3D time capsules that unlock on a specified date. Users customize capsule appearance, upload memories, and later experience a dynamic timelapse of their photos in a 3D environment.",
-    languages: ["3D Time Capsules", "AWS S3", "Node.js", "TypeScript", "MongoDB"],
+    languages: ["AWS S3", "Node.js", "TypeScript", "MongoDB"],
+    tagline: "3D photo capsule app",
     categories: ["software", "web", "3D", "fullstack"],
     sections: [
       {
@@ -179,6 +185,7 @@ const featuredProjects: Project[] = [
     description:
       "An offline Monte Carlo path tracer implemented in C++. Supports multiple integrators, area and point lights, BxDF models, depth of field, and a custom ray intersection engine.",
     languages: ["C++", "OpenGL", "GLSL"],
+    tagline: "C++ Monte Carlo renderer",
     categories: ["graphics", "rendering"],
     sections: [
       {
@@ -253,6 +260,7 @@ const featuredProjects: Project[] = [
     description:
       "A real time shading project from Penn’s Advanced Rendering course. Implements the energy conserving Cook Torrance microfacet BRDF using the Trowbridge Reitz GGX distribution, Schlick’s Fresnel approximation, and the Smith Schlick GGX geometry term.",
     languages: ["C++", "GLSL", "OpenGL"],
+    tagline: "Real time PBR renderer",
     categories: ["graphics", "rendering"],
     sections: [
       {

@@ -30,14 +30,14 @@
   margin: 0 auto;
   flex: 1 0 auto;
   color: var(--project-detail-text);
-  font-family: monospace;
+  font-family: "Raleway", sans-serif;
 }
 
 .project-detail-back-button,
 .project-detail-cta-button {
   border: none;
   border-radius: 20px;
-  font-family: monospace;
+  font-family: "Raleway", sans-serif;
   cursor: pointer;
 }
 
@@ -53,6 +53,10 @@
 
 .project-detail-title {
   margin: 0 0 20px;
+  font-family: "Bodoni Moda", serif;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
   color: var(--project-detail-accent);
 }
 
@@ -161,7 +165,7 @@
   color: var(--project-detail-text);
   border-radius: 16px;
   text-decoration: none;
-  font-family: monospace;
+  font-family: "Raleway", sans-serif;
   font-size: 12px;
   border: 1px solid var(--project-detail-border);
 }

@@ -7,151 +7,149 @@
 }
 
 .about-shell {
-  width: min(1080px, 100%);
+  width: 90%;
+  max-width: 1440px;
   margin: 0 auto 48px;
-  padding: clamp(22px, 5vw, 56px) clamp(12px, 3vw, 28px);
+  padding: clamp(42px, 6vw, 84px) 20px clamp(34px, 5vw, 64px);
   box-sizing: border-box;
-  font-family: monospace;
+  font-family: "Raleway", sans-serif;
   text-align: left;
-}
-
-.about-title {
-  margin: 0 0 28px;
-  color: var(--about-text);
-  font-family: monospace;
-  font-size: clamp(24px, 4vw, 40px);
-  line-height: 1.1;
-  letter-spacing: 0;
 }
 
 .about-content {
   display: grid;
-  grid-template-columns: minmax(260px, 0.86fr) minmax(0, 1.14fr);
-  align-items: center;
-  gap: clamp(28px, 5vw, 58px);
-}
-
-.about-flower-panel {
-  min-width: 0;
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.about-flower-stage {
-  width: min(380px, 100%);
-  height: clamp(360px, 58vh, 560px);
-  min-height: 320px;
-  overflow: visible;
-  pointer-events: none;
-  transition: opacity 0.4s ease;
-}
-
-.about-flower-canvas {
-  width: 100%;
-  height: 100%;
-  display: block;
-  pointer-events: none;
+  grid-template-columns: minmax(0, 1.08fr) minmax(280px, 0.82fr);
+  align-items: start;
+  gap: clamp(34px, 7vw, 96px);
 }
 
 .about-bio {
-  border: 1px solid var(--about-border);
-  border-radius: 2px;
-  background: var(--about-surface);
-  padding: clamp(20px, 4vw, 34px);
+  max-width: 880px;
   box-sizing: border-box;
-  font-size: clamp(13.5px, 1.45vw, 16px);
-  line-height: 1.55;
+  color: var(--about-text);
+  font-family: "Raleway", sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.6;
+  text-align: left;
+}
+
+.about-title {
+  margin: 0 0 clamp(18px, 3vw, 30px) -0.04em;
+  color: var(--about-text);
+  font-family: "Bodoni Moda", serif;
+  font-optical-sizing: auto;
+  font-size: clamp(14px, 1.6vw, 18px);
+  font-weight: 400;
+  font-style: normal;
+  line-height: 1.35;
+  letter-spacing: 0;
 }
 
 .about-paragraph {
   margin: 0;
+  max-width: 900px;
+  opacity: 0.68;
 }
 
-.about-paragraph--spaced,
+.about-paragraph--intro,
 .about-list,
-.about-paragraph--secondary {
-  margin-bottom: clamp(24px, 4vw, 40px);
+.about-paragraph--contact {
+  margin-bottom: clamp(28px, 4vw, 48px);
 }
 
 .about-list {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
+  padding-left: 1.25em;
+  opacity: 0.68;
 }
 
-.about-line {
-  display: flex;
-  align-items: flex-start;
-  gap: 8px;
+.about-list li {
+  padding-left: 0.18em;
 }
 
-.about-line-bullet {
-  flex: 0 0 auto;
-  font-size: 1.15em;
-  font-weight: 700;
-  line-height: 1.1;
-  padding-right: 8px;
-}
-
-.about-line-copy {
-  min-width: 0;
-}
-
-.about-paragraph--secondary {
-  font-size: 0.92em;
-  opacity: 0.78;
-}
-
-.about-link {
-  color: var(--about-link);
+.about-link,
+.about-email-link {
+  color: inherit;
   text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.16em;
 }
 
 .about-inline-link-button {
-  display: inline-flex;
-  align-items: center;
-  margin: 0 3px;
-  border: 1px solid var(--about-button-border);
-  border-radius: 999px;
-  padding: 3px 10px;
-  background: var(--about-button-bg);
-  color: var(--about-button-text);
+  margin: 0;
+  border: 0;
+  border-radius: 0;
+  padding: 0;
+  background: transparent;
+  color: inherit;
   cursor: pointer;
   font-family: inherit;
   font-size: inherit;
-  font-weight: 700;
-  line-height: 1.2;
-  white-space: nowrap;
+  font-weight: inherit;
+  line-height: inherit;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.16em;
   vertical-align: baseline;
 }
 
 .about-inline-link-button:focus-visible {
   outline: 2px solid currentColor;
-  outline-offset: 2px;
+  outline-offset: 3px;
 }
 
-.about-email-link {
-  color: var(--about-link);
-  text-decoration: none;
-  margin-left: 4px;
+.about-detail-section {
+  margin-top: clamp(30px, 5vw, 52px);
 }
 
-@media (max-width: 900px) {
+.about-section-title {
+  margin: 0 0 12px;
+  color: var(--about-text);
+  font-family: "Bodoni Moda", serif;
+  font-optical-sizing: auto;
+  font-size: clamp(14px, 1.6vw, 18px);
+  font-weight: 400;
+  font-style: normal;
+  line-height: 1.35;
+  letter-spacing: 0;
+}
+
+.about-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 18px;
+  align-items: baseline;
+  padding: 12px 0 14px;
+  border-bottom: 1px solid var(--about-border);
+  color: var(--about-text);
+  font-size: 16px;
+  line-height: 1.6;
+  opacity: 0.68;
+}
+
+.about-row > span {
+  min-width: 0;
+}
+
+.about-row span span,
+.about-row time {
+  opacity: 0.72;
+}
+
+.about-row time {
+  white-space: nowrap;
+  font: inherit;
+  text-align: right;
+}
+
+@media (max-width: 960px) {
   .about-shell {
-    width: min(760px, 100%);
+    width: 90%;
   }
 
   .about-content {
     grid-template-columns: 1fr;
-    gap: 22px;
-  }
-
-  .about-flower-stage {
-    width: min(460px, 100%);
-    height: clamp(280px, 40vh, 380px);
-    min-height: 260px;
+    gap: 28px;
   }
 }
 
@@ -161,10 +159,26 @@
   }
 
   .about-shell {
-    padding-top: 20px;
+    width: 90%;
+    padding: 28px 0 clamp(34px, 5vw, 64px);
   }
 
   .about-bio {
-    padding: 18px;
+    font-size: 16px;
   }
+
+  .about-title {
+    font-size: clamp(14px, 1.6vw, 18px);
+  }
+
+  .about-row {
+    grid-template-columns: 1fr;
+    gap: 4px;
+    font-size: 16px;
+  }
+
+  .about-row time {
+    text-align: left;
+  }
+
 }

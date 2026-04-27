@@ -1,5 +1,5 @@
 import type React from "react"
-import { useCallback, useEffect, useMemo, useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import Footer from "../../components/Footer"
 import OptimizedImage from "../../components/ui/OptimizedImage"
@@ -17,14 +17,6 @@ const PROGRESSIVE_GIF_THUMBNAIL_PROJECT_IDS = new Set(["penn-capsule", "mini-min
 
 function isGifAsset(source: string) {
   return /\.gif(?:$|[?#])/i.test(source)
-}
-
-function getShortCardDescription(text: string) {
-  const trimmed = text.trim()
-  if (!trimmed) return ""
-
-  const firstSentenceMatch = trimmed.match(/.*?[.!?](?:\s|$)/)
-  return (firstSentenceMatch?.[0] ?? trimmed).trim()
 }
 
 const LazyImage: React.FC<{
@@ -77,7 +69,7 @@ const LazyImage: React.FC<{
                 justifyContent: "center",
                 color: "rgba(128, 128, 128, 0.6)",
                 fontSize: "14px",
-                fontFamily: "monospace",
+                fontFamily: '"Raleway", sans-serif',
               }}
             >
               Loading...
@@ -104,30 +96,18 @@ const LazyImage: React.FC<{
 }
 
 const Portfolio: React.FC<PortfolioProps> = ({ theme }) => {
-  const [activeFilter, setActiveFilter] = useState<string | null>(null)
   const navigate = useNavigate()
-
-  const filteredProjects = useMemo(() => {
-    if (activeFilter) {
-      return projects.filter((project) => project.categories.includes(activeFilter))
-    }
-    return projects
-  }, [activeFilter])
-
-  const handleFilterClick = useCallback((filter: string) => {
-    setActiveFilter((current) => (current === filter ? null : filter))
-  }, [])
 
   const handleProjectClick = useCallback(
     (projectId: string, projectName: string) => {
       trackProjectCardClick({
         projectId,
         projectName,
-        uiRegion: activeFilter ? `portfolio_grid_filtered_${activeFilter}` : "portfolio_grid",
+        uiRegion: "portfolio_grid",
       })
       navigate(`/portfolio/${projectId}`)
     },
-    [activeFilter, navigate],
+    [navigate],
   )
 
   const currentTheme = CONTENT_THEME_TOKENS[theme]
@@ -144,35 +124,16 @@ const Portfolio: React.FC<PortfolioProps> = ({ theme }) => {
       }}
     >
       <div className="portfolio-header">
-        <h3 className="portfolio-title">Projects:</h3>
-
-        <div className="portfolio-filters">
-          {["software", "graphics"].map((filter) => {
-            const isActive = activeFilter === filter
-            return (
-              <button
-                key={filter}
-                type="button"
-                onClick={() => handleFilterClick(filter)}
-                className="portfolio-filter-button"
-                style={{
-                  ["--portfolio-filter-bg" as string]: isActive
-                    ? currentTheme["--button-bg"]
-                    : currentTheme["--button-bg-light"],
-                  ["--portfolio-filter-text" as string]: isActive
-                    ? currentTheme["--button-text"]
-                    : currentTheme["--color-text"],
-                }}
-              >
-                {isActive ? `${filter} ×` : filter}
-              </button>
-            )
-          })}
+        <div className="portfolio-heading-copy">
+          <h1 className="portfolio-title">Projects</h1>
+          <p className="portfolio-subtitle">
+            Software, interfaces, and immersive tools
+          </p>
         </div>
       </div>
 
       <div className="portfolio-grid">
-        {filteredProjects.map((project) => (
+        {projects.map((project) => (
           <div
             key={project.id}
             onClick={() => handleProjectClick(project.id, project.name)}
@@ -198,9 +159,7 @@ const Portfolio: React.FC<PortfolioProps> = ({ theme }) => {
             <div className="project-card-info">
               <div className="project-card-copy">
                 <h3 className="project-card-title">{project.name}</h3>
-                <p className="project-card-description">
-                  {getShortCardDescription(project.description)}
-                </p>
+                <p className="project-card-description">{project.tagline}</p>
               </div>
 
               <div className="project-card-languages" aria-label="Languages">

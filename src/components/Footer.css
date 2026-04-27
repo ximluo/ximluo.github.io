@@ -3,7 +3,7 @@
   width: 100%;
   box-sizing: border-box;
   color: var(--footer-text);
-  font-family: monospace;
+  font-family: "Raleway", sans-serif;
   font-size: var(--footer-font-size);
 }
 

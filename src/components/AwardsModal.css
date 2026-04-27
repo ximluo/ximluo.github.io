@@ -20,7 +20,7 @@
   box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
   padding: 30px;
   color: var(--awards-text);
-  font-family: monospace;
+  font-family: "Raleway", sans-serif;
 }
 
 .awards-modal-header {

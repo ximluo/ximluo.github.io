@@ -1,15 +1,19 @@
-export interface Section {
+export type Section = {
   text?: string
   image?: string
   video?: string
 }
 
-export interface Project {
+export type Project = {
   id: string
   name: string
   image: string
   description: string
   languages: string[]
-  categories: string[]
+  tagline: string
   sections: Section[]
+}
+
+export type ProjectContent = Project & {
+  categories: string[]
 }
