@@ -281,6 +281,19 @@
     padding-inline: 0;
   }
 
+  .creative-header {
+    text-align: left;
+  }
+
+  .creative-title {
+    margin-left: 0;
+    text-align: left;
+  }
+
+  .creative-subtitle {
+    text-align: left;
+  }
+
   .photo-grid {
     column-count: 1;
   }
