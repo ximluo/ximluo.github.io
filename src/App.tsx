@@ -110,24 +110,22 @@ function App() {
                   data-top-header
                   className="app-top-nav"
                   style={{
-                    ["--app-nav-padding" as string]: isMobile ? "16px 18px 9px" : "20px 28px 12px",
-                    ["--app-nav-gap" as string]: `${isMobile ? 22 : 36}px`,
+                    ["--app-nav-padding" as string]: isMobile ? "16px 16px 9px" : "20px 28px 12px",
+                    ["--app-nav-gap" as string]: `${isMobile ? 8 : 26}px`,
                     ["--app-nav-title-color" as string]: themes[theme]["--color-text"],
                   }}
                 >
-                  {!isMobile && (
-                    <div className="app-top-nav-title">
-                      <Link
-                        to="/"
-                        className="app-top-nav-home-link"
-                        onClick={() => {
-                          dispatchHomeFlowerTemporaryHide()
-                        }}
-                      >
-                        XIMING LUO
-                      </Link>
-                    </div>
-                  )}
+                  <div className="app-top-nav-title">
+                    <Link
+                      to="/"
+                      className="app-top-nav-home-link"
+                      onClick={() => {
+                        dispatchHomeFlowerTemporaryHide()
+                      }}
+                    >
+                      XIMING LUO
+                    </Link>
+                  </div>
 
                   <nav className="app-top-nav-links" aria-label="Primary navigation">
                     {NAV_ITEMS.map((item) => {

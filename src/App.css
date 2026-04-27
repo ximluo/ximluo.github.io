@@ -71,10 +71,10 @@
 
 .app-top-nav-title {
   position: absolute;
-  left: 28px;
+  left: var(--app-nav-title-left, 28px);
   font-family: "Bodoni Moda", serif;
   font-optical-sizing: auto;
-  font-size: 17px;
+  font-size: var(--app-nav-title-size, 17px);
   font-weight: 600;
   font-style: normal;
   color: var(--app-nav-title-color, inherit);
@@ -97,7 +97,7 @@
 .app-nav-text-link {
   color: var(--app-nav-title-color, inherit);
   font-family: "Raleway", sans-serif;
-  font-size: 15px;
+  font-size: var(--app-nav-link-size, 15px);
   font-weight: 700;
   letter-spacing: 0.04em;
   line-height: 1.2;
@@ -105,7 +105,7 @@
   text-transform: uppercase;
   border: 1px solid transparent;
   border-radius: 999px;
-  padding: 4px 11px 5px;
+  padding: var(--app-nav-link-padding, 4px 11px 5px);
   transition:
     border-color 0.2s ease,
     opacity 0.2s ease;
@@ -207,6 +207,13 @@
 }
 
 @media (max-width: 767px) {
+  .app-top-nav {
+    --app-nav-title-left: 16px;
+    --app-nav-title-size: 14px;
+    --app-nav-link-size: 12px;
+    --app-nav-link-padding: 3px 5px 4px;
+  }
+
   .main-content-scroll--home {
     scroll-snap-type: none;
     scroll-behavior: auto;
