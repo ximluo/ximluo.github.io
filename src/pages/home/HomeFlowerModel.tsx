@@ -1,6 +1,6 @@
 import type React from "react"
-import { Suspense, useEffect, useRef, useState } from "react"
-import { Canvas } from "@react-three/fiber"
+import { Suspense, useEffect, useRef } from "react"
+import { Canvas, useThree } from "@react-three/fiber"
 import FlowerScene from "../about/FlowerScene"
 import { getHomeFlowerControls } from "./homeFlowerControls"
 
@@ -11,9 +11,36 @@ interface HomeFlowerModelProps {
   layerHeight: number
 }
 
-const prefersReducedMotion = () =>
-  typeof window !== "undefined" &&
-  window.matchMedia?.("(prefers-reduced-motion: reduce)").matches
+/**
+ * Parks the render loop while the hero is scrolled out of view (or the user
+ * prefers reduced motion). Runs inside the Canvas and flips the loop through
+ * the R3F store imperatively — flipping the Canvas `frameloop` prop instead
+ * would re-render the whole scene tree and cause a visible hitch right at
+ * the scroll boundary.
+ */
+const FrameloopController: React.FC<{ targetRef: React.RefObject<HTMLElement | null> }> = ({
+  targetRef,
+}) => {
+  const setFrameloop = useThree((state) => state.setFrameloop)
+
+  useEffect(() => {
+    if (window.matchMedia?.("(prefers-reduced-motion: reduce)").matches) {
+      setFrameloop("never")
+      return
+    }
+
+    const node = targetRef.current
+    if (!node || typeof IntersectionObserver === "undefined") return
+
+    const observer = new IntersectionObserver(([entry]) => {
+      setFrameloop(entry.isIntersecting ? "always" : "never")
+    })
+    observer.observe(node)
+    return () => observer.disconnect()
+  }, [setFrameloop, targetRef])
+
+  return null
+}
 
 const HomeFlowerModel: React.FC<HomeFlowerModelProps> = ({
   isSmallScreen,
@@ -22,23 +49,8 @@ const HomeFlowerModel: React.FC<HomeFlowerModelProps> = ({
   layerHeight,
 }) => {
   const asideRef = useRef<HTMLElement | null>(null)
-  const [isInView, setIsInView] = useState(true)
   const controls = getHomeFlowerControls(windowWidth, windowHeight)
   const canvasDpr = controls.dpr
-
-  // Park the render loop while the hero is scrolled out of view
-  useEffect(() => {
-    const node = asideRef.current
-    if (!node || typeof IntersectionObserver === "undefined") return
-
-    const observer = new IntersectionObserver(([entry]) => {
-      setIsInView(entry.isIntersecting)
-    })
-    observer.observe(node)
-    return () => observer.disconnect()
-  }, [])
-
-  const animate = isInView && !prefersReducedMotion()
 
   return (
     <aside
@@ -63,9 +75,10 @@ const HomeFlowerModel: React.FC<HomeFlowerModelProps> = ({
             stencil: false,
           }}
           dpr={canvasDpr}
-          frameloop={animate ? "always" : "never"}
+          frameloop="always"
           camera={{ fov: 35, near: 0.1, far: 1000, position: [0, 0, 3] }}
         >
+          <FrameloopController targetRef={asideRef} />
           <Suspense fallback={null}>
             <FlowerScene
               quality="low"
