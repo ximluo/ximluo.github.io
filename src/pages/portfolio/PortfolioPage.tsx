@@ -5,6 +5,7 @@ import Footer from "../../components/Footer"
 import OptimizedImage from "../../components/ui/OptimizedImage"
 import projects from "../../data/projects"
 import useIntersectionOnce from "../../hooks/useIntersectionOnce"
+import usePageMeta from "../../hooks/usePageMeta"
 import { CONTENT_THEME_TOKENS, THEME_VISUAL_TOKENS, type ThemeType } from "../../theme/tokens"
 import { trackProjectCardClick } from "../../utils/analytics"
 import "./Portfolio.css"
@@ -97,6 +98,7 @@ const LazyImage: React.FC<{
 
 const Portfolio: React.FC<PortfolioProps> = ({ theme }) => {
   const navigate = useNavigate()
+  usePageMeta("Projects", "Software, interface, and immersive projects by Ximing Luo.")
 
   const handleProjectClick = useCallback(
     (projectId: string, projectName: string) => {

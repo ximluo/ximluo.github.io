@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from "react"
 import { Link } from "react-router-dom"
 import "./NotFoundPage.css"
 import { scrambleText } from "../../utils/scramble"
+import usePageMeta from "../../hooks/usePageMeta"
 import { CONTENT_THEME_TOKENS, THEME_VISUAL_TOKENS, type ThemeType } from "../../theme/tokens"
 
 interface NotFoundProps {
@@ -21,6 +22,7 @@ const NOT_FOUND_THEME_CONFIG = {
 } as const
 
 const NotFound: React.FC<NotFoundProps> = ({ theme, backPath = "/" }) => {
+  usePageMeta("Page Not Found")
   const [fadeIn, setFadeIn] = useState<boolean>(false)
   const [glitchText, setGlitchText] = useState<string>("404")
   const [messageText, setMessageText] = useState<string>("PAGE NOT FOUND")

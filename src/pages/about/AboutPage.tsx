@@ -4,6 +4,7 @@ import { aboutContent, type AboutRow, type AboutTextPart } from "../../data/abou
 import awardsData from "../../data/awards"
 import { CONTENT_THEME_TOKENS, type ThemeType } from "../../theme/tokens"
 import { trackExternalLinkClick } from "../../utils/analytics"
+import usePageMeta from "../../hooks/usePageMeta"
 import "./About.css"
 
 interface AboutProps {
@@ -89,6 +90,7 @@ const AboutRowsSection: React.FC<AboutRowsSectionProps> = ({ id, title, rows }) 
 )
 
 const About: React.FC<AboutProps> = ({ theme }) => {
+  usePageMeta("Experience", "Experience, activities, and awards of Ximing Luo.")
   const colors = CONTENT_THEME_TOKENS[theme]
 
   return (

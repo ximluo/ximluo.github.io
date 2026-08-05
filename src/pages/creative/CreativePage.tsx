@@ -3,6 +3,7 @@ import { useSearchParams } from "react-router-dom"
 import Footer from "../../components/Footer"
 import OptimizedImage from "../../components/ui/OptimizedImage"
 import useModalA11y from "../../hooks/useModalA11y"
+import usePageMeta from "../../hooks/usePageMeta"
 import photos from "../../data/photos"
 import { CONTENT_THEME_TOKENS, THEME_VISUAL_TOKENS, type ThemeType } from "../../theme/tokens"
 import "./Creative.css"
@@ -85,6 +86,7 @@ PhotoModal.displayName = "PhotoModal"
 
 const Creative: React.FC<CreativeProps> = ({ theme }) => {
   const [searchParams, setSearchParams] = useSearchParams()
+  usePageMeta("Artwork", "Illustrations, photographs, and visual experiments by Ximing Luo.")
 
   const colors = CONTENT_THEME_TOKENS[theme]
   const cardBackground = THEME_VISUAL_TOKENS[theme].surfaceCreativeCard

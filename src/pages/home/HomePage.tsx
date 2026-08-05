@@ -20,6 +20,7 @@ import useIntersectionOnce from "../../hooks/useIntersectionOnce"
 import { HOME_THEME_TOKENS, type ThemeType } from "../../theme/tokens"
 import { HomeIntroPanel } from "./HomeSections"
 import { useHomeViewportState } from "./home.hooks"
+import usePageMeta from "../../hooks/usePageMeta"
 
 const HomeFlowerModel = lazy(() => import("./HomeFlowerModel"))
 
@@ -90,6 +91,7 @@ interface HomeProps {
 }
 
 const Home: React.FC<HomeProps> = ({ theme, phase }) => {
+  usePageMeta()
   const navigate = useNavigate()
   const [tallPageFlags, setTallPageFlags] = useState<boolean[]>(() =>
     Array.from({ length: HOME_SCROLL_PAGE_COUNT }, () => false),

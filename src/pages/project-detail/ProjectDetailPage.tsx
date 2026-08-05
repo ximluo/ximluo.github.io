@@ -7,6 +7,7 @@ import NotFound from "../not-found/NotFoundPage"
 import ProgressiveDetailImage from "./ProgressiveDetailImage"
 import ProjectDetailSections from "./ProjectDetailSections"
 import { getFirstSentence, getProjectRelatedLink, getProjectTimeline } from "./projectDetail.shared"
+import usePageMeta from "../../hooks/usePageMeta"
 import "./ProjectDetail.css"
 
 interface ProjectDetailProps {
@@ -47,6 +48,7 @@ const ProjectDetail: React.FC<ProjectDetailProps> = ({ theme }) => {
   const themeTokens = CONTENT_THEME_TOKENS[theme]
 
   const project = projects.find((entry) => entry.id === projectId)
+  usePageMeta(project ? project.name : null, project ? getFirstSentence(project.description) : undefined)
 
   if (!project) {
     return <NotFound theme={theme} backPath="/portfolio" />
