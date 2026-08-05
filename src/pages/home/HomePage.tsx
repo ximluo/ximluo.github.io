@@ -1,6 +1,7 @@
 import type React from "react"
 import {
   lazy,
+  memo,
   Suspense,
   useCallback,
   useEffect,
@@ -32,6 +33,9 @@ const HOME_SHOWCASE_RAIL_CLEARANCE_PX = 96
 const HOME_SIDE_RAIL_BREAKPOINT_PX = 1024
 const HOME_INTRO_DESKTOP_OFFSET_BREAKPOINT_PX = 1366
 const HOME_SINGLE_COLUMN_BREAKPOINT_PX = 767
+
+const FEATURED_PROJECTS = projects.slice(0, 6)
+const FEATURED_ARTWORKS = photos.slice(0, 3)
 
 function isGifAsset(source: string) {
   return /\.gif(?:$|[?#])/i.test(source)
@@ -86,6 +90,140 @@ const HomeProjectPreviewImage: React.FC<HomeProjectPreviewImageProps> = ({ src, 
   )
 }
 
+/*
+ * The two showcase sections own their scroll-reveal IntersectionObserver
+ * state so that revealing a section re-renders only that section, not the
+ * whole home page. Props are stable, so `memo` also skips them entirely
+ * when Home re-renders for viewport changes.
+ */
+
+interface ShowcaseSectionProps {
+  registerContent: (node: HTMLElement | null) => void
+}
+
+interface ProjectsShowcaseProps extends ShowcaseSectionProps {
+  gridRef: React.RefObject<HTMLDivElement | null>
+}
+
+const HomeProjectsShowcase = memo<ProjectsShowcaseProps>(({ registerContent, gridRef }) => {
+  const navigate = useNavigate()
+  const { ref: setSectionRef, hasIntersected } = useIntersectionOnce<HTMLDivElement>({
+    rootMargin: "0px 0px 0px 0px",
+    threshold: 0.01,
+  })
+
+  return (
+    <div
+      ref={setSectionRef}
+      className={`home-showcase-shell home-scroll-reveal ${hasIntersected ? "is-visible" : ""}`}
+    >
+      <div ref={registerContent} className="home-preview-stack home-preview-stack--showcase-gap">
+        <div className="home-preview-section">
+          <div className="home-preview-header">
+            <h2 className="home-preview-title">Projects</h2>
+          </div>
+          <div ref={gridRef} className="home-preview-grid home-preview-grid--projects">
+            {FEATURED_PROJECTS.map((project) => (
+              <button
+                key={project.id}
+                type="button"
+                className="home-project-card"
+                onClick={() => navigate(`/portfolio/${project.id}`)}
+              >
+                <span className="home-project-card-media-frame">
+                  <HomeProjectPreviewImage src={project.image} alt={project.name} />
+                  <span className="home-project-card-hover" aria-hidden>
+                    <span className="home-project-card-view">View</span>
+                  </span>
+                </span>
+
+                <span className="home-project-card-info">
+                  <span className="home-project-card-copy">
+                    <span className="home-project-card-title">{project.name}</span>
+                    <span className="home-project-card-description">{project.tagline}</span>
+                  </span>
+
+                  <span className="home-project-card-languages" aria-label="Languages">
+                    {project.languages.slice(0, 3).map((lang) => (
+                      <span key={lang} className="home-project-card-language">
+                        {lang}
+                      </span>
+                    ))}
+                  </span>
+                </span>
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <button type="button" className="home-preview-more" onClick={() => navigate("/portfolio")}>
+          View More Projects
+        </button>
+      </div>
+    </div>
+  )
+})
+HomeProjectsShowcase.displayName = "HomeProjectsShowcase"
+
+const HomeArtworkShowcase = memo<ShowcaseSectionProps>(({ registerContent }) => {
+  const navigate = useNavigate()
+  const { ref: setSectionRef, hasIntersected } = useIntersectionOnce<HTMLDivElement>({
+    rootMargin: "0px 0px 0px 0px",
+    threshold: 0.01,
+  })
+
+  return (
+    <div
+      ref={setSectionRef}
+      className={`home-showcase-shell home-scroll-reveal ${hasIntersected ? "is-visible" : ""}`}
+    >
+      <div ref={registerContent} className="home-preview-stack home-preview-stack--showcase-gap">
+        <div className="home-preview-section">
+          <div className="home-preview-header">
+            <h2 className="home-preview-title">Artwork</h2>
+          </div>
+          <div className="home-preview-grid home-preview-grid--artwork">
+            {FEATURED_ARTWORKS.map((photo) => (
+              <button
+                key={photo.id}
+                type="button"
+                className="home-project-card home-project-card--artwork"
+                onClick={() => navigate(`/creative?photo=${encodeURIComponent(photo.id)}`)}
+              >
+                <span className="home-project-card-media-frame home-project-card-media-frame--square">
+                  <OptimizedImage
+                    src={photo.image}
+                    alt={photo.title}
+                    className="home-preview-card-image"
+                    sizes="(max-width: 767px) 80vw, 33vw"
+                  />
+                  <span className="home-project-card-hover" aria-hidden>
+                    <span className="home-project-card-view">View</span>
+                  </span>
+                </span>
+
+                <span className="home-project-card-info">
+                  <span className="home-project-card-copy">
+                    <span className="home-project-card-title">{photo.title}</span>
+                    <span className="home-project-card-description">
+                      {getPhotoMedium(photo.description)}
+                    </span>
+                  </span>
+                </span>
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <button type="button" className="home-preview-more" onClick={() => navigate("/creative")}>
+          View More Artwork
+        </button>
+      </div>
+    </div>
+  )
+})
+HomeArtworkShowcase.displayName = "HomeArtworkShowcase"
+
 interface HomeProps {
   theme: ThemeType
   phase: number
@@ -93,7 +231,6 @@ interface HomeProps {
 
 const Home: React.FC<HomeProps> = ({ theme, phase }) => {
   usePageMeta()
-  const navigate = useNavigate()
   const [tallPageFlags, setTallPageFlags] = useState<boolean[]>(() =>
     Array.from({ length: HOME_SCROLL_PAGE_COUNT }, () => false),
   )
@@ -202,18 +339,15 @@ const Home: React.FC<HomeProps> = ({ theme, phase }) => {
     return Math.max(Math.min(HOME_SHOWCASE_DESKTOP_MAX_WIDTH, desiredWidth, safeViewportWidth), 320)
   }, [showHomeSideRails, showcaseHorizontalPadding, windowWidth])
 
-  const featuredProjects = useMemo(() => projects.slice(0, 6), [])
-  const featuredArtworks = useMemo(() => photos.slice(0, 3), [])
-  const { ref: setProjectsSectionRef, hasIntersected: hasProjectsIntersected } =
-    useIntersectionOnce<HTMLDivElement>({
-      rootMargin: "0px 0px 0px 0px",
-      threshold: 0.01,
-    })
-  const { ref: setArtworkSectionRef, hasIntersected: hasArtworkIntersected } =
-    useIntersectionOnce<HTMLDivElement>({
-      rootMargin: "0px 0px 0px 0px",
-      threshold: 0.01,
-    })
+  const registerIntroContent = useCallback((node: HTMLElement | null) => {
+    scrollPageContentRefs.current[0] = node
+  }, [])
+  const registerProjectsContent = useCallback((node: HTMLElement | null) => {
+    scrollPageContentRefs.current[1] = node
+  }, [])
+  const registerArtworkContent = useCallback((node: HTMLElement | null) => {
+    scrollPageContentRefs.current[2] = node
+  }, [])
 
   const scrollToPage = useCallback((pageIndex: number) => {
     const parent = homeContainerRef.current?.parentElement
@@ -302,6 +436,9 @@ const Home: React.FC<HomeProps> = ({ theme, phase }) => {
     }
   }, [sectionHeight, windowHeight, windowWidth])
 
+  // Tall-page flags depend only on content/viewport heights, which cannot
+  // change from scrolling alone — resize + ResizeObservers cover every real
+  // cause, so no scroll listener here (it forced layout on every frame).
   useEffect(() => {
     if (typeof window === "undefined") return
     const parent = homeContainerRef.current?.parentElement
@@ -335,7 +472,6 @@ const Home: React.FC<HomeProps> = ({ theme, phase }) => {
     }
 
     updatePageMetrics()
-    parent.addEventListener("scroll", schedulePageMetrics, { passive: true })
     window.addEventListener("resize", schedulePageMetrics)
 
     const resizeObserver =
@@ -347,7 +483,6 @@ const Home: React.FC<HomeProps> = ({ theme, phase }) => {
     return () => {
       if (frameId) window.cancelAnimationFrame(frameId)
       resizeObserver?.disconnect()
-      parent.removeEventListener("scroll", schedulePageMetrics)
       window.removeEventListener("resize", schedulePageMetrics)
     }
   }, [sectionHeight])
@@ -394,12 +529,7 @@ const Home: React.FC<HomeProps> = ({ theme, phase }) => {
           className={`home-scroll-page home-scroll-page--intro ${tallPageFlags[0] ? "home-scroll-page--content-tall" : ""}`}
           style={{ padding }}
         >
-          <div
-            ref={(node) => {
-              scrollPageContentRefs.current[0] = node
-            }}
-            className="home-intro-click-surface"
-          >
+          <div ref={registerIntroContent} className="home-intro-click-surface">
             <HomeIntroPanel
               phase={phase}
               isMobile={isMobile}
@@ -433,68 +563,7 @@ const Home: React.FC<HomeProps> = ({ theme, phase }) => {
           className={`home-scroll-page home-scroll-page--showcase ${tallPageFlags[1] ? "home-scroll-page--content-tall" : ""}`}
           style={{ padding: projectsPadding }}
         >
-          <div
-            ref={setProjectsSectionRef}
-            className={`home-showcase-shell home-scroll-reveal ${hasProjectsIntersected ? "is-visible" : ""}`}
-          >
-            <div
-              ref={(node) => {
-                scrollPageContentRefs.current[1] = node
-              }}
-              className="home-preview-stack home-preview-stack--showcase-gap"
-            >
-              <div className="home-preview-section">
-                <div className="home-preview-header">
-                  <h2 className="home-preview-title">Projects</h2>
-                </div>
-                <div
-                  ref={projectGridRef}
-                  className="home-preview-grid home-preview-grid--projects"
-                >
-                  {featuredProjects.map((project) => (
-                    <button
-                      key={project.id}
-                      type="button"
-                      className="home-project-card"
-                      onClick={() => navigate(`/portfolio/${project.id}`)}
-                    >
-                      <span className="home-project-card-media-frame">
-                        <HomeProjectPreviewImage src={project.image} alt={project.name} />
-                        <span className="home-project-card-hover" aria-hidden>
-                          <span className="home-project-card-view">View</span>
-                        </span>
-                      </span>
-
-                      <span className="home-project-card-info">
-                        <span className="home-project-card-copy">
-                          <span className="home-project-card-title">{project.name}</span>
-                          <span className="home-project-card-description">
-                            {project.tagline}
-                          </span>
-                        </span>
-
-                        <span className="home-project-card-languages" aria-label="Languages">
-                          {project.languages.slice(0, 3).map((lang) => (
-                            <span key={lang} className="home-project-card-language">
-                              {lang}
-                            </span>
-                          ))}
-                        </span>
-                      </span>
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              <button
-                type="button"
-                className="home-preview-more"
-                onClick={() => navigate("/portfolio")}
-              >
-                View More Projects
-              </button>
-            </div>
-          </div>
+          <HomeProjectsShowcase registerContent={registerProjectsContent} gridRef={projectGridRef} />
         </section>
 
         <section
@@ -504,62 +573,7 @@ const Home: React.FC<HomeProps> = ({ theme, phase }) => {
           className={`home-scroll-page home-scroll-page--showcase ${tallPageFlags[2] ? "home-scroll-page--content-tall" : ""}`}
           style={{ padding: artworkPadding }}
         >
-          <div
-            ref={setArtworkSectionRef}
-            className={`home-showcase-shell home-scroll-reveal ${hasArtworkIntersected ? "is-visible" : ""}`}
-          >
-            <div
-              ref={(node) => {
-                scrollPageContentRefs.current[2] = node
-              }}
-              className="home-preview-stack home-preview-stack--showcase-gap"
-            >
-              <div className="home-preview-section">
-                <div className="home-preview-header">
-                  <h2 className="home-preview-title">Artwork</h2>
-                </div>
-                <div className="home-preview-grid home-preview-grid--artwork">
-                  {featuredArtworks.map((photo) => (
-                    <button
-                      key={photo.id}
-                      type="button"
-                      className="home-project-card home-project-card--artwork"
-                      onClick={() => navigate(`/creative?photo=${encodeURIComponent(photo.id)}`)}
-                    >
-                      <span className="home-project-card-media-frame home-project-card-media-frame--square">
-                        <OptimizedImage
-                          src={photo.image}
-                          alt={photo.title}
-                          className="home-preview-card-image"
-                          sizes="(max-width: 767px) 80vw, 33vw"
-                        />
-                        <span className="home-project-card-hover" aria-hidden>
-                          <span className="home-project-card-view">View</span>
-                        </span>
-                      </span>
-
-                      <span className="home-project-card-info">
-                        <span className="home-project-card-copy">
-                          <span className="home-project-card-title">{photo.title}</span>
-                          <span className="home-project-card-description">
-                            {getPhotoMedium(photo.description)}
-                          </span>
-                        </span>
-                      </span>
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              <button
-                type="button"
-                className="home-preview-more"
-                onClick={() => navigate("/creative")}
-              >
-                View More Artwork
-              </button>
-            </div>
-          </div>
+          <HomeArtworkShowcase registerContent={registerArtworkContent} />
         </section>
       </div>
 
