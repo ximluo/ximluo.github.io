@@ -48,7 +48,7 @@
   position: absolute;
   width: 100%;
   bottom: 60px;
-  font-family: "Open Sans", sans-serif;
+  font-family: "Raleway", sans-serif;
   color: var(--bunny-modal-accent);
   font-size: 0.75em;
   text-transform: uppercase;
@@ -60,7 +60,7 @@
   position: absolute;
   width: 100%;
   bottom: 20px;
-  font-family: "Open Sans", sans-serif;
+  font-family: "Raleway", sans-serif;
   color: var(--bunny-modal-text);
   font-size: 0.7em;
   text-transform: uppercase;

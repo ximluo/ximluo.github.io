@@ -44,6 +44,7 @@ const FlowerModel: React.FC<FlowerModelProps> = ({
   const { actions, names } = useAnimations(animations, group)
 
   useEffect(() => {
+    if (window.matchMedia?.("(prefers-reduced-motion: reduce)").matches) return
     names.forEach((name) => {
       const action = actions[name]
       if (!action) return

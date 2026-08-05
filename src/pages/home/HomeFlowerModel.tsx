@@ -1,5 +1,5 @@
 import type React from "react"
-import { Suspense } from "react"
+import { Suspense, useEffect, useRef, useState } from "react"
 import { Canvas } from "@react-three/fiber"
 import FlowerScene from "../about/FlowerScene"
 import { getHomeFlowerControls } from "./homeFlowerControls"
@@ -11,17 +11,38 @@ interface HomeFlowerModelProps {
   layerHeight: number
 }
 
+const prefersReducedMotion = () =>
+  typeof window !== "undefined" &&
+  window.matchMedia?.("(prefers-reduced-motion: reduce)").matches
+
 const HomeFlowerModel: React.FC<HomeFlowerModelProps> = ({
   isSmallScreen,
   windowWidth,
   windowHeight,
   layerHeight,
 }) => {
+  const asideRef = useRef<HTMLElement | null>(null)
+  const [isInView, setIsInView] = useState(true)
   const controls = getHomeFlowerControls(windowWidth, windowHeight)
   const canvasDpr = controls.dpr
 
+  // Park the render loop while the hero is scrolled out of view
+  useEffect(() => {
+    const node = asideRef.current
+    if (!node || typeof IntersectionObserver === "undefined") return
+
+    const observer = new IntersectionObserver(([entry]) => {
+      setIsInView(entry.isIntersecting)
+    })
+    observer.observe(node)
+    return () => observer.disconnect()
+  }, [])
+
+  const animate = isInView && !prefersReducedMotion()
+
   return (
     <aside
+      ref={asideRef}
       className="home-flower-model"
       aria-hidden
       style={{
@@ -42,7 +63,7 @@ const HomeFlowerModel: React.FC<HomeFlowerModelProps> = ({
             stencil: false,
           }}
           dpr={canvasDpr}
-          frameloop="always"
+          frameloop={animate ? "always" : "never"}
           camera={{ fov: 35, near: 0.1, far: 1000, position: [0, 0, 3] }}
         >
           <Suspense fallback={null}>

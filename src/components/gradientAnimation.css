@@ -61,6 +61,18 @@
   animation-fill-mode: both;
 }
 
+@media (prefers-reduced-motion: reduce) {
+  /* Blob circles carry inline animation styles, hence !important */
+  .g1,
+  .g2,
+  .g3,
+  .g4,
+  .g5,
+  .gbg-path {
+    animation: none !important;
+  }
+}
+
 ::-webkit-scrollbar {
   width: 6px;
 }

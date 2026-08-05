@@ -193,7 +193,9 @@ const DogCompanion = () => {
     let pointerY = initialTrackRect.top + initialTrackRect.height / 2
     let moveTimer = 0
     let frameId = 0
+    let rafActive = false
     let activePartIndex = -1
+    const reducedMotion = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches ?? false
     let isWalking = false
     let walkDirection: DirectionKey | null = null
     let lookDirection: DirectionKey | null = null
@@ -326,12 +328,18 @@ const DogCompanion = () => {
         const nextTargetX = getClampedTargetX(targetSide)
         const delta = nextTargetX - currentX
         targetX = nextTargetX
-        if (Math.abs(delta) > 0.5) {
+        if (Math.abs(delta) > 0.5 && reducedMotion) {
+          currentX = nextTargetX
+          setDogX(currentX)
+          lastGuideSide = delta > 0 ? "right" : "left"
+          walkDirection = null
+          lookDirection = getPointerDirection()
+        } else if (Math.abs(delta) > 0.5) {
           lastGuideSide = delta > 0 ? "right" : "left"
           walkDirection = lastGuideSide
           lookDirection = null
-          lastMoveAt = 0
           setWalking(true)
+          startLoop()
         } else {
           lastGuideSide = targetSide
           walkDirection = null
@@ -384,8 +392,11 @@ const DogCompanion = () => {
       targetX = clamp(targetX, bounds.minX, bounds.maxX)
       setDogX(currentX)
       applyDirection()
+      if (Math.abs(targetX - currentX) > 0.5) startLoop()
     }
 
+    // The loop only runs while the dog has somewhere to go; it parks itself
+    // on arrival and is restarted by scheduleMove/updateResize.
     const tick = (timestamp: number) => {
       const delta = targetX - currentX
       if (Math.abs(delta) > 0.5) {
@@ -395,24 +406,32 @@ const DogCompanion = () => {
           setDogX(currentX)
           setWalking(true)
         }
-      } else {
-        currentX = targetX
-        lastMoveAt = 0
-        setDogX(currentX)
-        setWalking(false)
-        if (!isWaitingToMove) {
-          walkDirection = null
-          lookDirection = getPointerDirection()
-        }
+        applyDirection()
+        frameId = window.requestAnimationFrame(tick)
+        return
       }
 
+      currentX = targetX
+      lastMoveAt = 0
+      setDogX(currentX)
+      setWalking(false)
+      if (!isWaitingToMove) {
+        walkDirection = null
+        lookDirection = getPointerDirection()
+      }
       applyDirection()
+      rafActive = false
+    }
+
+    function startLoop() {
+      if (rafActive) return
+      rafActive = true
+      lastMoveAt = 0
       frameId = window.requestAnimationFrame(tick)
     }
 
     setDogX(currentX)
     applyDirection()
-    frameId = window.requestAnimationFrame(tick)
 
     window.addEventListener("pointermove", updatePointer, { passive: true })
     window.addEventListener("pointerdown", updatePointer, { passive: true })

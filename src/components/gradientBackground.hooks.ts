@@ -62,23 +62,28 @@ export const useHeaderOffset = () => {
   return headerOffset
 }
 
-const paintNoiseCanvas = (
-  canvas: HTMLCanvasElement,
-  ctx: CanvasRenderingContext2D,
-  width: number,
-  height: number,
-) => {
-  if (width <= 0 || height <= 0) return
+// The grain is generated once into a small tile and repeated as a pattern,
+// instead of regenerating a full-viewport ImageData pixel-by-pixel on every
+// resize.
+const NOISE_TILE_SIZE = 256
 
-  canvas.width = width
-  canvas.height = height
+let noiseTile: HTMLCanvasElement | null = null
 
-  const img = ctx.createImageData(width, height)
+const getNoiseTile = () => {
+  if (noiseTile) return noiseTile
+
+  const tile = document.createElement("canvas")
+  tile.width = NOISE_TILE_SIZE
+  tile.height = NOISE_TILE_SIZE
+  const ctx = tile.getContext("2d")
+  if (!ctx) return null
+
+  const img = ctx.createImageData(NOISE_TILE_SIZE, NOISE_TILE_SIZE)
   const buf = img.data
 
-  for (let y = 0; y < height; y += 2) {
-    for (let x = 0; x < width; x += 2) {
-      const i = (y * width + x) * 4
+  for (let y = 0; y < NOISE_TILE_SIZE; y += 2) {
+    for (let x = 0; x < NOISE_TILE_SIZE; x += 2) {
+      const i = (y * NOISE_TILE_SIZE + x) * 4
       if (Math.random() > 0.2) {
         const shade = (Math.random() * 256) | 0
         buf[i] = shade
@@ -90,6 +95,27 @@ const paintNoiseCanvas = (
   }
 
   ctx.putImageData(img, 0, 0)
+  noiseTile = tile
+  return tile
+}
+
+const paintNoiseCanvas = (
+  canvas: HTMLCanvasElement,
+  ctx: CanvasRenderingContext2D,
+  width: number,
+  height: number,
+) => {
+  if (width <= 0 || height <= 0) return
+
+  canvas.width = width
+  canvas.height = height
+
+  const tile = getNoiseTile()
+  if (!tile) return
+  const pattern = ctx.createPattern(tile, "repeat")
+  if (!pattern) return
+  ctx.fillStyle = pattern
+  ctx.fillRect(0, 0, width, height)
 }
 
 interface UseGradientNoiseCanvasOptions {
