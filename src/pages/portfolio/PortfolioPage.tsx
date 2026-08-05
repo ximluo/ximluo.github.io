@@ -26,7 +26,8 @@ const LazyImage: React.FC<{
   src: string
   alt: string
   style: React.CSSProperties
-}> = ({ projectId, src, alt, style }) => {
+  priority?: boolean
+}> = ({ projectId, src, alt, style, priority = false }) => {
   const [isLoaded, setIsLoaded] = useState(false)
   const [shouldAnimateGif, setShouldAnimateGif] = useState(false)
   const { ref: setImgRef, hasIntersected: isInView } = useIntersectionOnce<HTMLDivElement>({
@@ -80,10 +81,13 @@ const LazyImage: React.FC<{
           <OptimizedImage
             src={src}
             alt={alt}
+            priority={priority}
             preferPosterForGif={!(canAnimateGifThumbnail && shouldAnimateGif)}
             preferAnimatedGifVariant={canAnimateGifThumbnail && shouldAnimateGif}
-            sizes="(max-width: 960px) 100vw, 460px"
-            fetchPriority={canAnimateGifThumbnail && shouldAnimateGif ? "auto" : "low"}
+            sizes="(max-width: 640px) 92vw, (max-width: 960px) 46vw, 460px"
+            fetchPriority={
+              canAnimateGifThumbnail && shouldAnimateGif ? "auto" : priority ? "high" : "low"
+            }
             onLoad={() => setIsLoaded(true)}
             style={{
               ...style,
@@ -134,7 +138,7 @@ const Portfolio: React.FC<PortfolioProps> = ({ theme }) => {
       </div>
 
       <div className="portfolio-grid">
-        {projects.map((project) => (
+        {projects.map((project, index) => (
           <div
             key={project.id}
             onClick={() => handleProjectClick(project.id, project.name)}
@@ -154,6 +158,7 @@ const Portfolio: React.FC<PortfolioProps> = ({ theme }) => {
                 projectId={project.id}
                 src={project.image || "/placeholder.svg"}
                 alt={project.name}
+                priority={index < 3}
                 style={{
                   width: "100%",
                   height: "100%",
