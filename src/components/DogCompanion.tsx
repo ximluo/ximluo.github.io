@@ -1,5 +1,4 @@
 import { useEffect, useRef } from "react"
-import useMediaQuery from "../hooks/useMediaQuery"
 import "./DogCompanion.css"
 
 const DOG_WIDTH = 96
@@ -11,9 +10,11 @@ const MOVE_DISTANCE = 20
 const MOVE_INTERVAL_MS = 120
 const EDGE_BUFFER = 12
 const FOOTER_OBSTACLE_BUFFER = 14
-const DOG_MEDIA_QUERY = "(min-width: 700px)"
 const FOOTER_OBSTACLE_SELECTOR =
   ".footer-controls--floating .footer-icon-button, .footer-controls--inline .footer-icon-button"
+// Taps/clicks on interactive elements shouldn't redirect the dog
+const INTERACTIVE_TARGET_SELECTOR =
+  'a, button, input, textarea, select, iframe, [role="button"], [role="dialog"]'
 
 const BODY_FRAME_WIDTH = 96
 const HEAD_FRAME_WIDTH = 62
@@ -143,10 +144,6 @@ const getDirection = (
 }
 
 const DogCompanion = () => {
-  const isEnabled = useMediaQuery(
-    DOG_MEDIA_QUERY,
-    typeof window !== "undefined" ? window.innerWidth >= 700 : false,
-  )
   const dogRef = useRef<HTMLDivElement | null>(null)
   const bodyWrapperRef = useRef<HTMLDivElement | null>(null)
   const bodyRef = useRef<HTMLDivElement | null>(null)
@@ -167,7 +164,6 @@ const DogCompanion = () => {
     const track = dog?.parentElement
 
     if (
-      !isEnabled ||
       !dog ||
       !track ||
       !body ||
@@ -353,6 +349,13 @@ const DogCompanion = () => {
     let lastPointerY = pointerY
 
     const updatePointer = (event: PointerEvent) => {
+      if (
+        event.type === "pointerdown" &&
+        event.target instanceof Element &&
+        event.target.closest(INTERACTIVE_TARGET_SELECTOR)
+      ) {
+        return
+      }
       const dx = event.clientX - lastPointerX
       const dy = event.clientY - lastPointerY
       const movedDistance = Math.sqrt(dx * dx + dy * dy)
@@ -444,7 +447,7 @@ const DogCompanion = () => {
       window.removeEventListener("pointerdown", updatePointer)
       window.removeEventListener("resize", updateResize)
     }
-  }, [isEnabled])
+  }, [])
 
   return (
     <div className="dog-companion" aria-hidden="true">

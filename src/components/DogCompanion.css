@@ -1,5 +1,5 @@
 .dog-companion {
-  display: none;
+  display: block;
   position: absolute;
   right: 0;
   bottom: 0;
@@ -118,12 +118,6 @@
 .dog-companion-dog.is-walking .dog-companion-leg-2,
 .dog-companion-dog.is-walking .dog-companion-leg-3 {
   animation: dog-companion-walk 0.4s infinite 0.2s;
-}
-
-@media (min-width: 700px) {
-  .dog-companion {
-    display: block;
-  }
 }
 
 @keyframes dog-companion-fade-in {
