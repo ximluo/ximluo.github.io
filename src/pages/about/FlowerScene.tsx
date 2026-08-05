@@ -219,6 +219,14 @@ const FlowerScene: React.FC<FlowerSceneProps> = ({
   )
 }
 
-useGLTF.preload("/models/blue_flower.glb")
+// Defer the 3.1MB model fetch to idle time so it doesn't compete with images on first paint
+if (typeof window !== "undefined") {
+  const preloadFlowerModel = () => useGLTF.preload("/models/blue_flower.glb")
+  if (typeof window.requestIdleCallback === "function") {
+    window.requestIdleCallback(preloadFlowerModel, { timeout: 3000 })
+  } else {
+    window.setTimeout(preloadFlowerModel, 1500)
+  }
+}
 
 export default FlowerScene
