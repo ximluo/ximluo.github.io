@@ -348,7 +348,7 @@ const DogCompanion = () => {
     let lastPointerX = pointerX
     let lastPointerY = pointerY
 
-    const updatePointer = (event: PointerEvent) => {
+    const processPointer = (event: PointerEvent) => {
       if (
         event.type === "pointerdown" &&
         event.target instanceof Element &&
@@ -387,6 +387,26 @@ const DogCompanion = () => {
       setDogX(currentX)
       applyDirection()
       scheduleMove()
+    }
+
+    // Mice fire 60-240 pointermove events/sec; each pointer update both reads
+    // layout (getBoundingClientRect) and writes styles. Batch moves to one
+    // processing pass per animation frame to avoid layout thrash.
+    let pendingMoveEvent: PointerEvent | null = null
+    let pointerFrameId = 0
+
+    const onPointerMove = (event: PointerEvent) => {
+      pendingMoveEvent = event
+      if (pointerFrameId) return
+      pointerFrameId = window.requestAnimationFrame(() => {
+        pointerFrameId = 0
+        if (pendingMoveEvent) processPointer(pendingMoveEvent)
+        pendingMoveEvent = null
+      })
+    }
+
+    const onPointerDown = (event: PointerEvent) => {
+      processPointer(event)
     }
 
     const updateResize = () => {
@@ -436,15 +456,16 @@ const DogCompanion = () => {
     setDogX(currentX)
     applyDirection()
 
-    window.addEventListener("pointermove", updatePointer, { passive: true })
-    window.addEventListener("pointerdown", updatePointer, { passive: true })
+    window.addEventListener("pointermove", onPointerMove, { passive: true })
+    window.addEventListener("pointerdown", onPointerDown, { passive: true })
     window.addEventListener("resize", updateResize)
 
     return () => {
       window.clearTimeout(moveTimer)
       window.cancelAnimationFrame(frameId)
-      window.removeEventListener("pointermove", updatePointer)
-      window.removeEventListener("pointerdown", updatePointer)
+      if (pointerFrameId) window.cancelAnimationFrame(pointerFrameId)
+      window.removeEventListener("pointermove", onPointerMove)
+      window.removeEventListener("pointerdown", onPointerDown)
       window.removeEventListener("resize", updateResize)
     }
   }, [])

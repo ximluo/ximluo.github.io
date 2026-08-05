@@ -814,10 +814,22 @@
     "h": 748
   },
   "web-ascii": {
+    "animatedThumb": [
+      480
+    ],
+    "poster": [
+      640
+    ],
     "w": 480,
     "h": 294
   },
   "web-clock": {
+    "animatedThumb": [
+      480
+    ],
+    "poster": [
+      640
+    ],
     "w": 480,
     "h": 357
   },
@@ -850,6 +862,12 @@
     "h": 458
   },
   "web-still": {
+    "animatedThumb": [
+      480
+    ],
+    "poster": [
+      640
+    ],
     "w": 480,
     "h": 358
   },
@@ -868,6 +886,12 @@
     "h": 518
   },
   "web-tv": {
+    "animatedThumb": [
+      480
+    ],
+    "poster": [
+      640
+    ],
     "w": 480,
     "h": 304
   },
