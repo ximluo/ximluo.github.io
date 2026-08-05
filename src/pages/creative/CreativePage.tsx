@@ -2,6 +2,7 @@ import React from "react"
 import { useSearchParams } from "react-router-dom"
 import Footer from "../../components/Footer"
 import OptimizedImage from "../../components/ui/OptimizedImage"
+import useModalA11y from "../../hooks/useModalA11y"
 import photos from "../../data/photos"
 import { CONTENT_THEME_TOKENS, THEME_VISUAL_TOKENS, type ThemeType } from "../../theme/tokens"
 import "./Creative.css"
@@ -17,6 +18,8 @@ interface ModalProps {
 }
 
 const PhotoModal = React.memo<ModalProps>(({ photo, onClose, theme }) => {
+  const frameRef = useModalA11y<HTMLDivElement>(onClose)
+
   if (!photo) return null
 
   const isPdfPreview = Boolean(photo.previewPdf)
@@ -27,7 +30,12 @@ const PhotoModal = React.memo<ModalProps>(({ photo, onClose, theme }) => {
   return (
     <div className="creative-modal-backdrop" onClick={onClose}>
       <div
+        ref={frameRef}
         className="creative-modal-frame"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="creative-modal-title"
+        tabIndex={-1}
         style={{
           maxWidth: isPdfPreview ? 640 : 960,
           ["--creative-modal-surface" as string]: modalSurface,
@@ -54,7 +62,9 @@ const PhotoModal = React.memo<ModalProps>(({ photo, onClose, theme }) => {
           )}
 
           <div className="creative-modal-caption">
-            <h2 className="creative-modal-caption-title">{photo.title}</h2>
+            <h2 className="creative-modal-caption-title" id="creative-modal-title">
+              {photo.title}
+            </h2>
             <p className="creative-modal-caption-text">{photo.description}</p>
           </div>
         </div>
@@ -139,7 +149,19 @@ interface GridCardProps {
 
 const GridCard: React.FC<GridCardProps> = ({ photo, onPhotoClick }) => {
   return (
-    <div onClick={() => onPhotoClick(photo)} className="artwork-card">
+    <div
+      onClick={() => onPhotoClick(photo)}
+      className="artwork-card"
+      role="button"
+      tabIndex={0}
+      aria-label={`View ${photo.title}`}
+      onKeyDown={(event) => {
+        if (event.key === "Enter" || event.key === " ") {
+          event.preventDefault()
+          onPhotoClick(photo)
+        }
+      }}
+    >
       <div className="artwork-card-image-frame">
         <OptimizedImage
           src={photo.image || "/placeholder.svg"}

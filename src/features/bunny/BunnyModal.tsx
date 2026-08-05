@@ -5,6 +5,7 @@ import { Canvas } from "@react-three/fiber"
 import "./BunnyModal.css"
 import { BUNNY_MODAL_THEME_TOKENS, type ThemeType } from "../../theme/tokens"
 import useIsMobile from "../../hooks/useIsMobile"
+import useModalA11y from "../../hooks/useModalA11y"
 import BunnyScene, { type BunnySceneColors } from "./BunnyScene"
 import useCarrotStorage from "./useCarrotStorage"
 
@@ -17,6 +18,7 @@ const MODAL_ROOT_ID = "bunny-modal-root"
 
 const BunnyModal: React.FC<BunnyModalProps> = ({ onClose, theme }) => {
   const portalRef = useRef<HTMLDivElement | null>(null)
+  const panelRef = useModalA11y<HTMLDivElement>(onClose)
   const [mounted, setMounted] = useState(false)
   const isMobile = useIsMobile(768)
   const { carrotCount, incrementCarrotCount } = useCarrotStorage()
@@ -82,7 +84,15 @@ const BunnyModal: React.FC<BunnyModalProps> = ({ onClose, theme }) => {
       }}
       onClick={onClose}
     >
-      <div className="bunny-modal-panel" onClick={(e) => e.stopPropagation()}>
+      <div
+        ref={panelRef}
+        className="bunny-modal-panel"
+        role="dialog"
+        aria-modal="true"
+        aria-label="Bunny mini-game"
+        tabIndex={-1}
+        onClick={(e) => e.stopPropagation()}
+      >
         <Canvas
           className="bunny-modal-canvas"
           shadows={!isMobile}

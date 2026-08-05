@@ -136,6 +136,15 @@ const Portfolio: React.FC<PortfolioProps> = ({ theme }) => {
             key={project.id}
             onClick={() => handleProjectClick(project.id, project.name)}
             className="project-card"
+            role="button"
+            tabIndex={0}
+            aria-label={`View ${project.name}`}
+            onKeyDown={(event) => {
+              if (event.key === "Enter" || event.key === " ") {
+                event.preventDefault()
+                handleProjectClick(project.id, project.name)
+              }
+            }}
           >
             <div className="project-card-media-frame">
               <LazyImage
