@@ -1,15 +1,6 @@
-export type ThemeType = "bunny" | "water"
+export type ThemeType = "water"
 
 const BASE_THEME_TOKENS = {
-  bunny: {
-    "--color-text": "rgb(121, 85, 189)",
-    "--color-text-secondary": "rgba(249, 240, 251, 1)",
-    "--color-accent-primary": "rgba(223, 30, 155, 1)",
-    "--button-bg": "rgba(223, 30, 155, 0.8)",
-    "--button-bg-light": "rgba(223, 30, 155, 0.2)",
-    "--button-text": "rgba(249, 240, 251, 1)",
-    "--border-color": "rgb(152, 128, 220)",
-  },
   water: {
     "--color-text": "rgb(191, 229, 249)",
     "--color-text-secondary": "rgba(249, 240, 251, 1)",
@@ -41,20 +32,6 @@ const FOOTER_THEME_KEYS = [
 ] as const
 
 export const THEME_VISUAL_TOKENS = {
-  bunny: {
-    navGlowActive: "0 0 15px rgba(223, 30, 155, 0.4)",
-    navGlowHover: "0 0 20px rgba(223, 30, 155, 0.6)",
-    iconGlowSoft: "0 0 15px rgba(223, 30, 155, 0.3)",
-    textGlowStrong: "0 0 10px rgba(223, 30, 155, 0.8)",
-    buttonGlow: "0 0 15px rgba(223, 30, 155, 0.4)",
-    buttonGlowHover: "0 0 20px rgba(223, 30, 155, 0.6)",
-    surfaceCreativeModal: "rgba(121, 85, 189, 0.2)",
-    surfaceCreativeCard: "rgba(121, 85, 189, 0.1)",
-    surfacePortfolioCard: "rgba(121, 85, 189, 0.1)",
-    surfaceProjectEmbed: "rgba(121, 85, 189, 0.08)",
-    projectEmbedSkeletonGradient:
-      "linear-gradient(120deg, rgba(121, 85, 189, 0.06), rgba(121, 85, 189, 0.14), rgba(121, 85, 189, 0.06))",
-  },
   water: {
     navGlowActive: "0 0 15px rgba(134, 196, 240, 0.4)",
     navGlowHover: "0 0 20px rgba(134, 196, 240, 0.6)",
@@ -72,18 +49,6 @@ export const THEME_VISUAL_TOKENS = {
 } as const
 
 export const GRADIENT_BACKGROUND_THEME_VARS = {
-  bunny: {
-    "--color-bg1": "#ebdbff",
-    "--color-bg2": "#ffffff",
-    "--color1": "249,240,251",
-    "--color2": "249,240,251",
-    "--color3": "226,199,213",
-    "--color4": "227, 89, 195",
-    "--color5": "249,240,251",
-    "--color-interactive": "227, 89, 195",
-    "--circle-size": "90%",
-    "--blending": "screen",
-  },
   water: {
     "--color-bg1": "#001f3f",
     "--color-bg2": "#001f3f",
@@ -112,14 +77,6 @@ function pickTokens<T extends Record<string, string>, K extends readonly (keyof 
 }
 
 export const APP_THEME_TOKENS = {
-  bunny: {
-    ...pickTokens(BASE_THEME_TOKENS.bunny, CONTENT_THEME_KEYS),
-    "--outer-bg": "#a892e7",
-    "--cursor-color": "rgba(223, 30, 155, 0.7)",
-    "--cursor-glow": "0 0 8px rgba(223, 30, 155, 0.5)",
-    "--cursor-hover-color": "rgba(223, 30, 155, 0.6)",
-    "--cursor-hover-glow": "0 0 12px rgba(223, 30, 155, 0.5)",
-  },
   water: {
     ...pickTokens(BASE_THEME_TOKENS.water, CONTENT_THEME_KEYS),
     "--outer-bg": "#1d0298",
@@ -131,15 +88,10 @@ export const APP_THEME_TOKENS = {
 } as const
 
 export const CONTENT_THEME_TOKENS = {
-  bunny: pickTokens(BASE_THEME_TOKENS.bunny, CONTENT_THEME_KEYS),
   water: pickTokens(BASE_THEME_TOKENS.water, CONTENT_THEME_KEYS),
 } as const
 
 export const HOME_THEME_TOKENS = {
-  bunny: {
-    ...pickTokens(BASE_THEME_TOKENS.bunny, HOME_THEME_KEYS),
-    "--link-color": "rgba(223, 30, 155, 0.8)",
-  },
   water: {
     ...pickTokens(BASE_THEME_TOKENS.water, HOME_THEME_KEYS),
     "--link-color": "rgba(191, 229, 249, 0.96)",
@@ -147,23 +99,10 @@ export const HOME_THEME_TOKENS = {
 } as const
 
 export const FOOTER_THEME_TOKENS = {
-  bunny: pickTokens(BASE_THEME_TOKENS.bunny, FOOTER_THEME_KEYS),
   water: pickTokens(BASE_THEME_TOKENS.water, FOOTER_THEME_KEYS),
 } as const
 
 export const BUNNY_MODAL_THEME_TOKENS = {
-  bunny: {
-    ...pickTokens(BASE_THEME_TOKENS.bunny, CONTENT_THEME_KEYS),
-    "--game-border": "rgba(223, 30, 155, 0.6)",
-    "--game-shadow": "rgba(223, 30, 155, 0.35)",
-    "--game-floor": "#2a0b25",
-    "--game-fog": "#1b0318",
-    "--bunny-primary": "#ffd7f3",
-    "--bunny-secondary": "#4f2065",
-    "--carrot-body": "#ff70ff",
-    "--carrot-leaf": "#ffd2ff",
-    "--game-outline": "#2b0320",
-  },
   water: {
     ...pickTokens(BASE_THEME_TOKENS.water, CONTENT_THEME_KEYS),
     "--game-border": "rgba(134, 196, 240, 0.6)",

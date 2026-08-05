@@ -40,7 +40,6 @@ const useIntersectionOnce = <T extends Element>({
   return {
     ref: setNode,
     hasIntersected,
-    setHasIntersected,
   }
 }
 

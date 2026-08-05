@@ -104,10 +104,6 @@ export const GradientCircles = ({
 }
 
 interface GradientRightEdgeOverlayProps {
-  pathname: string
-  isLaptopViewport: boolean
-  isMobileViewport: boolean
-  overlayOpacity: number
   headerOffset: number
 }
 
@@ -139,21 +135,7 @@ export const GradientDrawingSvg = ({
   </svg>
 )
 
-export const GradientRightEdgeOverlay = ({
-  pathname,
-  isLaptopViewport,
-  isMobileViewport,
-  overlayOpacity,
-  headerOffset,
-}: GradientRightEdgeOverlayProps) => {
-  const isPortfolioOrCreativePage =
-    pathname.startsWith("/portfolio") || pathname.startsWith("/creative")
-  const hideForNarrowViewport = isPortfolioOrCreativePage && !isLaptopViewport
-  const hideForMobileViewport = isMobileViewport
-  const effectiveOpacity = hideForNarrowViewport || hideForMobileViewport ? 0 : overlayOpacity
-
-  if (effectiveOpacity <= 0) return null
-
+export const GradientRightEdgeOverlay = ({ headerOffset }: GradientRightEdgeOverlayProps) => {
   return (
     <div
       aria-hidden
@@ -169,9 +151,7 @@ export const GradientRightEdgeOverlay = ({
         pointerEvents: "none",
         zIndex: 5,
         paddingRight: 8,
-        opacity: effectiveOpacity,
-        transition: "opacity 200ms ease",
-        willChange: "opacity",
+        opacity: 1,
       }}
     >
       <GradientDrawingSvg

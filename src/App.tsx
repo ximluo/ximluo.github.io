@@ -7,7 +7,6 @@ import GradientBackground from "./components/GradientBackground"
 import AppRoutes from "./app/routes"
 import { APP_THEME_TOKENS, type ThemeType } from "./theme/tokens"
 import useViewportSize from "./hooks/useViewportSize"
-import { dispatchHomeFlowerTemporaryHide } from "./pages/home/home.events"
 
 const themes = APP_THEME_TOKENS
 const GA_MEASUREMENT_ID = "G-1QHSNH5G8L"
@@ -116,13 +115,7 @@ function App() {
                   }}
                 >
                   <div className="app-top-nav-title">
-                    <Link
-                      to="/"
-                      className="app-top-nav-home-link"
-                      onClick={() => {
-                        dispatchHomeFlowerTemporaryHide()
-                      }}
-                    >
+                    <Link to="/" className="app-top-nav-home-link">
                       XIMING LUO
                     </Link>
                   </div>

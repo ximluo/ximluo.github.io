@@ -5,7 +5,6 @@ import FlowerScene from "../about/FlowerScene"
 import { getHomeFlowerControls } from "./homeFlowerControls"
 
 interface HomeFlowerModelProps {
-  isMobile: boolean
   isSmallScreen: boolean
   windowWidth: number
   windowHeight: number
@@ -13,14 +12,11 @@ interface HomeFlowerModelProps {
 }
 
 const HomeFlowerModel: React.FC<HomeFlowerModelProps> = ({
-  isMobile,
   isSmallScreen,
   windowWidth,
   windowHeight,
   layerHeight,
 }) => {
-  if (isMobile) return null
-
   const controls = getHomeFlowerControls(windowWidth, windowHeight)
   const canvasDpr = controls.dpr
 
@@ -53,7 +49,7 @@ const HomeFlowerModel: React.FC<HomeFlowerModelProps> = ({
             <FlowerScene
               quality="low"
               layout={{
-                isMobile,
+                isMobile: false,
                 isSmallScreen,
                 windowWidth,
                 focusScale: controls.focusScale,

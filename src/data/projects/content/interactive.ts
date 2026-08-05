@@ -10,7 +10,6 @@ const interactiveProjects: ProjectContent[] = [
     languages: ["JavaScript", "Vite", "React Three Fiber"],
     tagline: "Interactive web experiments",
     timeline: "",
-    categories: ["software", "web", "interactive", "3D"],
     sections: [
       {
         image: "/images/web-zoom.gif",
@@ -68,7 +67,6 @@ const interactiveProjects: ProjectContent[] = [
     languages: ["React.js", "Tailwind", "Firebase"],
     tagline: "Penn lost item platform",
     timeline: "2024",
-    categories: ["software", "web", "ux", "community"],
     sections: [
       {
         video: "https://www.youtube.com/embed/DxMMO6Qa638?si=4tPosHJ_6WKeH1kH",
@@ -96,7 +94,6 @@ const interactiveProjects: ProjectContent[] = [
     languages: ["Unreal Engine", "Blueprints", "C++"],
     tagline: "Meta Quest VR scenes",
     timeline: "2025",
-    categories: ["graphics", "VR", "Unreal", "Quest"],
     sections: [
       {
         text: "Portals through the Season presents a pair of themed levels connected by interactive portals. Entering a portal uses level streaming to load and unload environments instantly. UI widgets built in Blueprints animate activation rings and transition effects. NavMesh enables smooth player movement and teleportation.",
@@ -119,7 +116,6 @@ const interactiveProjects: ProjectContent[] = [
     languages: ["C++", "OpenGL", "GLSL"],
     tagline: "OpenGL shader collection",
     timeline: "2024",
-    categories: ["graphics", "shaders"],
     sections: [
       {
         image: "/images/glsl-inflate.gif",

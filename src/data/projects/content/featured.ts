@@ -10,7 +10,6 @@ const featuredProjects: ProjectContent[] = [
     languages: ["Swift", "SwiftUI"],
     tagline: "Adobe Digital Edge Awards Winner",
     timeline: "2024",
-    categories: ["software", "mobile", "AI", "AR"],
     sections: [
       {
         text: "PetSteps won the Digital Edge Standout Prize at Adobe MAX 2024. Adobe highlighted its originality, strong execution, and smart use of AI and AR to support real health goals.",
@@ -41,7 +40,6 @@ const featuredProjects: ProjectContent[] = [
     languages: ["C++", "OpenGL", "GLSL"],
     tagline: "C++ voxel game engine",
     timeline: "2024",
-    categories: ["graphics"],
     sections: [
       {
         video: "https://www.youtube.com/embed/kr7ze2p7Tx8?si=f6Pqu8gN6oUHypdi",
@@ -69,7 +67,6 @@ const featuredProjects: ProjectContent[] = [
     languages: ["Swift", "SwiftUI"],
     tagline: "Official Penn student app",
     timeline: "2025-Present",
-    categories: ["software", "mobile", "iOS", "student tools"],
     sections: [
       {
         text: "Learn more at [pennlabs.org/products/penn-mobile](https://pennlabs.org/products/penn-mobile).",
@@ -91,7 +88,6 @@ const featuredProjects: ProjectContent[] = [
     languages: ["WebXR", "LangChain", "IRIS Vector Search"],
     tagline: "HackMIT Winner - AR memory",
     timeline: "2024",
-    categories: ["software", "AR", "AI", "healthtech"],
     sections: [
       {
         text: "Gaussian Splatting 3D Scene Generation: We convert user video clips into point cloud environments using a custom Python pipeline and render them in real time with Three.js and WebXR. Users can navigate their memories in 360 degree AR.",
@@ -113,7 +109,6 @@ const featuredProjects: ProjectContent[] = [
     languages: ["C#", "Unity", "Arduino", "Fusion 360"],
     tagline: "MIT Reality Hack Winner - XR biosensing",
     timeline: "2025",
-    categories: ["graphics", "XR", "hardware", "biosensing"],
     sections: [
       {
         text: "NeuroScent integrates scent delivery and physiological sensing to extend XR immersion beyond vision and sound. We used the Varjo headset for visual feedback and OpenBCI Galea for EEG, PPG, and EMG biosignals, creating a holistic biofeedback loop.",
@@ -147,7 +142,6 @@ const featuredProjects: ProjectContent[] = [
     languages: ["AWS S3", "Node.js", "TypeScript", "MongoDB"],
     tagline: "3D photo capsule app",
     timeline: "2025",
-    categories: ["software", "web", "3D", "fullstack"],
     sections: [
       {
         text: "On the frontend, React Three Fiber renders the 3D capsules. Capsules animate open, revealing embedded photos arranged chronologically around the interior. Users interact via orbit controls in an immersive 3D view.",
@@ -193,7 +187,6 @@ const featuredProjects: ProjectContent[] = [
     languages: ["C++", "OpenGL", "GLSL"],
     tagline: "C++ Monte Carlo renderer",
     timeline: "2025",
-    categories: ["graphics", "rendering"],
     sections: [
       {
         text: "This path tracer solves the light transport equation on the GPU using Monte Carlo integration, with a flexible framework for different sampling strategies and material models.",
@@ -269,7 +262,6 @@ const featuredProjects: ProjectContent[] = [
     languages: ["C++", "GLSL", "OpenGL"],
     tagline: "Real time PBR renderer",
     timeline: "2025",
-    categories: ["graphics", "rendering"],
     sections: [
       {
         text: "The PBR shader screenshot shows the microfacet model in action. Metallicness is toggled between zero and one via GUI sliders, and roughness is held around 0 to illustrate reflectiveness.",

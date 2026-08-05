@@ -45,7 +45,7 @@ const ProjectDetailSections: React.FC<ProjectDetailSectionsProps> = ({ project, 
             <DeferredEmbed
               key={`vid-${idx}`}
               src={section.video}
-              title={`${project.name} ${isPdfSource(section.video) ? "PDF preview" : "demo video"}`}
+              title={`${project.name} demo video`}
               theme={theme}
             />
           )

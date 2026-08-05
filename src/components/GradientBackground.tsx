@@ -2,11 +2,7 @@ import React, { useEffect, useRef, useMemo } from "react"
 import { useLocation } from "react-router-dom"
 import { GRADIENT_BACKGROUND_THEME_VARS, type ThemeType } from "../theme/tokens"
 import useViewportSize from "../hooks/useViewportSize"
-import {
-  useGradientNoiseCanvas,
-  useHeaderOffset,
-  useHomeFlowerOverlay,
-} from "./gradientBackground.hooks"
+import { useGradientNoiseCanvas, useHeaderOffset } from "./gradientBackground.hooks"
 import { GradientCircles, GradientRightEdgeOverlay } from "./gradientBackground.parts"
 interface GradientBackgroundProps {
   theme: ThemeType
@@ -41,14 +37,11 @@ const GradientBackground: React.FC<GradientBackgroundProps> = ({ theme, children
   const interBubbleRef = useRef<HTMLDivElement>(null)
   const noiseCanvasRef = useRef<HTMLCanvasElement>(null)
   const headerOffset = useHeaderOffset()
-  const isLaptopViewport = viewportWidth >= LAPTOP_BREAKPOINT
-  const isMobileViewport = viewportWidth <= 767
   const isHomePage = location.pathname === "/"
   const isAboutPage = location.pathname.startsWith("/about")
   const shouldShowRightEdgeOverlay =
     isAboutPage && !isMobileOrTablet && viewportWidth > LAPTOP_BREAKPOINT
   const gradientGlowOpacityScale = isHomePage ? 0.7 : isAboutPage ? 0.75 : 1
-  const { overlayOpacity } = useHomeFlowerOverlay({ isHomePage })
 
   useGradientNoiseCanvas({
     noiseCanvasRef,
@@ -116,15 +109,7 @@ const GradientBackground: React.FC<GradientBackgroundProps> = ({ theme, children
         opacityScale={gradientGlowOpacityScale}
       />
 
-      {shouldShowRightEdgeOverlay && (
-        <GradientRightEdgeOverlay
-          pathname={location.pathname ?? ""}
-          isLaptopViewport={isLaptopViewport}
-          isMobileViewport={isMobileViewport}
-          overlayOpacity={isHomePage ? overlayOpacity : 1}
-          headerOffset={headerOffset}
-        />
-      )}
+      {shouldShowRightEdgeOverlay && <GradientRightEdgeOverlay headerOffset={headerOffset} />}
 
       <div style={{ position: "relative", zIndex: 10, height: "100%" }}>{children}</div>
     </div>

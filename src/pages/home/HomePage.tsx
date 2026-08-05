@@ -378,7 +378,6 @@ const Home: React.FC<HomeProps> = ({ theme, phase }) => {
         {phase >= 2 && !isMobile && (
           <Suspense fallback={null}>
             <HomeFlowerModel
-              isMobile={isMobile}
               isSmallScreen={windowHeight <= 700}
               windowWidth={windowWidth}
               windowHeight={windowHeight}

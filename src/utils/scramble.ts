@@ -1,6 +1,4 @@
 export const SCRAMBLE_SETS = {
-  japanese: "!@#$%^&*?<>/",
-  binary: "01",
   symbols: "!<>-_\\/[]{}=+*^?#",
   matrix: "!@#$%^&*?<>/",
   code: "{([/\\])}@#$%^&*<>+=",

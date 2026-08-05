@@ -10,7 +10,6 @@ const researchProjects: ProjectContent[] = [
     languages: ["Python", "R"],
     tagline: "Wharton Directed Reading Program project",
     timeline: "2025",
-    categories: ["software", "finance", "machine learning", "research"],
     sections: [
       {
         text: "Wharton Directed Reading Program, April 24, 2025: MACHINE LEARNING IN ASSET PRICING. Exploring predictability in stock returns. Lead student: Ximing Luo (CS (DMD) and Economics ’27). Mentor: Yiwen Lu (Finance PhD, 2nd Year).",
@@ -38,7 +37,6 @@ const researchProjects: ProjectContent[] = [
     languages: ["Python", "React.js"],
     tagline: "Human AI interaction research",
     timeline: "2022-2023",
-    categories: ["software", "HCI", "Generative AI", "User Studies"],
     sections: [
       {
         text: "Contributed to two projects in the Intuitive Computing Lab at Johns Hopkins University, collaborating with PhD students Victor Nikhil Antony and Amama Mahmood. One project introduces an integrated authoring system for visual story creation using LLMs and multimodal generation. The other studies how apology tone and blame assignment affect user perceptions of voice assistants after recognition errors.",
@@ -60,7 +58,6 @@ const researchProjects: ProjectContent[] = [
     languages: ["Python", "C#"],
     tagline: "AR MRI visualization pipeline",
     timeline: "2023-2025",
-    categories: ["software", "Augmented Reality", "Medical Imaging", "Web Development"],
     sections: [
       {
         text: "This project streamlines a manual workflow of medical scan segmentation, mesh cleanup, and file conversion into a single web application. Physicians upload DICOM MRI sequences, automatically generate refined 3D point cloud models, and view or annotate them in real time on multiple AR headsets.",

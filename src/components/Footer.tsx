@@ -29,7 +29,6 @@ const prefetchBunnyFeature = () => {
 
 interface FooterProps {
   theme: ThemeType
-  controlsVisible?: boolean
 }
 
 interface FooterLinkItem {
@@ -63,7 +62,7 @@ const FOOTER_LINK_ITEMS: FooterLinkItem[] = [
   },
 ]
 
-const Footer: React.FC<FooterProps> = ({ theme, controlsVisible = true }) => {
+const Footer: React.FC<FooterProps> = ({ theme }) => {
   const [showBunny, setShowBunny] = useState(false)
   const location = useLocation()
   const isMobile = useIsMobile(767)
@@ -126,10 +125,7 @@ const Footer: React.FC<FooterProps> = ({ theme, controlsVisible = true }) => {
       }}
     >
       <div
-        className={`footer-controls footer-controls--${layoutMode} fade ${controlsVisible ? "show" : ""}`}
-        style={{
-          pointerEvents: controlsVisible ? "auto" : "none",
-        }}
+        className={`footer-controls footer-controls--${layoutMode} fade show`}
       >
         {usesSplitControls ? <div className="footer-bunny-slot">{bunnyButton}</div> : null}
 
@@ -162,10 +158,7 @@ const Footer: React.FC<FooterProps> = ({ theme, controlsVisible = true }) => {
       </div>
 
       <div
-        className={`footer-copyright footer-copyright--${layoutMode} fade ${controlsVisible ? "show" : ""}`}
-        style={{
-          pointerEvents: controlsVisible ? "auto" : "none",
-        }}
+        className={`footer-copyright footer-copyright--${layoutMode} fade show`}
       >
         © 2026 Ximing Luo •{" "}
         <a

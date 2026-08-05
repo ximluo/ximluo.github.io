@@ -1,5 +1,4 @@
-import { useEffect, useMemo, useState, type RefObject } from "react"
-import { listenHomeFlowerOpacity, listenHomeFlowerTemporaryHide } from "../pages/home/home.events"
+import { useEffect, useState, type RefObject } from "react"
 
 const HEADER_CANDIDATE_SELECTORS = [
   "[data-top-header]",
@@ -8,8 +7,6 @@ const HEADER_CANDIDATE_SELECTORS = [
   ".site-header",
   "[data-header]",
 ] as const
-
-const clampOpacity = (value: number) => Math.max(0, Math.min(value, 1))
 
 export const useHeaderOffset = () => {
   const [headerOffset, setHeaderOffset] = useState(0)
@@ -160,79 +157,4 @@ export const useGradientNoiseCanvas = ({
     viewportHeight,
     viewportWidth,
   ])
-}
-
-interface UseHomeFlowerOverlayOptions {
-  isHomePage: boolean
-}
-
-export const useHomeFlowerOverlay = ({ isHomePage }: UseHomeFlowerOverlayOptions) => {
-  const [edgeVisible, setEdgeVisible] = useState(true)
-  const [homeFlowerOpacity, setHomeFlowerOpacity] = useState<number | null>(null)
-  const [overlaySuppressed, setOverlaySuppressed] = useState(false)
-  const [pastIntroDelay, setPastIntroDelay] = useState(false)
-
-  useEffect(() => {
-    if (typeof window === "undefined" || !isHomePage) return
-
-    let lastY = window.scrollY
-    let ticking = false
-
-    const onScroll = () => {
-      const currentY = window.scrollY
-      if (ticking) return
-
-      window.requestAnimationFrame(() => {
-        const scrollingDown = currentY > lastY
-        const atTop = currentY <= 0
-        setEdgeVisible(!scrollingDown || atTop)
-        lastY = currentY
-        ticking = false
-      })
-      ticking = true
-    }
-
-    window.addEventListener("scroll", onScroll, { passive: true })
-    return () => window.removeEventListener("scroll", onScroll)
-  }, [isHomePage])
-
-  useEffect(() => {
-    return listenHomeFlowerOpacity((detail) => {
-      const next = detail.value
-      setHomeFlowerOpacity(next == null ? null : clampOpacity(next))
-    })
-  }, [])
-
-  useEffect(() => {
-    let hideTimeout: ReturnType<typeof setTimeout> | null = null
-
-    const unsubscribe = listenHomeFlowerTemporaryHide(() => {
-      if (hideTimeout) clearTimeout(hideTimeout)
-
-      setOverlaySuppressed(true)
-      hideTimeout = setTimeout(() => {
-        setOverlaySuppressed(false)
-        hideTimeout = null
-      }, 3000)
-    })
-
-    return () => {
-      if (hideTimeout) clearTimeout(hideTimeout)
-      unsubscribe()
-    }
-  }, [])
-
-  useEffect(() => {
-    const timer = setTimeout(() => setPastIntroDelay(true), 3000)
-    return () => clearTimeout(timer)
-  }, [])
-
-  const overlayOpacity = useMemo(() => {
-    if (!isHomePage) return 0
-
-    const baseOpacity = !pastIntroDelay ? 0 : (homeFlowerOpacity ?? (edgeVisible ? 1 : 0))
-    return overlaySuppressed ? 0 : clampOpacity(baseOpacity)
-  }, [edgeVisible, homeFlowerOpacity, isHomePage, overlaySuppressed, pastIntroDelay])
-
-  return { overlayOpacity }
 }

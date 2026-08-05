@@ -11,10 +11,6 @@ interface NotFoundProps {
 }
 
 const NOT_FOUND_THEME_CONFIG = {
-  bunny: {
-    glitchSet: "code",
-    messageSet: "symbols",
-  },
   water: {
     glitchSet: "matrix",
     messageSet: "code",

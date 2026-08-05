@@ -21,5 +21,4 @@ export type Project = {
 }
 
 export type ProjectContent = Project & {
-  categories: string[]
 }
