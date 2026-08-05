@@ -10,6 +10,7 @@ import {
   useState,
 } from "react"
 import { useNavigate } from "react-router-dom"
+import "../../components/ui/card.css"
 import "./Home.css"
 
 import Footer from "../../components/Footer"

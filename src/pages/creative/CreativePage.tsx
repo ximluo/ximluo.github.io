@@ -6,6 +6,7 @@ import useModalA11y from "../../hooks/useModalA11y"
 import usePageMeta from "../../hooks/usePageMeta"
 import photos from "../../data/photos"
 import { CONTENT_THEME_TOKENS, THEME_VISUAL_TOKENS, type ThemeType } from "../../theme/tokens"
+import "../../components/ui/card.css"
 import "./Creative.css"
 
 interface CreativeProps {

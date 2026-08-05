@@ -197,37 +197,6 @@
   will-change: transform;
 }
 
-.artwork-card-hover {
-  position: absolute;
-  inset: 0;
-  z-index: 3;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: rgba(0, 0, 0, 0.28);
-  opacity: 0;
-  transition: opacity 0.2s ease;
-  pointer-events: none;
-}
-
-.artwork-card-view {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 70px;
-  padding: 7px 16px;
-  border: 1px solid rgba(255, 255, 255, 0.86);
-  border-radius: 999px;
-  color: rgba(255, 255, 255, 0.96);
-  background: rgba(0, 0, 0, 0.16);
-  font-size: 12px;
-  font-weight: 700;
-  line-height: 1;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  backdrop-filter: blur(5px);
-}
-
 .artwork-card-info {
   display: flex;
   min-width: 0;
@@ -239,9 +208,6 @@
 .artwork-card-title {
   margin: 0;
   font-family: "Raleway", sans-serif;
-  font-size: 13px;
-  font-weight: 700;
-  line-height: 1.25;
   color: var(--creative-text);
   text-align: left;
 }
@@ -249,10 +215,7 @@
 .artwork-card-description {
   margin: 0;
   font-family: "Raleway", sans-serif;
-  font-size: 13px;
-  line-height: 1.35;
   color: var(--creative-text);
-  opacity: 0.72;
   text-align: left;
 }
 

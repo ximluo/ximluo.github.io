@@ -8,6 +8,7 @@ import useIntersectionOnce from "../../hooks/useIntersectionOnce"
 import usePageMeta from "../../hooks/usePageMeta"
 import { CONTENT_THEME_TOKENS, THEME_VISUAL_TOKENS, type ThemeType } from "../../theme/tokens"
 import { trackProjectCardClick } from "../../utils/analytics"
+import "../../components/ui/card.css"
 import "./Portfolio.css"
 
 interface PortfolioProps {

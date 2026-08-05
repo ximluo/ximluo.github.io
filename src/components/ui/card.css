@@ -1,0 +1,111 @@
+/* Shared card styles used by the portfolio grid (.project-card-*), the
+   home featured cards (.home-project-card-*), and the artwork grid
+   (.artwork-card-*). Page stylesheets keep only their differing
+   declarations.
+
+   Canonical breakpoints used across the site: 480 / 768 / 960 / 1024.
+   (Some files still use 767 or 1025 for min/max-width pairs.) */
+
+.project-card-view,
+.home-project-card-view,
+.artwork-card-view {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 70px;
+  padding: 7px 16px;
+  border: 1px solid rgba(255, 255, 255, 0.86);
+  border-radius: 999px;
+  color: rgba(255, 255, 255, 0.96);
+  background: rgba(0, 0, 0, 0.16);
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  backdrop-filter: blur(5px);
+}
+
+.project-card-hover,
+.home-project-card-hover,
+.artwork-card-hover {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.28);
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  pointer-events: none;
+}
+
+.project-card-info,
+.home-project-card-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 14px;
+  margin-top: 10px;
+}
+
+.project-card-copy,
+.home-project-card-copy {
+  display: flex;
+  min-width: 0;
+  flex: 1;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.project-card-languages,
+.home-project-card-languages {
+  display: flex;
+  max-width: 48%;
+  flex: 0 1 auto;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 5px;
+}
+
+.project-card-language,
+.home-project-card-language {
+  display: inline-flex;
+  align-items: center;
+  min-height: 20px;
+  border: 1px solid currentColor;
+  border-radius: 999px;
+  padding: 2px 8px;
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 1.2;
+  opacity: 0.78;
+  white-space: nowrap;
+}
+
+.project-card-media-frame,
+.home-project-card-media-frame {
+  width: 100%;
+  position: relative;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  border-radius: 2px;
+  transform: translateZ(0);
+}
+
+.project-card-title,
+.home-project-card-title,
+.artwork-card-title {
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.25;
+}
+
+.project-card-description,
+.home-project-card-description,
+.artwork-card-description {
+  font-size: 13px;
+  line-height: 1.35;
+  opacity: 0.72;
+}

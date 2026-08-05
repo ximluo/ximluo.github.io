@@ -18,13 +18,6 @@
   font-size: 16px;
 }
 
-.project-detail-cta-button {
-  border: 1px solid transparent;
-  border-radius: 2px;
-  font-family: "Raleway", sans-serif;
-  cursor: pointer;
-}
-
 .project-detail-hero {
   display: block;
   margin-bottom: 0;
@@ -33,10 +26,6 @@
 .project-detail-hero-main,
 .project-detail-body {
   min-width: 0;
-}
-
-.project-detail-body {
-  margin-left: 0;
 }
 
 .project-detail-intro {
@@ -234,9 +223,11 @@
   padding: 10px 20px;
   background: transparent;
   color: var(--project-detail-text);
-  border-color: rgba(152, 213, 255, 0.74);
+  border: 1px solid rgba(152, 213, 255, 0.74);
   border-radius: 999px;
+  font-family: "Raleway", sans-serif;
   font-weight: 700;
+  cursor: pointer;
 }
 
 .project-detail-container > .footer-root--floating {
@@ -246,10 +237,6 @@
 @media (max-width: 767px) {
   .project-detail-container {
     padding: 14px;
-  }
-
-  .project-detail-body {
-    margin-left: 0;
   }
 
   .project-detail-intro {

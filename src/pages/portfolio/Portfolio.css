@@ -77,104 +77,25 @@
 }
 
 .project-card-media-frame {
-  width: 100%;
-  position: relative;
-  aspect-ratio: 4 / 3;
-  overflow: hidden;
-  border-radius: 2px;
   background-color: var(--portfolio-card-bg);
-  transform: translateZ(0);
-}
-
-.project-card-hover {
-  position: absolute;
-  inset: 0;
-  z-index: 3;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: rgba(0, 0, 0, 0.28);
-  opacity: 0;
-  transition: opacity 0.2s ease;
-  pointer-events: none;
-}
-
-.project-card-view {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 70px;
-  padding: 7px 16px;
-  border: 1px solid rgba(255, 255, 255, 0.86);
-  border-radius: 999px;
-  color: rgba(255, 255, 255, 0.96);
-  background: rgba(0, 0, 0, 0.16);
-  font-size: 12px;
-  font-weight: 700;
-  line-height: 1;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  backdrop-filter: blur(5px);
-}
-
-.project-card-info {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 14px;
-  margin-top: 10px;
-}
-
-.project-card-copy {
-  display: flex;
-  min-width: 0;
-  flex: 1;
-  flex-direction: column;
-  gap: 4px;
 }
 
 .project-card-title {
   margin: 0;
   font-family: "Raleway", sans-serif;
   color: var(--portfolio-text);
-  font-size: 13px;
-  font-weight: 700;
-  line-height: 1.25;
   text-align: left;
 }
 
 .project-card-description {
   margin: 0;
   color: var(--portfolio-text);
-  font-size: 13px;
-  line-height: 1.35;
-  opacity: 0.72;
   text-align: left;
 }
 
-.project-card-languages {
-  display: flex;
-  max-width: 48%;
-  flex: 0 1 auto;
-  flex-wrap: wrap;
-  justify-content: flex-end;
-  gap: 5px;
-}
-
 .project-card-language {
-  display: inline-flex;
-  align-items: center;
-  min-height: 20px;
-  border: 1px solid currentColor;
-  border-radius: 999px;
-  padding: 2px 8px;
   color: var(--portfolio-text);
   font-family: "Raleway", sans-serif;
-  font-size: 10px;
-  font-weight: 700;
-  line-height: 1.2;
-  opacity: 0.78;
-  white-space: nowrap;
 }
 
 @media (min-width: 1025px) {
