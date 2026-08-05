@@ -15,7 +15,7 @@ const GA_MEASUREMENT_ID = "G-1QHSNH5G8L"
 const NAV_ITEMS = [
   { label: "work", to: "/portfolio", match: (path: string) => path.startsWith("/portfolio") },
   { label: "art", to: "/creative", match: (path: string) => path.startsWith("/creative") },
-  { label: "about", to: "/about", match: (path: string) => path.startsWith("/about") },
+  { label: "experience", to: "/about", match: (path: string) => path.startsWith("/about") },
 ]
 
 function App() {

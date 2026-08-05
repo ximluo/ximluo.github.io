@@ -39,7 +39,6 @@ export function HomeIntroPanel({
           <h1 className={`fade home-hero-title home-hero-title--stack ${phase >= 2 ? "show" : ""}`}>
             <span className="home-hero-name">Ximing Luo</span>
             <span className="home-hero-subtitle">CS and Digital Media Design @ UPenn</span>
-            <span className="home-hero-subtitle">Incoming @ Apple</span>
             <span className="home-hero-emote">Make it real. . ݁₊ ⊹ . ݁ ⟡ ݁ . ⊹ ₊ ݁.</span>
           </h1>
         </div>

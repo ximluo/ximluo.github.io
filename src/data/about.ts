@@ -32,10 +32,10 @@ export const aboutContent = {
     },
   ] satisfies AboutTextPart[],
   experience: [
-    { title: "Apple", detail: "Incoming", year: "2026", href: "https://www.apple.com/" },
+    { title: "Apple", detail: "Software Engineer Intern", year: "2026", href: "https://www.apple.com/" },
     {
       title: "Apollo Global Management",
-      detail: "Software Engineer",
+      detail: "Software Engineer Intern",
       year: "2025",
       href: "https://www.apollo.com/",
     },
