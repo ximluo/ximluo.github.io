@@ -1,3 +1,5 @@
+export const CONTACT_EMAIL = "ximluo@upenn.edu"
+
 export type AboutTextPart =
   | string
   | {
@@ -26,8 +28,8 @@ export const aboutContent = {
   contact: [
     "Say hello at ",
     {
-      text: "ximluo@upenn.edu",
-      href: "mailto:ximluo@upenn.edu",
+      text: CONTACT_EMAIL,
+      href: `mailto:${CONTACT_EMAIL}`,
       analyticsId: "email",
     },
   ] satisfies AboutTextPart[],

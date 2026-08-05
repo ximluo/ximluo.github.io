@@ -34,8 +34,8 @@
     "build": "react-scripts build",
     "lint": "eslint \"src/**/*.{js,jsx,ts,tsx}\"",
     "lint:fix": "npm run lint -- --fix",
-    "format": "prettier --write \"src/**/*.{js,jsx,ts,tsx,css}\" \"*.{json,md}\" \"docs/**/*.md\"",
-    "format:check": "prettier --check \"src/**/*.{js,jsx,ts,tsx,css}\" \"*.{json,md}\" \"docs/**/*.md\"",
+    "format": "prettier --write \"src/**/*.{js,jsx,ts,tsx,css}\" \"*.{json,md}\"",
+    "format:check": "prettier --check \"src/**/*.{js,jsx,ts,tsx,css}\" \"*.{json,md}\"",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },

@@ -6,6 +6,7 @@ import { FOOTER_THEME_TOKENS, THEME_VISUAL_TOKENS, type ThemeType } from "../the
 import useMediaQuery from "../hooks/useMediaQuery"
 import useIsMobile from "../hooks/useIsMobile"
 import { trackBunnyModalOpen, trackExternalLinkClick } from "../utils/analytics"
+import { CONTACT_EMAIL } from "../data/about"
 import "./Footer.css"
 
 const BunnyModal = lazy(() => import("../features/bunny"))
@@ -50,7 +51,7 @@ const FOOTER_LINK_ITEMS: FooterLinkItem[] = [
   {
     id: "email",
     label: "Email",
-    href: "mailto:ximluo@seas.upenn.edu",
+    href: `mailto:${CONTACT_EMAIL}`,
     icon: Mail,
   },
   {
@@ -160,7 +161,7 @@ const Footer: React.FC<FooterProps> = ({ theme }) => {
       <div
         className={`footer-copyright footer-copyright--${layoutMode} fade show`}
       >
-        © 2026 Ximing Luo •{" "}
+        © {new Date().getFullYear()} Ximing Luo •{" "}
         <a
           href="https://github.com/ximluo/ximluo.github.io"
           target="_blank"
