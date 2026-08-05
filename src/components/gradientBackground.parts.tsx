@@ -42,6 +42,12 @@ export const GradientCircles = ({
         inset: 0,
         filter: useSafariMode ? "none" : "url(#goo) blur(40px) brightness(0.86)",
         zIndex: 1,
+        // Isolate the expensive filtered layer on its own compositor layer so
+        // scrolling content above never re-rasterizes it, and contain its
+        // paint so blob movement doesn't propagate invalidations outward.
+        willChange: "transform",
+        transform: "translateZ(0)",
+        contain: "paint",
       }}
     >
       {circle("g1", "--color1", {
