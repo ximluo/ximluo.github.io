@@ -11,16 +11,25 @@ Personal portfolio built with React, TypeScript, and Three.js. The site is deplo
 - React Router
 - Three.js, React Three Fiber, and Drei
 - GSAP for the bunny scene animation
-- CSS modules by page, with shared theme tokens in TypeScript
+- Plain CSS per page (namespaced by prefix) plus shared card styles, with theme tokens in TypeScript
+
+## Images
+
+Every image is served as pre-generated AVIF/WebP variants from `public/optimized/images/`. GIFs get a still poster plus animated WebP tiers, so no page ships a raw GIF.
+
+- `scripts/generate-image-manifest.js` scans the variants and records widths and intrinsic dimensions into `src/generated/imageManifest.json`
+- The manifest regenerates automatically before `start` and `build` (or run `npm run generate:images`)
+- `src/components/ui/OptimizedImage.tsx` reads the manifest and renders `<picture>`/`srcSet` markup, falling back to the original file for anything without variants
 
 ## Commands
 
 - `npm start`: run the local development server
 - `npm run build`: create a production build in `build/`
 - `npm run deploy`: publish `build/` to GitHub Pages
+- `npm run generate:images`: regenerate the optimized image manifest
 - `npm run lint`: run ESLint on `src`
 - `npm run lint:fix`: run ESLint with autofix
-- `npm run format`: format source, docs, and root JSON/Markdown files
+- `npm run format`: format source and root JSON/Markdown files
 - `npm run format:check`: check formatting without writing changes
 
 ## Important Files
@@ -35,4 +44,6 @@ Personal portfolio built with React, TypeScript, and Three.js. The site is deplo
 - `src/pages/about/`: about page layout
 - `src/features/bunny/`: bunny modal and runtime scene logic
 - `src/components/`: shared site components such as the footer, dog companion, gradient background, and image wrapper
-- `src/hooks/`: reusable viewport, media query, and intersection hooks
+- `src/components/ui/card.css`: card styles shared by the home, work, and art grids
+- `src/hooks/`: viewport, media query, intersection, modal accessibility, and page title hooks
+- `scripts/generate-image-manifest.js`: image variant manifest generator
