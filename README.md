@@ -2,6 +2,8 @@
 
 My corner of the internet! 🌱
 
+![Home page — animated 3D flower over a gradient background](docs/preview.webp)
+
 Personal portfolio built with React, TypeScript, and Three.js. The site is deployed to GitHub Pages with `gh-pages`.
 
 ## Stack
