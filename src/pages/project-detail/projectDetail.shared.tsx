@@ -26,9 +26,7 @@ export function getPdfLinkLabel(source: string, fallbackTitle: string) {
   return `Open ${title || fallbackTitle} PDF`
 }
 
-export function isGifSource(source: string) {
-  return /\.gif(?:$|[?#])/i.test(source)
-}
+export { isGifSource } from "../../utils/media"
 
 export function preconnectToEmbedOrigin(source: string) {
   if (typeof window === "undefined" || typeof document === "undefined") return
@@ -73,8 +71,10 @@ export function parseTextWithLinks(text: string) {
       elements.push(text.slice(lastIndex, index))
     }
 
-    const url = mdUrl || rawUrl!
-    const label = mdLabel || rawUrl!
+    // The regex guarantees one of mdUrl/rawUrl matched; fullMatch is a safe
+    // last resort that keeps the types honest without a non-null assertion.
+    const url = mdUrl || rawUrl || fullMatch
+    const label = mdLabel || url
 
     elements.push(
       <a
@@ -128,9 +128,11 @@ export function getProjectRelatedLink(project: ProjectRecord) {
     if (!match) continue
 
     const [, mdLabel, mdUrl, rawUrl] = match
+    const href = mdUrl || rawUrl
+    if (!href) continue
     return {
       label: mdLabel || rawUrl || "Open link",
-      href: mdUrl || rawUrl,
+      href,
     }
   }
 

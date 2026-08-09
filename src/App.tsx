@@ -17,15 +17,19 @@ const NAV_ITEMS = [
   { label: "experience", to: "/about", match: (path: string) => path.startsWith("/about") },
 ]
 
+// Stable server-snapshot fallback for useSyncExternalStore — must not be a
+// fresh object per render.
+const VIEWPORT_FALLBACK = {
+  width: typeof window !== "undefined" ? window.innerWidth : 0,
+  height: typeof window !== "undefined" ? window.innerHeight : 0,
+}
+
 function App() {
   const theme: ThemeType = "water"
   const location = useLocation()
   const hasTrackedInitialPageRef = useRef(false)
   const mainContentScrollRef = useRef<HTMLDivElement | null>(null)
-  const { width: viewportWidth } = useViewportSize({
-    width: typeof window !== "undefined" ? window.innerWidth : 0,
-    height: typeof window !== "undefined" ? window.innerHeight : 0,
-  })
+  const { width: viewportWidth } = useViewportSize(VIEWPORT_FALLBACK)
 
   const isHomeRoute = location.pathname === "/"
 

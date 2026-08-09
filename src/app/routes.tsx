@@ -1,4 +1,5 @@
-import React, { Suspense, lazy } from "react"
+import type React from "react"
+import { Suspense, lazy } from "react"
 import { Route, Routes } from "react-router-dom"
 import { type ThemeType } from "../theme/tokens"
 

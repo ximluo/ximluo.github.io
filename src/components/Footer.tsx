@@ -17,15 +17,15 @@ const prefetchBunnyFeature = () => {
   if (bunnyPrefetchStarted) return
   bunnyPrefetchStarted = true
 
-  void import("../features/bunny")
-    .then((mod) => {
-      if ("preloadBunnyAssets" in mod && typeof mod.preloadBunnyAssets === "function") {
-        mod.preloadBunnyAssets()
-      }
-    })
-    .catch(() => {
+  void import("../features/bunny").then(
+    (mod) => {
+      mod.preloadBunnyAssets()
+    },
+    () => {
+      // The chunk itself failed to load — allow a later hover to retry.
       bunnyPrefetchStarted = false
-    })
+    },
+  )
 }
 
 interface FooterProps {

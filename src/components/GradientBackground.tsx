@@ -11,12 +11,16 @@ interface GradientBackgroundProps {
 
 const LAPTOP_BREAKPOINT = 1024
 
+// Stable server-snapshot fallback for useSyncExternalStore — must not be a
+// fresh object per render.
+const VIEWPORT_FALLBACK = {
+  width: typeof window !== "undefined" ? window.innerWidth : 0,
+  height: typeof window !== "undefined" ? window.innerHeight : 0,
+}
+
 const GradientBackground: React.FC<GradientBackgroundProps> = ({ theme, children }) => {
   const location = useLocation()
-  const { width: viewportWidth, height: viewportHeight } = useViewportSize({
-    width: typeof window !== "undefined" ? window.innerWidth : 0,
-    height: typeof window !== "undefined" ? window.innerHeight : 0,
-  })
+  const { width: viewportWidth, height: viewportHeight } = useViewportSize(VIEWPORT_FALLBACK)
   const isSafari = useMemo(() => {
     if (typeof navigator === "undefined") return false
     const ua = navigator.userAgent
@@ -28,7 +32,7 @@ const GradientBackground: React.FC<GradientBackgroundProps> = ({ theme, children
     const ua = navigator.userAgent
     const hasTouch =
       (typeof window !== "undefined" && "ontouchstart" in window) || navigator.maxTouchPoints > 0
-    return /Android|webOS|iPhone|iPad|iPod|BlackBerry|Windows Phone|Tablet/i.test(ua) || !!hasTouch
+    return /Android|webOS|iPhone|iPad|iPod|BlackBerry|Windows Phone|Tablet/i.test(ua) || hasTouch
   }, [])
 
   const useSafariMode = isSafari || isMobileOrTablet

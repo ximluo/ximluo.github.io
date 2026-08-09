@@ -19,7 +19,7 @@ const SOURCE_PATTERN = /^\/images\/([^/]+)\.(png|jpe?g|gif|webp)$/i
 
 interface OptimizedImageProps extends Omit<
   React.ImgHTMLAttributes<HTMLImageElement>,
-  "src" | "alt" | "loading"
+  "src" | "srcSet" | "alt" | "loading"
 > {
   src: string
   alt: string

@@ -1,7 +1,5 @@
 import projectsContent from "./projects.content"
 
-export const projects = projectsContent
-
-export type { Project, ProjectContent, Section } from "./types"
+export type { Project } from "./types"
 
 export default projectsContent

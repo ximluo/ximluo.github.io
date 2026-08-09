@@ -131,14 +131,13 @@ export const useBunnyRuntimeLoop = ({
         -heroSpeedRef.current.length() * 2
     }
 
-    const linePositions = (lineRef.current.geometry as THREE.BufferGeometry).attributes.position
-      .array
+    const linePositions = lineRef.current.geometry.attributes.position.array
     linePositions[0] = targetHeroAbsPosRef.current.x
     linePositions[2] = targetHeroAbsPosRef.current.y
     linePositions[3] = rabbitRef.current.position.x
     linePositions[4] = rabbitRef.current.position.y
     linePositions[5] = rabbitRef.current.position.z
-    ;(lineRef.current.geometry as THREE.BufferGeometry).attributes.position.needsUpdate = true
+    lineRef.current.geometry.attributes.position.needsUpdate = true
     lineRef.current.computeLineDistances()
 
     heroNewUVPosRef.current.x = 0.5 + rabbitRef.current.position.x / floorSizeRef.current

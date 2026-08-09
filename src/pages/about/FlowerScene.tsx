@@ -35,8 +35,7 @@ const FlowerModel: React.FC<FlowerModelProps> = ({
   uprightRotation = [1, 0, 0],
   controls,
 }) => {
-  const group = useRef<THREE.Group>(null!)
-  const inner = useRef<THREE.Group>(null!)
+  const group = useRef<THREE.Group | null>(null)
   const { scene, animations } = useGLTF(url) as unknown as {
     scene: THREE.Group
     animations: THREE.AnimationClip[]
@@ -68,7 +67,7 @@ const FlowerModel: React.FC<FlowerModelProps> = ({
       position={controls?.modelPosition ?? [0, 0, 0]}
       scale={controls?.modelScale ?? 1}
     >
-      <group ref={inner} rotation={controls?.modelRotation ?? uprightRotation}>
+      <group rotation={controls?.modelRotation ?? uprightRotation}>
         <primitive object={scene} />
       </group>
     </group>
@@ -107,16 +106,15 @@ const FlowerScene: React.FC<FlowerSceneProps> = ({
     if (size.width <= 0 || size.height <= 0) return false
     const obj = modelRef.current
 
-    const liveBox = stableBoxRef.current ?? new THREE.Box3().setFromObject(obj)
-    const box = stableBoxRef.current ?? liveBox
-    if (!box || !isFinite(box.min.x)) {
+    const box = stableBoxRef.current ?? new THREE.Box3().setFromObject(obj)
+    if (!isFinite(box.min.x)) {
       const persp = camera as THREE.PerspectiveCamera
       persp.position.set(0, 0.5, 6)
       persp.lookAt(0, 0.5, 0)
       persp.updateProjectionMatrix()
       return false
     }
-    if (!stableBoxRef.current) stableBoxRef.current = liveBox.clone()
+    if (!stableBoxRef.current) stableBoxRef.current = box.clone()
 
     const width = box.max.x - box.min.x
     const height = box.max.y - box.min.y

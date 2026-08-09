@@ -23,6 +23,7 @@ import { HOME_THEME_TOKENS, type ThemeType } from "../../theme/tokens"
 import { HomeIntroPanel } from "./HomeSections"
 import { useHomeViewportState } from "./home.hooks"
 import usePageMeta from "../../hooks/usePageMeta"
+import { isGifSource } from "../../utils/media"
 
 const HomeFlowerModel = lazy(() => import("./HomeFlowerModel"))
 
@@ -37,10 +38,6 @@ const HOME_SINGLE_COLUMN_BREAKPOINT_PX = 767
 const FEATURED_PROJECTS = projects.slice(0, 6)
 const FEATURED_ARTWORKS = photos.slice(0, 3)
 
-function isGifAsset(source: string) {
-  return /\.gif(?:$|[?#])/i.test(source)
-}
-
 function getPhotoMedium(description: string) {
   return description.split("|")[0]?.trim() || description
 }
@@ -52,7 +49,7 @@ interface HomeProjectPreviewImageProps {
 
 const HomeProjectPreviewImage: React.FC<HomeProjectPreviewImageProps> = ({ src, alt }) => {
   const mediaRef = useRef<HTMLSpanElement | null>(null)
-  const isGif = isGifAsset(src)
+  const isGif = isGifSource(src)
   const [isInView, setIsInView] = useState(() => !isGif)
 
   useEffect(() => {
@@ -235,7 +232,6 @@ const Home: React.FC<HomeProps> = ({ theme, phase }) => {
     Array.from({ length: HOME_SCROLL_PAGE_COUNT }, () => false),
   )
   const homeContainerRef = useRef<HTMLDivElement | null>(null)
-  const scrollCueRef = useRef<HTMLButtonElement | null>(null)
   const projectGridRef = useRef<HTMLDivElement | null>(null)
   const scrollPageRefs = useRef<Array<HTMLElement | null>>([])
   const scrollPageContentRefs = useRef<Array<HTMLElement | null>>([])
@@ -542,7 +538,6 @@ const Home: React.FC<HomeProps> = ({ theme, phase }) => {
           </div>
 
           <button
-            ref={scrollCueRef}
             type="button"
             className={`fade home-native-scroll-cue ${phase >= 3 ? "show" : ""}`}
             aria-label="Scroll to projects"

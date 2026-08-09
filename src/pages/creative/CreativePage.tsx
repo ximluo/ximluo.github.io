@@ -14,15 +14,13 @@ interface CreativeProps {
 }
 
 interface ModalProps {
-  photo: (typeof photos)[number] | null
+  photo: (typeof photos)[number]
   onClose: () => void
   theme: ThemeType
 }
 
 const PhotoModal = React.memo<ModalProps>(({ photo, onClose, theme }) => {
   const frameRef = useModalA11y<HTMLDivElement>(onClose)
-
-  if (!photo) return null
 
   const isPdfPreview = Boolean(photo.previewPdf)
   const colors = CONTENT_THEME_TOKENS[theme]

@@ -48,19 +48,15 @@ const BunnyScene: React.FC<BunnySceneProps> = ({ colors, onCarrotCollected, isMo
   const floorSizeRef = useRef(30)
   const timeRef = useRef(0)
 
-  const primMatRef = useRef<THREE.MeshToonMaterial>(
-    new THREE.MeshToonMaterial({ color: new THREE.Color(colors.bunnyPrimary) }),
-  )
-  const secMatRef = useRef<THREE.MeshToonMaterial>(
-    new THREE.MeshToonMaterial({ color: new THREE.Color(colors.bunnySecondary) }),
-  )
-  const bonusMatRef = useRef<THREE.MeshToonMaterial>(
-    new THREE.MeshToonMaterial({ color: new THREE.Color(colors.carrotBody) }),
-  )
-  const leafMatRef = useRef<THREE.MeshToonMaterial>(
-    new THREE.MeshToonMaterial({ color: new THREE.Color(colors.carrotLeaf) }),
-  )
-  const outlineMatRef = useRef<THREE.ShaderMaterial>(createOutlineMaterial())
+  // Lazily created once — a useRef initializer would construct (and discard)
+  // a fresh set of materials on every render.
+  const [{ primMatRef, secMatRef, bonusMatRef, leafMatRef, outlineMatRef }] = useState(() => ({
+    primMatRef: { current: new THREE.MeshToonMaterial({ color: new THREE.Color(colors.bunnyPrimary) }) },
+    secMatRef: { current: new THREE.MeshToonMaterial({ color: new THREE.Color(colors.bunnySecondary) }) },
+    bonusMatRef: { current: new THREE.MeshToonMaterial({ color: new THREE.Color(colors.carrotBody) }) },
+    leafMatRef: { current: new THREE.MeshToonMaterial({ color: new THREE.Color(colors.carrotLeaf) }) },
+    outlineMatRef: { current: createOutlineMaterial() },
+  }))
 
   useEffect(() => {
     primMatRef.current.color.set(colors.bunnyPrimary)
@@ -71,13 +67,9 @@ const BunnyScene: React.FC<BunnySceneProps> = ({ colors, onCarrotCollected, isMo
     scene.fog = new THREE.Fog(new THREE.Color(colors.fog).getHex(), 13, 20)
 
     if (floorRef.current) {
-      const mat = floorRef.current.material as THREE.Material & {
-        color?: THREE.Color
-        uniforms?: Record<string, { value: THREE.Color }>
-      }
-      if (mat.color) {
-        mat.color.set(colors.floor)
-      } else if (mat.uniforms?.color) {
+      // The Reflector floor always uses a ShaderMaterial; its color lives in a uniform.
+      const mat = floorRef.current.material
+      if (mat instanceof THREE.ShaderMaterial && mat.uniforms.color) {
         mat.uniforms.color.value.set(new THREE.Color(colors.floor))
       }
     }
@@ -91,7 +83,7 @@ const BunnyScene: React.FC<BunnySceneProps> = ({ colors, onCarrotCollected, isMo
       const markerDotMat = carrotMarkerDotRef.current.material as THREE.MeshBasicMaterial
       markerDotMat.color.set(colors.carrotLeaf)
     }
-  }, [colors, scene])
+  }, [colors, scene, primMatRef, secMatRef, bonusMatRef, leafMatRef, outlineMatRef])
 
   useBunnySceneSetup({
     scene,
@@ -137,7 +129,7 @@ const BunnyScene: React.FC<BunnySceneProps> = ({ colors, onCarrotCollected, isMo
       leafMat.dispose()
       outlineMat.dispose()
     }
-  }, [])
+  }, [primMatRef, secMatRef, bonusMatRef, leafMatRef, outlineMatRef])
 
   const hideCarrotMarker = useCallback(() => {
     if (carrotMarkerRef.current) carrotMarkerRef.current.visible = false
