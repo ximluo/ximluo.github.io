@@ -2,11 +2,6 @@
   overflow: visible;
   min-height: 100%;
   height: auto;
-  scrollbar-width: none;
-}
-
-.home-container::-webkit-scrollbar {
-  display: none;
 }
 
 .home-scroll-pages {
@@ -28,8 +23,6 @@
   justify-content: center;
   position: relative;
   z-index: 1;
-  scroll-snap-align: start;
-  scroll-snap-stop: always;
 }
 
 .home-scroll-page--intro {
@@ -40,7 +33,6 @@
 .home-flower-model {
   position: absolute;
   top: 0;
-  right: auto;
   left: var(--home-flower-panel-left, 0%);
   z-index: 0;
   width: var(--home-flower-panel-width, 100%);
@@ -51,8 +43,6 @@
   justify-content: center;
   pointer-events: none;
   opacity: var(--home-flower-model-opacity, 0.68);
-  transform: none;
-  transition: none;
 }
 
 .home-flower-model-stage {

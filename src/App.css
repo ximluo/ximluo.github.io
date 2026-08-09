@@ -111,10 +111,6 @@
     opacity 0.2s ease;
 }
 
-.app-nav-text-link.is-active {
-  border-color: transparent;
-}
-
 .app-nav-text-link:not(.is-active) {
   opacity: 0.72;
 }
@@ -181,7 +177,6 @@
   }
 
   .main-content-scroll--home {
-    scroll-snap-type: none;
     scroll-behavior: auto;
     overscroll-behavior-y: auto;
   }
