@@ -82,7 +82,9 @@ function App() {
     const container = mainContentScrollRef.current
     if (!container) return
     container.scrollTop = 0
-  }, [location.pathname, location.search, location.hash])
+    // Pathname only: search params (e.g. the creative page's ?photo= modal)
+    // must not scroll the page back to the top.
+  }, [location.pathname])
 
   return (
     <>
