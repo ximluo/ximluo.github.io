@@ -93,8 +93,7 @@ export const GradientCircles = ({
           ref={interBubbleRef}
           style={{
             position: "absolute",
-            background:
-              `radial-gradient(circle at center, rgba(var(--color-interactive),${0.5 * glowScale}) 0%, rgba(var(--color-interactive),0) 50%)`,
+            background: `radial-gradient(circle at center, rgba(var(--color-interactive),${0.5 * glowScale}) 0%, rgba(var(--color-interactive),0) 50%)`,
             mixBlendMode: "normal",
             width: "140%",
             height: "140%",
@@ -118,10 +117,7 @@ interface GradientDrawingSvgProps {
   style?: React.CSSProperties
 }
 
-export const GradientDrawingSvg = ({
-  className = "gbg-svg",
-  style,
-}: GradientDrawingSvgProps) => (
+export const GradientDrawingSvg = ({ className = "gbg-svg", style }: GradientDrawingSvgProps) => (
   <svg
     className={className}
     version="1.1"

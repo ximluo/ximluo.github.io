@@ -34,7 +34,12 @@ export const aboutContent = {
     },
   ] satisfies AboutTextPart[],
   experience: [
-    { title: "Apple", detail: "Software Engineer Intern", year: "2026", href: "https://www.apple.com/" },
+    {
+      title: "Apple",
+      detail: "Software Engineer Intern",
+      year: "2026",
+      href: "https://www.apple.com/",
+    },
     {
       title: "Apollo Global Management",
       detail: "Software Engineer Intern",
@@ -56,7 +61,12 @@ export const aboutContent = {
       href: "https://wics.cis.upenn.edu/",
     },
     { title: "FemmeHacks", detail: "President", year: "", href: "https://www.femmehacks.io/" },
-    { title: "Google Developer Group", detail: "Technical Lead", year: "", href: "https://gdg.community.dev/gdg-on-campus-university-of-pennsylvania-philadelphia-united-states/" },
+    {
+      title: "Google Developer Group",
+      detail: "Technical Lead",
+      year: "",
+      href: "https://gdg.community.dev/gdg-on-campus-university-of-pennsylvania-philadelphia-united-states/",
+    },
     { title: "Penn Labs", detail: "Developer", year: "", href: "https://pennlabs.org/" },
     { title: "Penn Spark", detail: "Developer", year: "", href: "https://pennspark.org/" },
     { title: "Notion", detail: "Campus Ambassador", year: "", href: "https://www.notion.com" },

@@ -109,7 +109,11 @@ export function getProjectTimeline(project: ProjectRecord) {
 
   const text = [
     project.description,
-    ...project.sections.flatMap((section) => [section.text ?? "", section.image ?? "", section.video ?? ""]),
+    ...project.sections.flatMap((section) => [
+      section.text ?? "",
+      section.image ?? "",
+      section.video ?? "",
+    ]),
   ].join(" ")
 
   const years = Array.from(new Set(text.match(/\b20\d{2}\b/g) ?? []))

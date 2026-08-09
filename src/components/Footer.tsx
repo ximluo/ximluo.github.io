@@ -125,9 +125,7 @@ const Footer: React.FC<FooterProps> = ({ theme }) => {
         ["--footer-bunny-slot-width" as string]: isMobile ? "100px" : "120px",
       }}
     >
-      <div
-        className={`footer-controls footer-controls--${layoutMode} fade show`}
-      >
+      <div className={`footer-controls footer-controls--${layoutMode} fade show`}>
         {usesSplitControls ? <div className="footer-bunny-slot">{bunnyButton}</div> : null}
 
         <div className={`footer-icons footer-icons--${layoutMode}`}>
@@ -158,9 +156,7 @@ const Footer: React.FC<FooterProps> = ({ theme }) => {
         </div>
       </div>
 
-      <div
-        className={`footer-copyright footer-copyright--${layoutMode} fade show`}
-      >
+      <div className={`footer-copyright footer-copyright--${layoutMode} fade show`}>
         © {new Date().getFullYear()} Ximing Luo •{" "}
         <a
           href="https://github.com/ximluo/ximluo.github.io"

@@ -51,10 +51,18 @@ const BunnyScene: React.FC<BunnySceneProps> = ({ colors, onCarrotCollected, isMo
   // Lazily created once — a useRef initializer would construct (and discard)
   // a fresh set of materials on every render.
   const [{ primMatRef, secMatRef, bonusMatRef, leafMatRef, outlineMatRef }] = useState(() => ({
-    primMatRef: { current: new THREE.MeshToonMaterial({ color: new THREE.Color(colors.bunnyPrimary) }) },
-    secMatRef: { current: new THREE.MeshToonMaterial({ color: new THREE.Color(colors.bunnySecondary) }) },
-    bonusMatRef: { current: new THREE.MeshToonMaterial({ color: new THREE.Color(colors.carrotBody) }) },
-    leafMatRef: { current: new THREE.MeshToonMaterial({ color: new THREE.Color(colors.carrotLeaf) }) },
+    primMatRef: {
+      current: new THREE.MeshToonMaterial({ color: new THREE.Color(colors.bunnyPrimary) }),
+    },
+    secMatRef: {
+      current: new THREE.MeshToonMaterial({ color: new THREE.Color(colors.bunnySecondary) }),
+    },
+    bonusMatRef: {
+      current: new THREE.MeshToonMaterial({ color: new THREE.Color(colors.carrotBody) }),
+    },
+    leafMatRef: {
+      current: new THREE.MeshToonMaterial({ color: new THREE.Color(colors.carrotLeaf) }),
+    },
     outlineMatRef: { current: createOutlineMaterial() },
   }))
 

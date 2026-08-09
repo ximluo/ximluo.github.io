@@ -77,11 +77,7 @@ export const useBunnyRuntimeLoop = ({
     timeRef.current += dt
     outlineMatRef.current.uniforms.time.value = timeRef.current
 
-    if (
-      !rabbitRef.current ||
-      !lineRef.current ||
-      !floorRef.current
-    ) {
+    if (!rabbitRef.current || !lineRef.current || !floorRef.current) {
       return
     }
 

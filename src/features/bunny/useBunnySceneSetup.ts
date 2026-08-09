@@ -138,7 +138,6 @@ export const useBunnySceneSetup = ({
     return () => {
       disposedRef.current = true
       setModelLoaded(false)
-
       ;(floorRef.current as (Reflector & { dispose?: () => void }) | null)?.dispose?.()
 
       disposeMeshMaterial(carrotMarkerRef.current)

@@ -163,16 +163,7 @@ const DogCompanion = () => {
     const tail = tailRef.current
     const track = dog?.parentElement
 
-    if (
-      !dog ||
-      !track ||
-      !body ||
-      !bodyWrapper ||
-      !head ||
-      !headWrapper ||
-      !tailWrapper ||
-      !tail
-    ) {
+    if (!dog || !track || !body || !bodyWrapper || !head || !headWrapper || !tailWrapper || !tail) {
       return
     }
 

@@ -417,9 +417,7 @@ const Home: React.FC<HomeProps> = ({ theme, phase }) => {
     window.addEventListener("resize", scheduleFlowerLayerHeight)
 
     const resizeObserver =
-      typeof ResizeObserver === "undefined"
-        ? null
-        : new ResizeObserver(scheduleFlowerLayerHeight)
+      typeof ResizeObserver === "undefined" ? null : new ResizeObserver(scheduleFlowerLayerHeight)
     if (resizeObserver) {
       if (homeContainerRef.current) resizeObserver.observe(homeContainerRef.current)
       if (projectGridRef.current) resizeObserver.observe(projectGridRef.current)
@@ -558,7 +556,10 @@ const Home: React.FC<HomeProps> = ({ theme, phase }) => {
           className={`home-scroll-page home-scroll-page--showcase ${tallPageFlags[1] ? "home-scroll-page--content-tall" : ""}`}
           style={{ padding: projectsPadding }}
         >
-          <HomeProjectsShowcase registerContent={registerProjectsContent} gridRef={projectGridRef} />
+          <HomeProjectsShowcase
+            registerContent={registerProjectsContent}
+            gridRef={projectGridRef}
+          />
         </section>
 
         <section
