@@ -117,6 +117,22 @@ const applyRabbitMaterialsAndOutlines = (
   })
 }
 
+const disposeAbandonedModel = (root: THREE.Object3D) => {
+  root.traverse((child) => {
+    const mesh = child as THREE.Mesh
+    if (!mesh.isMesh) return
+    mesh.geometry?.dispose()
+    const materials = Array.isArray(mesh.material) ? mesh.material : [mesh.material]
+    materials.forEach((material) => {
+      if (!material) return
+      Object.values(material).forEach((value) => {
+        if (value instanceof THREE.Texture) value.dispose()
+      })
+      material.dispose()
+    })
+  })
+}
+
 export const loadRabbitModelIntoScene = ({
   addToScene,
   disposedRef,
@@ -130,10 +146,24 @@ export const loadRabbitModelIntoScene = ({
 }: LoadRabbitModelIntoSceneOptions) => {
   const loader = new GLTFLoader()
 
-  loader.load("/models/rabbit.glb", (gltf) => {
-    if (disposedRef.current) return
+  loader.load(
+    "/models/rabbit.glb",
+    (gltf) => {
+      if (disposedRef.current) {
+        // The modal closed while the model was in flight — free the parsed
+        // GPU resources instead of dropping them on the floor.
+        disposeAbandonedModel(gltf.scene)
+        return
+      }
+      handleRabbitModelLoaded(gltf.scene)
+    },
+    undefined,
+    (error) => {
+      console.warn("Failed to load rabbit model:", error)
+    },
+  )
 
-    const model = gltf.scene
+  function handleRabbitModelLoaded(model: THREE.Group) {
     const rabbit = model.getObjectByName("Rabbit") as THREE.Group | null
     const rabbitBody = model.getObjectByName("body") as THREE.Mesh | null
     const earRight = model.getObjectByName("earRight") as THREE.Mesh | null
@@ -161,6 +191,7 @@ export const loadRabbitModelIntoScene = ({
       !carrotLeaf ||
       !carrotLeaf2
     ) {
+      disposeAbandonedModel(model)
       return
     }
 
@@ -191,7 +222,7 @@ export const loadRabbitModelIntoScene = ({
     carrotRef.current = carrot
 
     setModelLoaded(true)
-  })
+  }
 }
 
 export const createBunnySceneScaffold = ({

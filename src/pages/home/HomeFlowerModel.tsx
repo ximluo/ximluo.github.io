@@ -1,5 +1,5 @@
 import type React from "react"
-import { Suspense, useEffect, useRef } from "react"
+import { Suspense, useEffect, useMemo, useRef } from "react"
 import { Canvas, useThree } from "@react-three/fiber"
 import FlowerScene from "../about/FlowerScene"
 import { getHomeFlowerControls } from "./homeFlowerControls"
@@ -49,7 +49,12 @@ const HomeFlowerModel: React.FC<HomeFlowerModelProps> = ({
   layerHeight,
 }) => {
   const asideRef = useRef<HTMLElement | null>(null)
-  const controls = getHomeFlowerControls(windowWidth, windowHeight)
+  // Memoized so `controls.transform` keeps a stable identity — FlowerScene
+  // re-frames the camera whenever its `controls` prop changes identity.
+  const controls = useMemo(
+    () => getHomeFlowerControls(windowWidth, windowHeight),
+    [windowWidth, windowHeight],
+  )
   const canvasDpr = controls.dpr
 
   return (

@@ -27,6 +27,16 @@ const disposeObjectGeometries = (objects: THREE.Object3D[]) => {
   geometries.forEach((geometry) => geometry.dispose())
 }
 
+const disposeMeshMaterial = (mesh: THREE.Mesh | null) => {
+  if (!mesh) return
+  const material = mesh.material
+  if (Array.isArray(material)) {
+    material.forEach((entry) => entry.dispose())
+  } else {
+    material.dispose()
+  }
+}
+
 interface BunnySceneSetupOptions extends BunnyMaterialRefs {
   scene: THREE.Scene
   camera: THREE.Camera
@@ -131,7 +141,13 @@ export const useBunnySceneSetup = ({
 
       ;(floorRef.current as (Reflector & { dispose?: () => void }) | null)?.dispose?.()
 
+      disposeMeshMaterial(carrotMarkerRef.current)
+      disposeMeshMaterial(carrotMarkerDotRef.current)
+
       createdObjects.forEach((object) => {
+        if (object instanceof THREE.Light) {
+          object.dispose()
+        }
         if (object.parent === scene) {
           scene.remove(object)
         }

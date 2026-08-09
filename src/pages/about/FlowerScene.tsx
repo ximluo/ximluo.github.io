@@ -91,6 +91,7 @@ const FlowerScene: React.FC<FlowerSceneProps> = ({
   const modelRef = useRef<THREE.Group | null>(null)
   const stableBoxRef = useRef<THREE.Box3 | null>(null)
   const hasReportedReadyRef = useRef(false)
+  const retryRafRef = useRef<number | null>(null)
   const { camera, size } = useThree()
   const ambientLightIntensity = controls?.ambientLightIntensity ?? (quality === "low" ? 1.15 : 0.9)
   const directionalLightIntensity =
@@ -195,16 +196,22 @@ const FlowerScene: React.FC<FlowerSceneProps> = ({
           onSceneReady?.()
         }
         if (!didFrame && attempts < 12) {
-          requestAnimationFrame(tryFrame)
+          retryRafRef.current = requestAnimationFrame(tryFrame)
         } else if (!didFrame && !hasReportedReadyRef.current) {
           hasReportedReadyRef.current = true
           onSceneReady?.()
         }
       }
-      requestAnimationFrame(tryFrame)
+      retryRafRef.current = requestAnimationFrame(tryFrame)
     },
     [frameCentered, onSceneReady],
   )
+
+  useEffect(() => {
+    return () => {
+      if (retryRafRef.current !== null) cancelAnimationFrame(retryRafRef.current)
+    }
+  }, [])
 
   useEffect(() => {
     frameCentered()

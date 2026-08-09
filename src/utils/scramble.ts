@@ -11,6 +11,7 @@ export const scrambleText = (
   set: ScrambleSet,
   updateFn: (text: string) => void,
   steps = 15,
+  isCancelled?: () => boolean,
 ): Promise<string> => {
   return new Promise((resolve) => {
     let frame = 0
@@ -18,6 +19,10 @@ export const scrambleText = (
     let out = Array.from(target)
 
     const tick = () => {
+      if (isCancelled?.()) {
+        resolve(target)
+        return
+      }
       out = out.map((_, index) =>
         frame >= steps
           ? target[index]

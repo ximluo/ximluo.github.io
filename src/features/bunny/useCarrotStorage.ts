@@ -12,7 +12,12 @@ const parseStoredCarrotCount = (value: string | null) => {
 const useCarrotStorage = () => {
   const [carrotCount, setCarrotCount] = useState(() => {
     if (typeof window === "undefined") return 0
-    return parseStoredCarrotCount(window.sessionStorage.getItem(CARROT_COUNT_STORAGE_KEY))
+    try {
+      return parseStoredCarrotCount(window.sessionStorage.getItem(CARROT_COUNT_STORAGE_KEY))
+    } catch {
+      // sessionStorage can throw when storage is blocked (private mode, embedded webviews)
+      return 0
+    }
   })
   const skipNextWriteRef = useRef(false)
 
@@ -42,7 +47,11 @@ const useCarrotStorage = () => {
       return
     }
 
-    window.sessionStorage.setItem(CARROT_COUNT_STORAGE_KEY, carrotCount.toString())
+    try {
+      window.sessionStorage.setItem(CARROT_COUNT_STORAGE_KEY, carrotCount.toString())
+    } catch {
+      // storage blocked — the count still works in-memory for this session
+    }
   }, [carrotCount])
 
   const incrementCarrotCount = useCallback(() => {

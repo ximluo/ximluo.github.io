@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react"
+import React, { useState, useEffect, useCallback, useRef } from "react"
 import { Link } from "react-router-dom"
 import "./NotFoundPage.css"
 import { scrambleText } from "../../utils/scramble"
@@ -26,12 +26,26 @@ const NotFound: React.FC<NotFoundProps> = ({ theme, backPath = "/" }) => {
   const themeConfig = NOT_FOUND_THEME_CONFIG[theme]
   const visualTokens = THEME_VISUAL_TOKENS[theme]
 
+  const unmountedRef = useRef(false)
+  const messageTimerRef = useRef<number | null>(null)
+
   const scrambleEffect = useCallback((): void => {
-    void scrambleText("404", themeConfig.glitchSet, setGlitchText, 30)
-    setTimeout(() => {
-      void scrambleText("PAGE NOT FOUND", themeConfig.messageSet, setMessageText, 25)
+    const isCancelled = () => unmountedRef.current
+    void scrambleText("404", themeConfig.glitchSet, setGlitchText, 30, isCancelled)
+    if (messageTimerRef.current !== null) clearTimeout(messageTimerRef.current)
+    messageTimerRef.current = window.setTimeout(() => {
+      messageTimerRef.current = null
+      void scrambleText("PAGE NOT FOUND", themeConfig.messageSet, setMessageText, 25, isCancelled)
     }, 300)
   }, [themeConfig])
+
+  useEffect(() => {
+    unmountedRef.current = false
+    return () => {
+      unmountedRef.current = true
+      if (messageTimerRef.current !== null) clearTimeout(messageTimerRef.current)
+    }
+  }, [])
 
   useEffect(() => {
     const timer = setTimeout(() => {

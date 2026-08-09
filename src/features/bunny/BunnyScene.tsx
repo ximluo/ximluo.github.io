@@ -207,6 +207,10 @@ const BunnyScene: React.FC<BunnySceneProps> = ({ colors, onCarrotCollected, isMo
     (pos: THREE.Vector3) => {
       isExplodingRef.current = true
 
+      // All scale tweens share the same duration/ease, so the respawn
+      // callback only needs to ride on one of them.
+      let hasCompletionCallback = false
+
       for (const mesh of particlesRef.current) {
         mesh.position.set(pos.x, pos.y, pos.z)
         mesh.scale.set(2, 2, 2)
@@ -225,11 +229,14 @@ const BunnyScene: React.FC<BunnySceneProps> = ({ colors, onCarrotCollected, isMo
           z: 0,
           duration: 1,
           ease: "power4.out",
-          onComplete: () => {
-            spawnCarrot()
-            isExplodingRef.current = false
-          },
+          onComplete: hasCompletionCallback
+            ? undefined
+            : () => {
+                spawnCarrot()
+                isExplodingRef.current = false
+              },
         })
+        hasCompletionCallback = true
       }
 
       for (const mesh of particles2Ref.current) {

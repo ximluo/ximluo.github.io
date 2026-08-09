@@ -28,6 +28,13 @@ const DIMENSION_EXTENSIONS = new Set([".png", ".jpg", ".jpeg", ".gif", ".webp"])
 
 const manifest = {}
 
+for (const dir of [OPTIMIZED_DIR, SOURCE_DIR]) {
+  if (!fs.existsSync(dir)) {
+    console.error(`generate-image-manifest: missing directory ${dir}`)
+    process.exit(1)
+  }
+}
+
 let parsed = 0
 for (const file of fs.readdirSync(OPTIMIZED_DIR)) {
   const match = VARIANT_RE.exec(file)
