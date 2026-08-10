@@ -23,7 +23,7 @@ export const aboutContent = {
       text: "Digital Media Design",
       href: "http://cg.cis.upenn.edu/dmd.html",
     },
-    ") and Economics. I build software, interfaces, and immersive tools across mobile, graphics, XR, and visual systems.",
+    ") and Economics. I'm also getting my master's in Computer Science. I build software, interfaces, and immersive tools across mobile, graphics, XR, and visual systems, and I do machine learning research and analysis.",
   ] satisfies AboutTextPart[],
   contact: [
     "Say hello at ",
@@ -63,7 +63,7 @@ export const aboutContent = {
     { title: "FemmeHacks", detail: "President", year: "", href: "https://www.femmehacks.io/" },
     {
       title: "Google Developer Group",
-      detail: "Technical Lead",
+      detail: "President",
       year: "",
       href: "https://gdg.community.dev/gdg-on-campus-university-of-pennsylvania-philadelphia-united-states/",
     },

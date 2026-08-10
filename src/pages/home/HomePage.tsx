@@ -42,18 +42,28 @@ function getPhotoMedium(description: string) {
   return description.split("|")[0]?.trim() || description
 }
 
+// GIF thumbnails animate once scrolled into view, except for these projects,
+// which stay on their static poster frame.
+const STATIC_GIF_THUMBNAIL_PROJECT_IDS = new Set(["petsteps"])
+
 interface HomeProjectPreviewImageProps {
+  projectId: string
   src: string
   alt: string
 }
 
-const HomeProjectPreviewImage: React.FC<HomeProjectPreviewImageProps> = ({ src, alt }) => {
+const HomeProjectPreviewImage: React.FC<HomeProjectPreviewImageProps> = ({
+  projectId,
+  src,
+  alt,
+}) => {
   const mediaRef = useRef<HTMLSpanElement | null>(null)
   const isGif = isGifSource(src)
-  const [isInView, setIsInView] = useState(() => !isGif)
+  const canAnimate = isGif && !STATIC_GIF_THUMBNAIL_PROJECT_IDS.has(projectId)
+  const [isInView, setIsInView] = useState(false)
 
   useEffect(() => {
-    if (!isGif) return
+    if (!canAnimate) return
 
     const mediaNode = mediaRef.current
     if (!mediaNode || typeof IntersectionObserver === "undefined") {
@@ -70,7 +80,7 @@ const HomeProjectPreviewImage: React.FC<HomeProjectPreviewImageProps> = ({ src, 
 
     observer.observe(mediaNode)
     return () => observer.disconnect()
-  }, [isGif])
+  }, [canAnimate])
 
   return (
     <span ref={mediaRef} className="home-preview-card-media">
@@ -79,7 +89,7 @@ const HomeProjectPreviewImage: React.FC<HomeProjectPreviewImageProps> = ({ src, 
         alt={alt}
         className="home-preview-card-image"
         preferPosterForGif={isGif && !isInView}
-        preferAnimatedGifVariant={isGif && isInView}
+        preferAnimatedGifVariant={canAnimate && isInView}
         animatedGifVariantTier="thumb"
         sizes="(max-width: 767px) 80vw, 40vw"
       />
@@ -128,7 +138,11 @@ const HomeProjectsShowcase = memo<ProjectsShowcaseProps>(({ registerContent, gri
                 onClick={() => navigate(`/portfolio/${project.id}`)}
               >
                 <span className="home-project-card-media-frame">
-                  <HomeProjectPreviewImage src={project.image} alt={project.name} />
+                  <HomeProjectPreviewImage
+                    projectId={project.id}
+                    src={project.image}
+                    alt={project.name}
+                  />
                   <span className="home-project-card-hover" aria-hidden>
                     <span className="home-project-card-view">View</span>
                   </span>
