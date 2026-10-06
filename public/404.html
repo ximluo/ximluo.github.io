@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+<head>
+<script>
+/* links to the site before 2026 land on the page they meant; everything else falls through to the not-found page below */
+(function () {
+  var p = location.pathname.replace(/\/+$/, '') || '/', q = new URLSearchParams(location.search), to = null;
+  var ids = { 'ar-mri-point-cloud': 1, 'hci-research-jhu': 1, 'lost-at-penn': 1, 'mini-minecraft': 1, 'neuroscent': 1, 'painterly': 1, 'pbr-renderer': 1, 'penn-capsule': 1, 'penn-mobile': 1, 'pennos': 1, 'petsteps': 1, 'relight': 1, 'rewind': 1, 'statistical-learning-returns': 1, 'undertone': 1, 'web-experiments': 1 };
+  var m = p.match(/^\/portfolio\/([a-z0-9-]+)$/);
+  if (m && ids[m[1]]) to = '/?open=' + m[1];
+  else if (p === '/portfolio') to = '/?index';
+  else if (p === '/creative') { var ph = q.get('photo'); to = ph && /^photo-\d+$/.test(ph) ? '/?art=' + ph : '/?art'; }
+  else if (p === '/about') to = '/?about';
+  if (to) { document.documentElement.style.visibility = 'hidden'; location.replace(to); }
+})();
+</script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Not found · Ximing Luo</title>
+<meta name="robots" content="noindex">
+<link rel="preload" href="/media/fonts/Boska-Regular.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/media/fonts/B612Mono-Regular.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/media/fonts/LeagueGothic-Regular.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<style>
+/* self-contained on purpose: this page is served for any missing path, so nothing here is relative */
+@font-face{font-family:"Boska";src:url("/media/fonts/Boska-Regular.woff2") format("woff2");font-weight:400;font-style:normal;font-display:swap}
+@font-face{font-family:"Boska";src:url("/media/fonts/Boska-Italic.woff2") format("woff2");font-weight:400;font-style:italic;font-display:swap}
+@font-face{font-family:"B612 Mono";src:url("/media/fonts/B612Mono-Regular.woff2") format("woff2");font-weight:400;font-style:normal;font-display:swap}
+@font-face{font-family:"League Gothic";src:url("/media/fonts/LeagueGothic-Regular.woff2") format("woff2");font-weight:400;font-style:normal;font-display:swap}
+:root{--ink:#111317;--bone:#ecebe6;--ruby:#e1262d;--silver:#a9abaf;--silver2:#7d8086;--serif:"Boska","Bodoni 72",Didot,Georgia,serif;--mono:"B612 Mono",ui-monospace,Menlo,monospace;--num:"League Gothic",Impact,"Arial Narrow",sans-serif}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{min-height:100%}
+body{background:radial-gradient(ellipse 46% 42% at 50% 50%,#3a2628 0,#1b1618 58%,#0a0a0b 100%) var(--ink);color:var(--bone);font-family:var(--mono);-webkit-font-smoothing:antialiased}
+.page{min-height:100vh;min-height:100dvh;display:grid;grid-template-rows:auto 1fr auto;padding:22px 28px;--fl:1;filter:brightness(var(--fl))}
+a{color:inherit;text-decoration:none}
+.top,.bot{display:flex;justify-content:space-between;align-items:center;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--silver2)}
+.top a,.bot a{color:var(--silver)}
+.top a:hover,.bot a:hover{color:var(--bone)}
+main{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:18px;padding:24px 0}
+.num{font:400 clamp(140px,28vw,320px)/.9 var(--num);letter-spacing:.02em;color:var(--bone);filter:url(#pn)}
+.line{font:italic 400 clamp(22px,2.6vw,34px)/1.2 var(--serif);color:var(--bone)}
+.sub{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--silver2);margin-top:-6px}
+.btn{display:inline-flex;align-items:center;gap:10px;height:40px;padding:0 16px;margin-top:14px;border:1px solid rgba(236,235,230,.3);border-radius:2px;background:rgba(17,19,23,.6);color:var(--bone);font-size:11px;letter-spacing:.14em;text-transform:uppercase;transition:background .15s steps(2),color .15s steps(2)}
+.btn:hover,.btn:focus-visible{background:var(--bone);color:#0b0c0e;outline:none}
+.btn i{width:0;height:0;border:5px solid transparent;border-left:8px solid var(--ruby);border-right:0}
+.btn:hover i{border-left-color:#0b0c0e}
+/* the countdown's print: scanlines and sprocket strips, the grain canvas and vignette from the site, lamp flicker via --fl on .page */
+.defs{position:absolute}
+.film{position:fixed;inset:0;pointer-events:none;background:repeating-linear-gradient(0deg,rgba(0,0,0,.14) 0 1px,transparent 1px 3px)}
+.film::before,.film::after{content:"";position:absolute;top:0;bottom:0;width:13px;background:repeating-linear-gradient(0deg,transparent 0 9px,rgba(236,235,230,.14) 9px 25px,transparent 25px 34px)}
+.film::before{left:max(10px,1.2vw)}.film::after{right:max(10px,1.2vw)}
+#grain{position:fixed;inset:0;width:100%;height:100%;z-index:80;pointer-events:none;opacity:.4}
+#vignette{position:fixed;inset:0;z-index:79;pointer-events:none;background:radial-gradient(ellipse 80% 75% at 50% 50%,transparent 62%,rgba(0,0,0,.4) 100%)}
+@media (max-width:760px){.page{padding:16px 18px}.film::before,.film::after{display:none}.top span:last-child,.bot span:last-child{display:none}}
+</style>
+</head>
+<body>
+<svg class="defs" aria-hidden="true" width="0" height="0">
+  <filter id="pn" x="-6%" y="-6%" width="112%" height="112%" color-interpolation-filters="sRGB"><feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" seed="7" result="n"/><feColorMatrix in="n" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 -8 5.7" result="holes"/><feTurbulence type="turbulence" baseFrequency=".018" numOctaves="1" seed="2" result="w"/><feDisplacementMap in="SourceGraphic" in2="w" scale="2.4" xChannelSelector="R" yChannelSelector="G" result="d"/><feComposite in="d" in2="holes" operator="in"/></filter>
+</svg>
+<div class="film" aria-hidden="true"></div>
+<div class="page">
+<header class="top"><a href="/">Ximing Luo</a><span>404</span></header>
+<main>
+  <div class="num" aria-hidden="true">404</div>
+  <h1 class="line">This page doesn't exist.</h1>
+  <p class="sub">The page may have moved, or the link was never real.</p>
+  <a class="btn" href="/"><i></i>Back to the start</a>
+</main>
+<footer class="bot"><span>Not found</span><span class="tc">00:00:00:00</span></footer>
+</div>
+<canvas id="grain" aria-hidden="true"></canvas>
+<div id="vignette" aria-hidden="true"></div>
+<script>
+/* the countdown's texture: 12 fps grain tiles with dust and scratches, the type noise reseeding, a 24 fps lamp flicker and the timecode */
+(function () {
+  var RM = matchMedia('(prefers-reduced-motion: reduce)').matches, TOUCH = matchMedia('(hover: none)').matches;
+  var gc = document.getElementById('grain'), g = gc.getContext('2d'), tiles = [], page = document.querySelector('.page'), turb = document.querySelector('#pn feTurbulence'), tcs = document.querySelectorAll('.tc');
+  for (var k = 0; k < 5; k++) { var c = document.createElement('canvas'); c.width = c.height = 128; var x = c.getContext('2d'), d = x.createImageData(128, 128);
+    for (var q = 0; q < d.data.length; q += 4) { var v = Math.random() < .5 ? 0 : 255; d.data[q] = d.data[q + 1] = d.data[q + 2] = v; d.data[q + 3] = Math.pow(Math.random(), 2.2) * (v ? 30 : 56); }
+    x.putImageData(d, 0, 0); tiles.push(c); }
+  function size() { var k = TOUCH ? .45 : .55; gc.width = Math.ceil(innerWidth * k); gc.height = Math.ceil(innerHeight * k); } size(); addEventListener('resize', size);
+  var scratch = [], gT = 0, fT = 0, tick = 0, t0 = performance.now(), done = false;
+  function tc(s) { var f = Math.floor((s % 1) * 24), ss = Math.floor(s) % 60, m = Math.floor(s / 60) % 60, h = Math.floor(s / 3600); return [h, m, ss, f].map(function (v) { return String(v).padStart(2, '0'); }).join(':'); }
+  (function loop(now) {
+    if (!done) requestAnimationFrame(loop);
+    if (!RM && now - fT > 41) { fT = now; page.style.setProperty('--fl', (.95 + Math.random() * .07).toFixed(3)); }
+    if (now - gT > 83) { gT = now; var W = gc.width, H = gc.height; g.clearRect(0, 0, W, H);
+      g.save(); g.translate(-Math.random() * 128, -Math.random() * 128); g.fillStyle = g.createPattern(tiles[(Math.random() * 5) | 0], 'repeat'); g.fillRect(0, 0, W + 128, H + 128); g.restore();
+      if (Math.random() < .5) { var X = Math.random() * W, Y = Math.random() * H, r = Math.random() * 1.8 + .4; g.fillStyle = Math.random() < .6 ? 'rgba(0,0,0,.6)' : 'rgba(236,235,230,.45)'; g.beginPath(); g.arc(X, Y, r, 0, 7); g.fill(); }
+      if (Math.random() < .03) scratch.push({ x: Math.random() * W, life: 5 + Math.random() * 14, a: .05 + Math.random() * .08 });
+      scratch = scratch.filter(function (s) { return s.life-- > 0; }); scratch.forEach(function (s) { s.x += (Math.random() - .5); g.fillStyle = 'rgba(236,235,230,' + s.a + ')'; g.fillRect(s.x, 0, .7, H); });
+      if (turb && (tick++ & 1)) turb.setAttribute('seed', (Math.random() * 999) | 0);
+      var t = tc((performance.now() - t0) / 1000); for (var i = 0; i < tcs.length; i++) tcs[i].textContent = t;
+      if (RM) done = true;
+    }
+  })(0);
+})();
+</script>
+</body>
+</html>
