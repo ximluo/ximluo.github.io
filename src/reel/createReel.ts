@@ -29,10 +29,10 @@ function directEntry(route: Route): Entry | null {
   return e && (e.kind === "work" || e.kind === "page") ? e : null
 }
 
-/** The first frame: the deep-linked entry (info pages stay off a phone's player) or the first Selected work. */
+/** The first frame: the deep-linked entry (info pages stay off a phone's player) or the title card. */
 export function homeEntry(route: Route): Entry {
   const direct = directEntry(route)
-  return direct && !(direct.kind === "page" && isPhone()) ? direct : catalog.sections[0]!.items[0]!
+  return direct && !(direct.kind === "page" && isPhone()) ? direct : catalog.home
 }
 
 export function initialState(route: Route): ReelState {
@@ -92,7 +92,7 @@ export function createReel(store: Store<ReelState>, dom: ReelDom, route: Route):
   const player = createPlayer(ctx)
   const project = createProject(ctx)
   const wall = createWall(ctx)
-  const shell = createShell(ctx, player.home)
+  const shell = createShell(ctx)
   Object.assign(ctx.a, list.actions, player.actions, project.actions, wall.actions, shell.actions)
   let stopFilm = () => {}
 

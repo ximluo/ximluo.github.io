@@ -1,7 +1,8 @@
-/* The About page: bio, address and links, then education and experience. */
+/* The About page: bio, address and links, then education, experience and recognition. */
 import { AB } from "../data/about"
 import { EXPERIENCE } from "../data/experience"
 import type { Experience } from "../data/types"
+import { RecognitionRoll } from "./RecognitionPage"
 
 function Roll({
   title,
@@ -55,6 +56,7 @@ export function AboutPage() {
         <div className="ab-grid">
           <Roll title="Education" items={AB.education} />
           <Roll title="Experience" items={experience} />
+          <RecognitionRoll firstTitle="Recognition" />
         </div>
         <p className="ab-fin mono">Fin</p>
       </div>

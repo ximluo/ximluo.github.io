@@ -75,16 +75,15 @@ The site is one page and routes by path. Every route is also a real file: the bu
 `scripts/prerender.ts`, which copies `dist/index.html` once per route with its own title, description and
 preview image, so GitHub Pages answers each address directly and a shared link previews the page it points to.
 
-| URL               | Opens                                                 |
-| ----------------- | ----------------------------------------------------- |
-| `/<id>`           | A project page (`/about` and `/recognition` too)      |
-| `/art`            | The artwork wall                                      |
-| `/art/<photo-id>` | A piece, enlarged over the wall                       |
-| `/index`          | The player with every section unfolded                |
-| `/?skipintro`     | Skips the leader (every path other than `/` does too) |
-| `/?tint=grey`     | A grey leader                                         |
+| URL               | Opens                                                     |
+| ----------------- | --------------------------------------------------------- |
+| `/<id>`           | A project page (`/about` too; `/recognition` opens About) |
+| `/art`            | The artwork wall                                          |
+| `/art/<photo-id>` | A piece, enlarged over the wall                           |
+| `/index`          | The player with every section unfolded                    |
+| `/?tint=grey`     | A grey leader                                             |
 
-After the first visit the leader is skipped; the name at the top left replays it. Links of the old shape
+After the first visit the leader is skipped; the name at the top left opens About. Links of the old shape
 (`/?open=<id>`, `/?art=<id>`, `/?about`) still work: the address is rewritten to the path once the site is up.
 
 Links to the site before 2026 (`/portfolio/<id>`, `/creative`) and paths with a trailing slash are redirected

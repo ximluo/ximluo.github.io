@@ -1,10 +1,9 @@
-/* The project list: one section per catalogue section with the wall row under Selected, and the About and
-   Recognition pills pinned beneath the scroll area. Folds and the scroll position survive a reload within the
-   session. */
+/* The project list: the Home and About rows above one section per catalogue section, with the wall row
+   under Selected. Folds and the scroll position survive a reload within the session. */
 import { useCallback, useEffect, useRef, type MouseEvent } from "react"
 import { cx } from "../cx"
 import { WALL_ID, type Section } from "../data/catalog"
-import type { Entry, PageEntry, WorkEntry } from "../data/types"
+import type { Entry, WorkEntry } from "../data/types"
 import { RM } from "../env"
 import { wallLoop } from "../media"
 import { artPath, openPath } from "../paths"
@@ -55,21 +54,38 @@ function WallRow() {
   )
 }
 
-function PageRow({ w }: { w: PageEntry }) {
-  const on = useReelState((s) => s.activeId === w.id)
-  const open = useReelState((s) => s.projOn && s.pageId === w.id)
-  const seen = useReelState((s) => s.seen.includes(w.id))
+/* The rows above Selected: Home (the title card, frame 00) and About (its card previews the page; clicking opens
+   it). Both are frames of the reel like any project row. */
+function TopRows() {
+  const { cat } = useReel()
+  const h = cat.home
+  const homeOn = useReelState((s) => s.activeId === h.id)
+  const pages = cat.info
+  const activeId = useReelState((s) => s.activeId)
+  const openId = useReelState((s) => (s.projOn ? s.pageId : null))
   return (
-    <a
-      className={cx("lr pg", on && "on", open && "open", seen && "seen")}
-      href={openPath(w.id)}
-      data-id={w.id}
-      data-k="page"
-    >
-      <span className="pt" aria-hidden="true"></span>
-      <b>{w.title}</b>
-      <em>{w.sub || ""}</em>
-    </a>
+    <section className="lu-sec lu-top" data-s="top">
+      <div className="lu-rows">
+        <a className={cx("lr hm t1", homeOn && "on")} href="/" data-id={h.id} data-k={h.kind}>
+          <span className="n">{cat.num(h)}</span>
+          <b>{h.label}</b>
+          <em>{h.sub}</em>
+        </a>
+        {pages.map((w) => (
+          <a
+            key={w.id}
+            className={cx("lr t1", (activeId === w.id || openId === w.id) && "on")}
+            href={openPath(w.id)}
+            data-id={w.id}
+            data-k="page"
+          >
+            <span className="n">{cat.num(w)}</span>
+            <b>{w.title}</b>
+            <em>{w.sub}</em>
+          </a>
+        ))}
+      </div>
+    </section>
   )
 }
 
@@ -157,15 +173,11 @@ export function ListUI() {
         }}
       >
         <div className="lu-inner">
+          <TopRows />
           {cat.sections.map((s) => s.items.length > 0 && <SectionBlock key={s.key} s={s} />)}
           <div className="lu-end"></div>
         </div>
       </div>
-      <nav className="lu-pin" aria-label="Info">
-        {cat.info.map((w) => (
-          <PageRow key={w.id} w={w} />
-        ))}
-      </nav>
     </div>
   )
 }

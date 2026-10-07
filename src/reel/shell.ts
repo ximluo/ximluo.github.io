@@ -1,17 +1,16 @@
-/* The frame around the player: the phone sheet and menu, the bottom bar's stepping, the keyboard, the HUD buttons
-   and the home replay. */
+/* The frame around the player: the phone sheet and menu, the bottom bar's stepping, the keyboard, the HUD
+   buttons and the home replay. */
 import { trackExternalLink } from "../analytics"
-import type { Entry } from "../data/types"
 import { isPhone } from "../env"
 import { clamp } from "../film/tween"
-import { nav } from "../routing"
 import type { Actions, Ctx } from "./ctx"
 import { setBodyClass, setMenuQ } from "./ctx"
+import { nav } from "../routing"
 import type { Snap } from "./state"
 
 const SNAPS: Snap[] = ["peek", "half", "full"]
 
-export function createShell(ctx: Ctx, home: () => Entry) {
+export function createShell(ctx: Ctx) {
   const { store, dom, cat, f } = ctx
   const s = () => store.get()
   const a = ctx.a
@@ -82,7 +81,7 @@ export function createShell(ctx: Ctx, home: () => Entry) {
     else if (s().view === "wall") void a.closeWall()
   }
 
-  /* ---------- home: the top-left name replays the opening and returns to the start ---------- */
+  /* ---------- home: the top-left name replays the opening and returns to the Home card. The leader plays nowhere else ---------- */
   async function resetHome() {
     a.closeFull()
     a.projReset()
@@ -93,7 +92,7 @@ export function createShell(ctx: Ctx, home: () => Entry) {
     a.setOff("Y", 0, 1)
     f.idleT = -1e9
     f.first = true
-    a.select(home())
+    a.select(cat.home)
     const sc = dom.blist.querySelector(".lu-scroll")
     if (sc) sc.scrollTop = 0
     nav.clear()
@@ -168,7 +167,8 @@ export function createShell(ctx: Ctx, home: () => Entry) {
       if (n) a.select(cat.entry(n))
     } else if (e.key === "Enter") {
       e.preventDefault()
-      if (st.cur) void a.pick(st.cur)
+      if (st.cur?.kind === "home") void a.pick(cat.entry("about"))
+      else if (st.cur) void a.pick(st.cur)
     }
   }
 

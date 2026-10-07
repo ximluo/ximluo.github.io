@@ -1,6 +1,6 @@
 /* The artwork wall in the right panel (reel/wall.ts mounts the WebGL wall into #aw-wall), its hover line and
    hint, and the enlarged piece over it. */
-import { Fragment, type MouseEvent } from "react"
+import { Fragment, useEffect, useRef, type MouseEvent } from "react"
 import { cx } from "../cx"
 import { TOUCH } from "../env"
 import { useDomRef, useReel, useReelState } from "../reel/context"
@@ -105,6 +105,12 @@ function ArtDetail() {
   const shown = useReelState((s) => s.adShown)
   const w = id ? cat.get(id) : undefined
   const still = cat.isArt(w) ? `${pad(cat.ri(w.id) + 1)} / ${pad(cat.art.length)}` : ""
+  /* when the dialog appeared: the second click of a double-click on the wall lands on the image just revealed, and
+     must not open the full view on top */
+  const shownAt = useRef(0)
+  useEffect(() => {
+    if (shown) shownAt.current = performance.now()
+  }, [shown])
   const onClick = (e: MouseEvent<HTMLDivElement>) => {
     const t = e.target as Element
     const step = t.closest<HTMLElement>("[data-d]")
@@ -116,7 +122,10 @@ function ArtDetail() {
       void actions.closeDetail()
       return
     }
-    if (t.closest(".ad-full") || t.closest("#ad-img")) actions.openFull()
+    if (t.closest(".ad-full") || t.closest("#ad-img")) {
+      if (e.detail > 1 || performance.now() - shownAt.current < 400) return
+      actions.openFull()
+    }
   }
   return (
     <div

@@ -17,8 +17,8 @@ export const IDLE_MS = 8000
 export function createPlayer(ctx: Ctx) {
   const { store, dom, cat, f } = ctx
   const AR = cat.artRow
-  /** The reel of the first screen: the Selected works and the wall row. */
-  const SEL: Entry[] = [...cat.sections[0]!.items, AR]
+  /** The reel of the first screen: the title card, the Selected works and the wall row. */
+  const SEL: Entry[] = [cat.home, ...cat.sections[0]!.items, AR]
   const imgs = new Map<string, HTMLImageElement>()
   const s = () => store.get()
 
@@ -92,6 +92,23 @@ export function createPlayer(ctx: Ctx) {
   async function pick(w: Entry) {
     const a = ctx.a
     if (isPhone()) setMenuQ(ctx, false)
+    /* the Home row: the title card is a frame, not a page. Picking it leaves whatever is open and shows the card */
+    if (w.kind === "home") {
+      touch()
+      if (s().view === "wall") {
+        if (s().detailId) await a.closeDetail({ instant: true })
+        a.closeMenu()
+        await a.closeWall()
+      }
+      if (s().projOn) {
+        a.projClose()
+        for (let i = 0; i < 40 && s().projOn; i++) await wait(50)
+        setMenuQ(ctx, false)
+      }
+      if (isPhone()) a.setSnap("peek")
+      select(w)
+      return
+    }
     /* the Artwork row is a toggle like the project rows: clicking it while the wall is up (expanded or not) leaves the wall */
     if (w === AR && s().view === "wall") {
       if (s().detailId) await a.closeDetail({ instant: true })
@@ -191,10 +208,16 @@ export function createPlayer(ctx: Ctx) {
         const st = s()
         setBodyClass("m-page", st.projOn && cat.isPage(st.projId ? cat.get(st.projId) : null))
         if (!st.started) return
-        const run = st.view === "code" && !st.projOn && !document.hidden && now - f.idleT > IDLE_MS
+        /* the title card never autoplays: the reel waits on it, and skips it when it comes round */
+        const run =
+          st.view === "code" &&
+          !st.projOn &&
+          !document.hidden &&
+          st.cur?.kind !== "home" &&
+          now - f.idleT > IDLE_MS
         dom.cap.style.setProperty("--p", run ? clamp((now - f.autoT) / AUTO_MS) * 100 + "%" : "0%")
         if (run && now - f.autoT > AUTO_MS) {
-          const ids = ctx.a.order()
+          const ids = ctx.a.order().filter((id) => id !== cat.home.id)
           const k = ids.indexOf(st.cur?.id ?? "")
           if (ids.length) select(cat.entry(ids[(k + 1) % ids.length]!))
         }

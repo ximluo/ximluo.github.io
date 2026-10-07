@@ -135,7 +135,7 @@ body.touch #cursor{display:none}
 
 
 /* ===== round 13: rooms, chooser, credits, slate ===== */
-.h-br .sep{width:1px;height:16px;background:rgba(236,235,230,.22);margin:0 6px;align-self:center}
+.h .sep{width:1px;height:16px;background:rgba(236,235,230,.22);margin:0 6px;align-self:center}
 /* credits */
 .ab-roll{max-width:900px;margin:0 auto;padding:7vh 24px 16vh;text-align:center;position:relative}
 .ab-kick{font:400 10.5px/1 var(--mono);letter-spacing:.18em;text-transform:uppercase;color:var(--silver)}

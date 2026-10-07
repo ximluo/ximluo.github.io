@@ -1,7 +1,7 @@
-/* The heads-up display in the four corners: the name (replays the opening), reel and scene numbers, the wall's Back
-   button, the timecode, the player toggle and the address. */
-import { AB } from "../data/about"
+/* The heads-up display in the four corners: the name (replays the opening and returns to Home), the wall's Back button, the timecode,
+   the reel and scene numbers, the player toggle and the address. */
 import { cx } from "../cx"
+import { AB } from "../data/about"
 import { useReel, useReelState } from "../reel/context"
 import { pad } from "../text"
 
@@ -25,7 +25,9 @@ export function Hud() {
         ? ""
         : page
           ? cur.title
-          : `${cat.num(cur)}/${pad(sec!.n)}`
+          : cur.kind === "home"
+            ? cur.title
+            : `${cat.num(cur)}/${pad(sec!.n)}`
 
   return (
     <div id="hud">
@@ -47,10 +49,6 @@ export function Hud() {
         <span className="h-how dim" id="h-how">
           {phone ? "Swipe or use the arrows" : ""}
         </span>
-        <span className="dim ph-x" id="reel">
-          {reel}
-        </span>{" "}
-        <span id="scno">{scno}</span> <i id="cue" className="cue"></i>
       </div>
       <div className="h h-wt mono">
         <button id="wt-back" data-hot="" onClick={() => void actions.wallBack()}>
@@ -60,10 +58,17 @@ export function Hud() {
       <div className="h h-bl mono ph-x">
         <span className="tc" id="tc">
           00:00:00:00
-        </span>{" "}
-        <span className="dim">CS &amp; Computer Graphics @ UPenn</span>
+        </span>
       </div>
       <div className="h h-br mono">
+        <span className="h-reel ph-x">
+          <span className="dim" id="reel">
+            {reel}
+          </span>
+          <span id="scno">{scno}</span>
+          <i id="cue" className="cue"></i>
+        </span>
+        <i className="sep ph-x"></i>
         <button
           id="tg-p"
           className={cx(!projOn && view === "code" && "on")}

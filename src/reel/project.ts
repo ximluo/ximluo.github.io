@@ -58,7 +58,7 @@ export function createProject(ctx: Ctx) {
 
   /** From inside a page (Next up, Then, a recognition link). */
   async function projGo(id: string) {
-    if (!cat.get(id)) return
+    if (!cat.get(id) || id === s().projId) return
     const p = swapTo(id)
     change(id)
     await p

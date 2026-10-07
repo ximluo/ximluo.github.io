@@ -29,13 +29,11 @@ export const aboutPage: PageEntry = {
   id: "about",
   kind: "page",
   title: "About",
-  sub: "Bio · Education · Experience",
+  sub: "Bio & Recognition",
   kick: "Info",
   tagline: AB.bio,
-  meta: [
-    ["Email", AB.email],
-    ["Based", AB.based],
-  ],
+  /* the address and the links are on the stage card, not in the meta grid */
+  meta: [],
 }
 
 export const recognitionPage: PageEntry = {
@@ -52,5 +50,5 @@ export const recognitionPage: PageEntry = {
   ],
 }
 
-/** In the order the Info room lists them. */
-export const PAGES: readonly PageEntry[] = [aboutPage, recognitionPage]
+/** The info pages. Recognition is a section of About now; its old address still opens About (routing.ts). */
+export const PAGES: readonly PageEntry[] = [aboutPage]

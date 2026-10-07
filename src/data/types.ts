@@ -1,6 +1,6 @@
-/* The site's content model. Entries come in four kinds: work (projects, in sections), art (pieces on the wall),
-   page (About and Recognition, rendered by their own components) and the single wall row that stands in for all
-   the art inside the project list. */
+/* The site's content model. Entries come in five kinds: work (projects, in sections), art (pieces on the wall),
+   page (About and Recognition, rendered by their own components), the single wall row that stands in for all
+   the art inside the project list, and the title card the reel opens on. */
 
 export type SectionKey = "selected" | "graphics" | "software" | "experiments" | "research"
 
@@ -82,7 +82,18 @@ export interface WallEntry {
   year: ""
 }
 
-export type Entry = WorkEntry | ArtEntry | PageEntry | WallEntry
+/** The title card: the first frame of the reel, listed as the Home row above Selected. */
+export interface HomeEntry {
+  id: "home"
+  kind: "home"
+  title: "Home"
+  label: "Home"
+  /** The row's label on the right, like a page's `sub`. */
+  sub: "Title card"
+  year: ""
+}
+
+export type Entry = WorkEntry | ArtEntry | PageEntry | WallEntry | HomeEntry
 
 export interface Experience {
   org: string

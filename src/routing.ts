@@ -1,10 +1,9 @@
 /* The site has one page and routes by path: /<id> for a project or an info page, /art and /art/<id> for the
    wall and an enlarged piece, /index for the player with every section unfolded, plus two switches read once at
-   start (?skipintro, ?tint=grey). Every route is also a prerendered file (scripts/prerender.ts), so a path loads
+   start (?tint=grey). Every route is also a prerendered file (scripts/prerender.ts), so a path loads
    straight from GitHub Pages. Links of the old shape (/?open=<id>, /?art=<id>, /?about) are still read, and the
    address is rewritten to the path once the site is up. A project pushes a history entry so the back button
    closes it; everything else replaces the current one. */
-import { INTRO_SEEN_KEY } from "./film/leader"
 import { openPath, parsePath, type PathRoute } from "./paths"
 
 /** Query keys of the old shape. Any of them on the home path is a deep link, which skips the opening leader. */
@@ -31,14 +30,10 @@ export function readRoute(pathname = location.pathname, search = location.search
         index: Q.has("index") || Q.get("view") === "list",
       }
     : path
-  let noIntro = !home || legacy || Q.has("skipintro")
-  try {
-    /* every visit after the first in this browser skips the leader too; the top-left name still replays it */
-    if (localStorage.getItem(INTRO_SEEN_KEY) === "1") noIntro = true
-  } catch {
-    /* storage may be unavailable */
-  }
-  return { ...r, noIntro, tintGrey: Q.get("tint") === "grey", legacy }
+  /* Recognition is a section of About now; its old address still opens it */
+  if (r.open === "recognition") r.open = "about"
+  /* the site always opens on the Home card; the leader plays only from the top-left name */
+  return { ...r, noIntro: true, tintGrey: Q.get("tint") === "grey", legacy }
 }
 
 const REEL_STATE = { reel: 1 }

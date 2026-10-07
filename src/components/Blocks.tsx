@@ -1,6 +1,6 @@
 /* Story blocks on a project page: paragraphs, headings, figures (one image, or a row of them), embedded video,
    click-to-load live demos and document links. Images fade in once loaded. */
-import { useEffect, useRef, useState, type SyntheticEvent } from "react"
+import { useEffect, useRef, useState, type MouseEvent } from "react"
 import { cx } from "../cx"
 import type { Block, FxName, ImgRef } from "../data/types"
 import { media } from "../media"
@@ -46,7 +46,9 @@ export function PjImg({ src, alt = "", w, h, variant = "figure" }: PjImgProps) {
       onLoad={() => setOk(true)}
       onClick={
         zoom
-          ? (e: SyntheticEvent<HTMLImageElement>) =>
+          ? (e: MouseEvent<HTMLImageElement>) =>
+              /* a double-click's second click lands on the overlay; neither click may undo the other */
+              e.detail < 2 &&
               actions.openFull(
                 e.currentTarget.currentSrc || e.currentTarget.src,
                 e.currentTarget.alt,

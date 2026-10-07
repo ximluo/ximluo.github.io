@@ -49,7 +49,7 @@ export interface Actions {
   pick(w: Entry): Promise<void>
   stepPlayer(d: number, axis: "x" | "y", from?: number): Promise<boolean>
   setOff(axis: "X" | "Y", x: number, o: number): void
-  /** Entry ids of the visible list rows (never the pinned pages), in list order. */
+  /** Entry ids of the visible list rows, in list order. */
   visibleIds(): string[]
   /** Visible rows of open sections, in screen order. */
   order(): string[]
@@ -64,7 +64,14 @@ export interface Actions {
   listClick(
     w: Entry,
     row: HTMLElement,
-    e: { metaKey: boolean; ctrlKey: boolean; shiftKey: boolean; preventDefault(): void },
+    e: {
+      metaKey: boolean
+      ctrlKey: boolean
+      shiftKey: boolean
+      /** The click count: a double-click's second click is ignored on a desktop. */
+      detail: number
+      preventDefault(): void
+    },
   ): void
   listHover(w: Entry, row: HTMLElement): void
   listLeave(): void
@@ -97,6 +104,7 @@ export interface Actions {
   togglePlayer(): Promise<void>
   wallBack(): Promise<void>
   navClose(): void
+  /** The top-left name: the leader plays again and the reel returns to the Home card. */
   goHome(): Promise<void>
 }
 

@@ -7,8 +7,8 @@ export function createList(ctx: Ctx) {
   const { store, dom, f } = ctx
   const rows = () => Array.from(dom.blist.querySelectorAll<HTMLAnchorElement>(".lr[data-id]"))
   const rowOf = (id: string) => rows().find((a) => a.dataset.id === id) ?? null
-  /** Work rows and the wall row, never the pinned info pages. */
-  const visible = () => rows().filter((a) => !a.hidden && !a.classList.contains("pg"))
+  /** Every listed row: Home, About, the works and the wall row. */
+  const visible = () => rows().filter((a) => !a.hidden)
 
   const order = () =>
     visible()
@@ -54,7 +54,10 @@ export function createList(ctx: Ctx) {
   const listClick: Actions["listClick"] = (w, row, e) => {
     if (e.metaKey || e.ctrlKey || e.shiftKey) return
     e.preventDefault()
-    if ((TOUCH || isPhone()) && tap2() && !row.classList.contains("pg") && f.tapId !== w.id) {
+    /* a double-click's second click lands on whatever the first one revealed (the docked list, the pane): on a
+       desktop it does nothing. Phones and touch screens keep their two-tap flow below. */
+    if (e.detail > 1 && !(TOUCH || isPhone())) return
+    if ((TOUCH || isPhone()) && tap2() && row.dataset.k !== "page" && f.tapId !== w.id) {
       f.tapId = w.id
       setActive(w.id)
       ctx.a.touch()
@@ -85,7 +88,7 @@ export function createList(ctx: Ctx) {
   let raf = 0
   const run = () => {
     raf = 0
-    const rs = rows().filter((a) => !a.classList.contains("pg") && !a.classList.contains("aw"))
+    const rs = rows().filter((a) => !a.classList.contains("aw"))
     if (isPhone()) {
       if (store.get().tight.length) store.set({ tight: [] })
       return

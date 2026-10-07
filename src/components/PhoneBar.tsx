@@ -36,12 +36,16 @@ export function PhoneBar() {
     const ART = cat.art
     if (s.projOn && s.projId) {
       const w = cat.get(s.projId)
-      if (w?.kind === "page")
+      if (w?.kind === "page") {
+        /* a page with no neighbour (About is the Info room's only entry) gets no arrows */
+        const nb = cat.next(s.projId, 1)
+        if (nb.id === s.projId) return { ct: w.title }
         return {
           ct: w.title,
           p: "Previous: " + cat.next(s.projId, -1).title,
-          n: "Next: " + cat.next(s.projId, 1).title,
+          n: "Next: " + nb.title,
         }
+      }
       const ps = cat.pos(s.projId)
       const prev = cat.next(s.projId, -1)
       const next = cat.next(s.projId, 1)
@@ -65,17 +69,23 @@ export function PhoneBar() {
     }
     const cur = s.cur
     if (!cur) return { ct: "" }
-    const ids = cat.sections
-      .filter((sec) => !s.fold[sec.key])
-      .flatMap((sec) => [...sec.items.map((w) => w.id), ...(sec.i === 0 ? [WALL_ID] : [])])
+    const ids = [
+      cat.home.id,
+      ...cat.info.map((p) => p.id),
+      ...cat.sections
+        .filter((sec) => !s.fold[sec.key])
+        .flatMap((sec) => [...sec.items.map((w) => w.id), ...(sec.i === 0 ? [WALL_ID] : [])]),
+    ]
     const k = ids.indexOf(cur.id)
     const base: BarState =
       cur.kind === "page"
         ? { ct: cur.title }
-        : {
-            ct: cnt(cat.num(cur), pad(cat.secOf(cur as never).n)),
-            sub: secName(cat.secOf(cur as never)),
-          }
+        : cur.kind === "home"
+          ? { ct: cur.label }
+          : {
+              ct: cnt(cat.num(cur), pad(cat.secOf(cur as never).n)),
+              sub: secName(cat.secOf(cur as never)),
+            }
     if (ids.length < 2) return base
     const title = (id: string) => cat.entry(id).title
     return {

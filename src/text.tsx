@@ -64,7 +64,7 @@ export function awardOf(award: string): { text: string; href?: string } | null {
 /** The caption line under a title in the player. */
 export function captionOf(w: Entry) {
   if (w.kind === "art") return [w.sub, awardOf(w.award)?.text].filter(Boolean).join(" · ")
-  if (w.kind === "wall") return ""
+  if (w.kind === "wall" || w.kind === "home") return ""
   return w.tagline || w.sub || ""
 }
 

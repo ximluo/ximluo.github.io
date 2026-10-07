@@ -86,10 +86,30 @@ function Group({
   )
 }
 
-export function RecognitionPage() {
+/** The groups: the highlights first (under `firstTitle`), each type, then the school years folded under Earlier. */
+export function RecognitionRoll({ firstTitle = "Highlights" }: { firstTitle?: string }) {
   const top = RECOGNITION.filter((r) => r.top)
   const rest = RECOGNITION.filter((r) => !r.top && !r.early)
   const early = RECOGNITION.filter((r) => r.early && !r.top)
+  return (
+    <>
+      <Group title={firstTitle} items={top} />
+      {RECOGNITION_TYPES.map(([type, title]) => (
+        <Group key={type} title={title} items={rest.filter((r) => r.type === type)} />
+      ))}
+      {early.length > 0 && (
+        <details className="rc-old" open>
+          <summary className="mono">
+            Earlier <i>{early.length}</i>
+          </summary>
+          <Group title="School years" items={early} withType />
+        </details>
+      )}
+    </>
+  )
+}
+
+export function RecognitionPage() {
   return (
     <div className="pj-wrap is-page">
       <div className="ab-roll">
@@ -98,18 +118,7 @@ export function RecognitionPage() {
           <p className="ab-bio">Awards, exhibitions and fellowships.</p>
         </header>
         <div className="ab-grid">
-          <Group title="Highlights" items={top} />
-          {RECOGNITION_TYPES.map(([type, title]) => (
-            <Group key={type} title={title} items={rest.filter((r) => r.type === type)} />
-          ))}
-          {early.length > 0 && (
-            <details className="rc-old" open>
-              <summary className="mono">
-                Earlier <i>{early.length}</i>
-              </summary>
-              <Group title="School years" items={early} withType />
-            </details>
-          )}
+          <RecognitionRoll />
         </div>
         <p className="ab-fin mono">Fin</p>
       </div>

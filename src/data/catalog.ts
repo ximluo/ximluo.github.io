@@ -4,7 +4,15 @@
 import { ART } from "./art"
 import { PAGES, recognitionOf } from "./pages"
 import { pad } from "../text"
-import type { ArtEntry, Entry, PageEntry, SectionKey, WallEntry, WorkEntry } from "./types"
+import type {
+  ArtEntry,
+  Entry,
+  HomeEntry,
+  PageEntry,
+  SectionKey,
+  WallEntry,
+  WorkEntry,
+} from "./types"
 import { WORK } from "./work"
 
 export type Room = "code" | "art" | "info"
@@ -36,6 +44,7 @@ const SECTION_NAMES: [SectionKey, string][] = [
 ]
 
 export const WALL_ID = "__art"
+export const HOME_ID = "home"
 
 export const roomOf = (e: Entry): Room =>
   e.kind === "art" ? "art" : e.kind === "page" ? "info" : "code"
@@ -80,8 +89,18 @@ function build() {
   sectionIndex.set(WALL_ID, selected.items.length)
   selected.n = selected.items.length + 1
 
+  /* the title card: frame 00, the row above Selected */
+  const home: HomeEntry = {
+    id: HOME_ID,
+    kind: "home",
+    title: "Home",
+    label: "Home",
+    sub: "Title card",
+    year: "",
+  }
+
   const byId = new Map<string, Entry>()
-  for (const e of [...code, ...art, ...info, artRow]) byId.set(e.id, e)
+  for (const e of [...code, ...art, ...info, artRow, home]) byId.set(e.id, e)
   const rooms: Record<Room, readonly Entry[]> = { code, art, info }
 
   const ri = (id: string) => roomIndex.get(id) ?? 0
@@ -89,7 +108,7 @@ function build() {
   const secOf = (e: WorkEntry | WallEntry): Section => (e.kind === "wall" ? selected : secOfWork(e))
   const pos = (id: string): Pos => {
     const e = byId.get(id)
-    if (!e || e.kind === "wall") return { i: 0, n: 0, room: "code" }
+    if (!e || e.kind === "wall" || e.kind === "home") return { i: 0, n: 0, room: "code" }
     if (e.kind === "work") {
       const s = secOfWork(e)
       return { i: (si(id) ?? 0) + 1, n: s.n, room: "code", sec: s }
@@ -117,12 +136,13 @@ function build() {
     info,
     sections,
     artRow,
+    home,
     /** Index within the entry's room. */
     ri,
     /** Index within the section, for the Code room and the wall row. */
     si,
     /** The two-digit number shown beside a list row. */
-    num: (e: Entry) => pad((si(e.id) ?? ri(e.id)) + 1),
+    num: (e: Entry) => (e.kind === "home" ? "00" : pad((si(e.id) ?? ri(e.id)) + 1)),
     secOf,
     pos,
     next,

@@ -21,9 +21,14 @@ body.m-proj #side{padding:12px 12px 0 calc(var(--gut) + 28px);background:rgba(17
 #blist .lr.t2 b{font-size:clamp(18px,calc(1.8vw - 2px),26px);line-height:1.2}
 #blist.hov .lr:not(.on){opacity:.4}
 #blist .lu-end{height:10vh}
+/* the Home and About rows above Selected: no section head, a little air before the first one */
+#blist .lu-top{margin-bottom:10px}
+body.m-proj #blist .lu-top{margin-bottom:6px}
 body.m-proj #blist .lr em{display:none}
 body.m-proj #blist .lr.t1 b{font-size:20px} body.m-proj #blist .lr.t2 b{font-size:18px}
-body.m-proj #blist .lr{grid-template-columns:2.4em minmax(0,1fr);opacity:.6} body.m-proj #blist .lr.on{opacity:1}
+/* docked beside an open project: the other rows step well back, the open one is full white with its mark */
+body.m-proj #blist .lr{grid-template-columns:2.4em minmax(0,1fr);opacity:.38} body.m-proj #blist .lr.on{opacity:1}
+body.m-proj #blist .lr.on b,body.m-proj #blist .lr.on .n{color:#fff}
 body.m-proj #blist .lr::before{left:-12px;width:6px}
 body.m-proj .sd-head{min-height:40px}
 
@@ -52,7 +57,7 @@ body.m-proj #player{opacity:0;pointer-events:none}
 #pl-title{font-weight:300;font-size:clamp(40px,4.8vw,84px);line-height:.92;letter-spacing:-.015em;text-wrap:balance;padding-bottom:.04em}
 #pl-tag{margin-top:10px;font-style:italic;font-size:clamp(18px,1.6vw,25px);line-height:1.25;color:#d6d5d0;max-width:34ch}
 .pl-r{display:grid;gap:12px}
-#pl-slate:empty{display:none}
+#pl-slate:empty,#pl-meta:empty{display:none}
 #player[data-kind=wall] #pl-title{font-style:italic}
 #pl-meta{display:grid;grid-template-columns:auto 1fr;gap:5px 14px;font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase}
 #pl-meta dt{color:var(--silver2)} #pl-meta dd{color:var(--bone);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -61,11 +66,11 @@ body.m-proj #player{opacity:0;pointer-events:none}
 .btn:hover{background:var(--bone);color:#0b0c0e}
 .btn i{font-style:normal;font-size:14px}
 /* the primary action on the player is filled */
-.open{background:var(--bone);color:#0b0c0e;border-color:var(--bone)}
-.open:hover{background:#fff;border-color:#fff;color:#0b0c0e}
-.open{justify-self:start}
+.btn.open{background:var(--bone);color:#0b0c0e;border-color:var(--bone)}
+.btn.open:hover{background:#fff;border-color:#fff;color:#0b0c0e}
+.btn.open{justify-self:start}
 /* the player's Open pill is a thinner bar on desktop */
-@media (min-width:761px){.open{height:32px;padding:0 14px;font-size:10px}}
+@media (min-width:761px){.btn.open{height:32px;padding:0 14px;font-size:10px}}
 /* the reel's progress: a hairline on the caption rule, visible only while auto-advance is running */
 .pl-cap::before{content:"";position:absolute;left:0;top:-1px;height:1px;width:var(--p,0%);background:var(--ruby)}
 
@@ -123,8 +128,8 @@ body:not(.touch) .pj-fig img{cursor:none}
   .pl-cap{grid-template-columns:1fr;padding-top:14px;gap:0}
   /* Open sits under the subtitle, outlined like every other pill; the meta grid stays off the phone */
   .pl-r{margin-top:18px} #pl-meta{display:none}
-  .open{background:rgba(17,19,23,.5);color:var(--bone);border-color:rgba(236,235,230,.4);height:44px}
-  .open:hover{background:var(--bone);color:#0b0c0e}
+  .btn.open{background:rgba(17,19,23,.5);color:var(--bone);border-color:rgba(236,235,230,.4);height:44px}
+  .btn.open:hover{background:var(--bone);color:#0b0c0e}
   #pl-title{font-size:clamp(42px,13vw,64px)}
   #pl-tag{font-size:19px}
   body.m-proj #player{display:none}
@@ -368,8 +373,6 @@ body:not(.touch) .ad-fig img{cursor:none}
   .mb-mail b{font-weight:400}
   .h-tr .h-how{display:inline;font-size:10px;letter-spacing:.1em}
   body.m-proj .h-tr .h-how,body.m-wall .h-tr .h-how{display:none}
-  /* the cue dot sits beside the bar counter on phones, not top right */
-  .h-tr #cue{display:none}
   .mb-ln{display:inline-flex;align-items:center}
   .mb-cue{width:10px;height:10px;margin-left:8px}
   body.m-q #side{display:flex}
@@ -389,18 +392,54 @@ body:not(.touch) .ad-fig img{cursor:none}
   .ad-tc{top:8px}
 }
 
-/* ===== now playing: sections, pinned info rows, cards, project pages inside the border ===== */
+/* ===== now playing: sections, cards, project pages inside the border ===== */
 body.m-proj #blist .lr:hover{opacity:1}
-.lu-pin{flex:none;display:grid;border-top:1px solid rgba(236,235,230,.16);padding:10px 0 12px;margin-top:6px}
-#blist .lr.pg{grid-template-columns:2.7em minmax(0,1fr) auto;padding:3px 0;opacity:.85}
-#blist .lr.pg b{font-size:clamp(20px,1.8vw,28px);line-height:1.25}
-#blist .lr.pg em::after{content:" \2192";color:var(--bone)}
-body.m-proj #blist .lr.pg b{font-size:18px}
-body.m-proj #blist .lr.pg em{display:none}
 .rk{display:inline-block;width:.3em;height:.3em;border-radius:50%;background:var(--ruby);margin-left:.45em;vertical-align:.5em}
 .pl-card{position:absolute;inset:0;display:grid;place-content:center;text-align:center;padding:24px;box-shadow:0 0 0 1px rgba(236,235,230,.14)}
 .pl-card[hidden]{display:none}
 #player[data-kind=card] #pl-meta dd{white-space:normal}
+/* the title card: a grid, the text left and the stage photo right (stacked on a phone). The card is sized in
+   container units so the name stays on one line at any sidebar width; this frame shows no caption */
+.pl-home{position:absolute;inset:0;overflow:hidden;container-type:inline-size;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);column-gap:clamp(12px,2vw,32px);align-items:center}
+.pl-home[hidden]{display:none}
+#player[data-kind=home] .pl-cap{display:none}
+.ph-text{grid-column:1;min-width:0;text-align:left}
+/* the photo: monochrome, its luminance laid over an even field of the page light (the ::before underlay; the figure's opacity isolates the blend to it, so the glow behind does not tint one part more than another), the left edge dissolving into the dark, the top and foot softened. Drop `mix-blend-mode` and the img `filter` for full colour */
+.ph-fig{grid-column:2;align-self:stretch;position:relative;min-width:0;min-height:0;opacity:.42;-webkit-mask-image:linear-gradient(to right,transparent 0,#000 32%,#000 94%,rgba(0,0,0,.7) 100%);mask-image:linear-gradient(to right,transparent 0,#000 32%,#000 94%,rgba(0,0,0,.7) 100%)}
+.ph-fig::before{content:"";position:absolute;inset:0;z-index:0;background:color-mix(in srgb,rgb(var(--tr),var(--tg),var(--tb)) 42%,#141518)}
+.ph-fig img{position:relative;z-index:1;width:100%;height:100%;object-fit:cover;object-position:50% 40%;mix-blend-mode:luminosity;filter:grayscale(1) contrast(1.15) brightness(.85);-webkit-mask-image:linear-gradient(to bottom,transparent 0,#000 10%,#000 82%,transparent 100%);mask-image:linear-gradient(to bottom,transparent 0,#000 10%,#000 82%,transparent 100%)}
+/* print noise over the photo; the parent's mask clips it */
+.ph-fig::after{content:"";position:absolute;inset:0;z-index:2;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .6 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E") 0 0/160px 160px;opacity:.55;mix-blend-mode:soft-light}
+.ph-name{margin:0;font-family:var(--serif);font-weight:300;font-size:clamp(44px,10.5cqw,160px);line-height:1;letter-spacing:.04em;text-transform:uppercase;white-space:nowrap;color:var(--bone);text-shadow:0 2px 28px rgba(0,0,0,.65)}
+.ph-line{margin:clamp(12px,1.8vh,20px) 0 0;font-style:italic;font-size:clamp(20px,2vw,32px);line-height:1.25;color:#d6d5d0;text-shadow:0 1px 14px rgba(0,0,0,.65)}
+.ph-sub{margin:14px 0 0;font-size:12.5px;color:var(--silver)}
+.ph-go{margin:clamp(20px,3.2vh,36px) 0 0;font-size:12.5px;color:var(--silver2)}
+/* the About card: one stack centred in the stage like the title card (title, bio, the Open pill, the link pills on the line under it); no caption on this frame */
+#player[data-kind=page] .pl-cap{display:none}
+.pl-about{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;align-items:flex-start}
+.pl-about[hidden]{display:none}
+.pa-kick{color:var(--silver);margin:0 0 10px}
+.pa-title{margin:0;font-weight:300;font-size:clamp(40px,4.8vw,84px);line-height:.92;letter-spacing:-.015em;padding-bottom:.04em}
+.pa-bio{margin:12px 0 0;font-style:italic;font-size:clamp(18px,1.6vw,25px);line-height:1.25;color:#d6d5d0;max-width:34ch}
+.pa-open{margin:clamp(20px,3vh,32px) 0 0}
+.pa-ln{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0 0}
+.pa-ln .btn{text-decoration:none}
+/* the Open pill matches the link pills' height, filled */
+@media (min-width:761px){.pa-open .btn.open{height:40px;padding:0 16px;font-size:11px}}
+/* phones: the title card fills the player, the photo above and the text at the foot (after the desktop rules so it wins at equal specificity) */
+@media (max-width:760px){
+  #player[data-kind=home] .pl-stage{flex:1 1 auto;min-height:0;margin:0}
+  .pl-home{grid-template-columns:minmax(0,1fr);grid-template-rows:minmax(0,1fr) auto;row-gap:14px;align-items:stretch}
+  .ph-fig{grid-column:1;grid-row:1;-webkit-mask-image:radial-gradient(ellipse 72% 70% at 50% 42%,#000 38%,transparent 100%);mask-image:radial-gradient(ellipse 72% 70% at 50% 42%,#000 38%,transparent 100%)}
+  .ph-fig img{-webkit-mask-image:none;mask-image:none;object-position:50% 20%}
+  .ph-text{grid-column:1;grid-row:2;align-self:end;padding-bottom:6px}
+  .ph-name{font-size:clamp(36px,15cqw,60px)}
+  .ph-line{font-size:19px}
+  .ph-go{margin-top:16px}
+  .pa-title{font-size:clamp(42px,13vw,64px)}
+  .pa-bio{font-size:19px}
+  .pa-ln .btn{height:44px;padding:0 12px}
+}
 #proj .pj-hero--card{display:grid;place-items:center;padding:clamp(16px,3vw,40px);background:radial-gradient(closest-side,rgba(var(--tr),var(--tg),var(--tb),.3),transparent 100%)}
 #proj .pj-hero--card .slate{max-width:440px}
 #proj .pj-hero--card .slate dd:nth-of-type(2){font-family:var(--mono);font-style:normal;font-size:10.5px;text-transform:uppercase;letter-spacing:.08em}
@@ -421,29 +460,14 @@ body.m-proj #blist .lr.pg em{display:none}
 @media (max-width:760px){
   #proj .pj-wrap{padding-right:var(--pj-gut)}
   body.m-proj:not(.m-q) .h-tr{display:none}
-  .lu-pin{display:none}
-  #blist .lr.pg,body.m-proj #blist .lr.pg{display:flex;align-items:center;justify-content:center;min-height:44px;padding:0;border:1px solid rgba(236,235,230,.22);border-radius:2px;opacity:1}
-  #blist .lr.pg .pt,#blist .lr.pg em,body.m-proj #blist .lr.pg em{display:none!important}
-  #blist .lr.pg b,body.m-proj #blist .lr.pg b{font:400 11px/1 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--bone)}
   #proj .pj-hero--card{padding:12px 0}
   #proj .is-page .ab-roll{padding-top:24px}
 }
 
 /* ===== round 2 of the branch: compact info row, email in the HUD, visible close, compact pages, shader heroes ===== */
 @media (min-width:761px){
-  /* About and Recognition: two outlined mono pills on a hairline under the list, each led by the ruby play mark, level with the player's Open pill (32px tall, 18px above the frame like the player's padding), so Open stays the one filled pill on the row; hovering previews the page and brightens the pill, the previewed or open one fills white */
-  .lu-pin{display:flex;flex-wrap:wrap;gap:6px;padding:12px 0 18px;margin-top:6px;border-top:1px solid rgba(236,235,230,.16)}
-  #blist .lr.pg,body.m-proj #blist .lr.pg{display:inline-flex;align-items:center;gap:8px;height:32px;padding:0 12px;background:rgba(17,19,23,.6);border:1px solid rgba(236,235,230,.3);border-radius:2px;opacity:1;grid-template-columns:none;transition:background .15s steps(2),border-color .15s steps(2)}
-  #blist .lr.pg em,body.m-proj #blist .lr.pg em{display:none}
-  #blist .lr.pg .pt{margin:0}
-  #blist .lr.pg b,body.m-proj #blist .lr.pg b{font:400 10px/1 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--silver);transition:color .15s steps(2)}
-  #blist .lr.pg:hover,body.m-proj #blist .lr.pg:hover{border-color:var(--bone)} #blist .lr.pg:hover b,body.m-proj #blist .lr.pg:hover b{color:#fff}
-  #blist .lr.pg.on,body.m-proj #blist .lr.pg.on{background:var(--bone);border-color:var(--bone)} #blist .lr.pg.on b,body.m-proj #blist .lr.pg.on b{color:#0b0c0e}
-  /* a page that was opened and left keeps a grey mark for the session (darker on the white fill); it is red again while the page is open */
-  #blist .lr.pg.seen .pt{background:var(--silver2)} #blist .lr.pg.on.seen .pt{background:rgba(11,12,14,.55)} #blist .lr.pg.open .pt,#blist .lr.pg.on.open .pt{background:var(--ruby)}
-  #blist .lr.pg::before{display:none}
-  /* the pills are not rows of the reel: hovering a title dims the other rows, never them */
-  #blist.hov .lr.pg{opacity:1}
+  /* the reel and scene numbers sit in the bottom bar, left of the address */
+  .h-reel{display:flex;align-items:center;gap:12px}
 }
 /* how to move through the reel, top right on phones only; it leaves while a page or the wall is open */
 .h-how{display:none;color:var(--silver2)}

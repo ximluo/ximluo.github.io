@@ -2,7 +2,9 @@
 export const AB = {
   email: "ximluo@upenn.edu",
   bio: "Graphics, machine learning and software. Also an artist, mostly ink, digital and fire.",
-  based: "Philadelphia",
+  /* The claim under the name on the title card. */
+  claim: "renders by hand and on the GPU",
+  study: "CS & Computer Graphics @ UPenn",
   education: [
     {
       org: "M.S.E. Computer Science",
@@ -21,3 +23,6 @@ export const AB = {
     ["LinkedIn", "https://www.linkedin.com/in/ximingluo/"],
   ] as const,
 }
+
+/** The claim on its own, as the title card says it under the name. */
+export const CLAIM = AB.claim.charAt(0).toUpperCase() + AB.claim.slice(1) + "."
