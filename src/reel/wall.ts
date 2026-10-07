@@ -165,7 +165,7 @@ export function createWall(ctx: Ctx) {
     if (!cat.isArt(w)) return
     f.dBusy = true
     f.lastWallId = id
-    setBodyClass("m-ad", true)
+    setBodyClass("m-piece", true)
     store.set({ detailId: id })
     await loadImg(w)
     store.set({ adShown: true, lineOn: false })
@@ -224,7 +224,7 @@ export function createWall(ctx: Ctx) {
     ad.style.clipPath = ""
     adFig.style.transform = ""
     adSheet.style.transform = ""
-    setBodyClass("m-ad", false)
+    setBodyClass("m-piece", false)
     store.set({ adShown: false, detailId: null })
     dom.adImg.removeAttribute("src")
     syncScrolled(ctx)
@@ -310,7 +310,7 @@ export function createWall(ctx: Ctx) {
     /* phone swipes on the sheet */
     let sw: { x: number; y: number; dy: number; dx: number; t: number } | null = null
     const onStart = (e: TouchEvent) => {
-      if ((e.target as Element).closest(".ad-side") && adSide.scrollTop > 0) {
+      if ((e.target as Element).closest(".piece-side") && adSide.scrollTop > 0) {
         sw = null
         return
       }

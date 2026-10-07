@@ -75,21 +75,21 @@ function DetailSide({ id }: { id: string }) {
             ))}
         </dl>
       </div>
-      <p className="ad-sub">{w.sub || w.tagline || ""}</p>
-      <div className="ad-act">
-        <button className="ad-wall mono" data-hot="" aria-label="Back to wall">
+      <p className="piece-sub">{w.sub || w.tagline || ""}</p>
+      <div className="piece-act">
+        <button className="piece-wall mono" data-hot="" aria-label="Back to wall">
           <i>‹</i>
           <span className="dl">Back to wall</span>
           <span className="ml">Wall</span>
           <em>esc</em>
         </button>
-        <span className="ad-ct mono">{still}</span>
-        <div className="ad-pn">
-          <button className="ad-p mono" data-d="-1" data-hot="" aria-label="Previous piece">
+        <span className="piece-ct mono">{still}</span>
+        <div className="piece-pn">
+          <button className="piece-p mono" data-d="-1" data-hot="" aria-label="Previous piece">
             <i>‹</i>
             <span>Prev</span>
           </button>
-          <button className="ad-n mono" data-d="1" data-hot="" aria-label="Next piece">
+          <button className="piece-n mono" data-d="1" data-hot="" aria-label="Next piece">
             <span>Next</span>
             <i>›</i>
           </button>
@@ -118,55 +118,55 @@ function ArtDetail() {
       void actions.stepDetail(+step.dataset.d!)
       return
     }
-    if (t.closest(".ad-wall") || t.id === "ad-back" || t.closest("#ad-handle")) {
+    if (t.closest(".piece-wall") || t.id === "piece-back" || t.closest("#piece-handle")) {
       void actions.closeDetail()
       return
     }
-    if (t.closest(".ad-full") || t.closest("#ad-img")) {
+    if (t.closest(".piece-full") || t.closest("#piece-img")) {
       if (e.detail > 1 || performance.now() - shownAt.current < 400) return
       actions.openFull()
     }
   }
   return (
     <div
-      className="ad"
-      id="ad"
+      className="piece"
+      id="piece"
       hidden={!shown}
       role="dialog"
       aria-label="Artwork detail"
       ref={useDomRef("ad")}
       onClick={onClick}
     >
-      <div className="ad-back" id="ad-back"></div>
-      <div className="ad-sheet" id="ad-sheet" ref={useDomRef("adSheet")}>
-        <button className="ad-handle" id="ad-handle" aria-label="Close detail">
+      <div className="piece-back" id="piece-back"></div>
+      <div className="piece-sheet" id="piece-sheet" ref={useDomRef("adSheet")}>
+        <button className="piece-handle" id="piece-handle" aria-label="Close detail">
           <i></i>
         </button>
         <button
-          className="ad-bk mono"
-          id="ad-bk"
+          className="piece-bk mono"
+          id="piece-bk"
           data-hot=""
           aria-label="Back to wall"
           onClick={() => void actions.closeDetail()}
         >
           <i>‹</i> Back to wall
         </button>
-        <div className="ad-fig" id="ad-fig" ref={useDomRef("adFig")}>
+        <div className="piece-fig" id="piece-fig" ref={useDomRef("adFig")}>
           <i className="fb tl"></i>
           <i className="fb tr"></i>
           <i className="fb bl"></i>
           <i className="fb br"></i>
-          <p className="ad-tc mono">
+          <p className="piece-tc mono">
             <span className="pt"></span>
             <span className="tc">00:00:00:00</span>
-            <span id="ad-st">{still}</span>
+            <span id="piece-st">{still}</span>
           </p>
-          <img id="ad-img" alt={cat.isArt(w) ? w.title : ""} ref={useDomRef("adImg")} />
-          <button className="ad-full mono" data-hot="">
+          <img id="piece-img" alt={cat.isArt(w) ? w.title : ""} ref={useDomRef("adImg")} />
+          <button className="piece-full mono" data-hot="">
             View full image <i>↗</i>
           </button>
         </div>
-        <aside className="ad-side" id="ad-side" ref={useDomRef("adSide")}>
+        <aside className="piece-side" id="piece-side" ref={useDomRef("adSide")}>
           {id && <DetailSide id={id} />}
         </aside>
       </div>
