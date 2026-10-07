@@ -1,5 +1,7 @@
 # ximingluo.com
 
+![The home screen: the list of projects down the left, the current one playing on the right](.github/screenshot.png)
+
 Ximing Luo's portfolio, presented as a film reel: an opening leader, a list of projects down the left, a player
 that shows the current one, docked project pages, and a draggable wall of artworks. Live at
 [ximingluo.com](https://ximingluo.com).
@@ -9,25 +11,27 @@ that shows the current one, docked project pages, and a draggable wall of artwor
 - [Vite](https://vite.dev), [React 19](https://react.dev) and TypeScript in strict mode
 - Plain CSS, kept in `src/styles` (the design lives there; nothing is generated)
 - WebGL2 for the artwork wall, 2D canvas for the grain and the code-glyph hero
-- Self-hosted type: Boska, B612 Mono and League Gothic (licences sit beside the files in `public/media/fonts`)
+- Self-hosted type: Boska, Bodoni Moda, B612 Mono and League Gothic (licences sit beside the files in
+  `public/media/fonts`)
 - No other runtime dependencies
 
 ## Scripts
 
-| Command             | What it does                                             |
-| ------------------- | -------------------------------------------------------- |
-| `npm run dev`       | Development server with hot reload on :5173              |
-| `npm run build`     | Type-checks, then builds the site into `dist/`           |
-| `npm run preview`   | Serves `dist/` on :4173                                  |
-| `npm run typecheck` | `tsc --noEmit`                                           |
-| `npm run lint`      | ESLint (TypeScript, React hooks, Prettier compatibility) |
-| `npm run format`    | Prettier over the source                                 |
+| Command             | What it does                                                                  |
+| ------------------- | ----------------------------------------------------------------------------- |
+| `npm run dev`       | Development server with hot reload on :5173                                   |
+| `npm run build`     | Type-checks, builds into `dist/`, then prerenders every route and the sitemap |
+| `npm run preview`   | Serves `dist/` on :4173                                                       |
+| `npm run typecheck` | `tsc --noEmit` for the site, then for the build script (`tsconfig.node.json`) |
+| `npm run lint`      | ESLint (TypeScript, React hooks, Prettier compatibility)                      |
+| `npm run format`    | Prettier over the source                                                      |
 
 ## How it is put together
 
 ```
 src/
   main.tsx, App.tsx       entry and the page, in the order the stylesheet layers it
+  paths.ts                the site's paths, shared by the router and the prerender step
   data/                   the content (see below) and the catalogue built from it
   components/             one component per piece of the page; markup only, content from the store
   reel/                   the typed sequences that drive the site: player, project pane, wall, phone sheet,
@@ -37,6 +41,7 @@ src/
   wall/                   the WebGL wall and the canvas effects
   styles/                 fonts, project pages, core, layout, wall
 public/                   static files served as they are: icons, `404.html`, `echoes.pdf`, `media/`
+scripts/prerender.ts      runs after the build: one HTML file per route, each with its own head, plus the sitemap
 ```
 
 Timing and gestures are deliberate (stepped tweens at film-like frame rates, swipe and wheel thresholds), so
@@ -91,8 +96,3 @@ Pushing to `main` runs `.github/workflows/deploy.yml`: it installs, lints, build
 GitHub Pages, which serves it at ximingluo.com (the custom domain is set in the repository's Pages settings;
 `public/CNAME` is kept as a belt and braces). `gh run watch` follows a deploy; the workflow can also be started
 by hand from the Actions tab.
-
-## Before 2026
-
-The React site this replaced, its deploy history and the plain-HTML prototype of this design are archived in
-`ximluo/portfolio-archive-2025`.
