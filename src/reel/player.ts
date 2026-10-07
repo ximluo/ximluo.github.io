@@ -9,6 +9,7 @@ import { clamp, eio, eout, tween, wait } from "../film/tween"
 import { heroOf } from "../media"
 import type { Actions, Ctx } from "./ctx"
 import { setBodyClass, setMenuQ, syncScrolled } from "./ctx"
+import { GAP, wheelGesture } from "./wheel"
 
 /** A frame plays for AUTO_MS once the visitor has been idle for IDLE_MS. */
 export const AUTO_MS = 5200
@@ -300,25 +301,19 @@ export function createPlayer(ctx: Ctx) {
     player.addEventListener("touchend", onEnd)
     player.addEventListener("touchcancel", onCancel)
 
-    /* wheel / trackpad over the player steps once per gesture, at every width. A new gesture is a pause over GAP ms, a
-       direction flip, or the magnitude climbing back after it had decayed (momentum only ever decays).
-       Desktop takes vertical scrolling; the phone layout on a computer takes either axis, a sideways trackpad swipe being a swipe. */
-    const GAP = 120
-    const DEAD = 28
-    let acc = 0
+    /* wheel / trackpad over the player steps once per gesture, at every width (wheel.ts tells gestures apart). Desktop
+       takes vertical scrolling; the phone layout on a computer takes either axis, a sideways trackpad swipe being a swipe. */
+    const gesture = wheelGesture()
     let lastW = 0
-    let dir = 0
-    let armed = true
-    let peak = 0
-    let low = 0
     let ax: "x" | "y" | "" = ""
     const onWheel = (e: WheelEvent) => {
       if (e.ctrlKey || s().view !== "code" || s().projOn || !s().started) return
-      const dy = e.deltaMode === 1 ? e.deltaY * 32 : e.deltaY
-      const dx = e.deltaMode === 1 ? e.deltaX * 32 : e.deltaX
+      const k = e.deltaMode === 1 ? 32 : e.deltaMode === 2 ? innerHeight : 1
+      const dy = e.deltaY * k
+      const dx = e.deltaX * k
       const now = performance.now()
       const ph = isPhone()
-      /* one axis per gesture, chosen on its first event and held: a trackpad swipe jitters on the other axis, and a sign
+      /* one axis per burst, chosen on its first event and held: a trackpad swipe jitters on the other axis, and a sign
          flip there must not read as a new gesture (that gave two steps for one swipe) */
       if (now - lastW > GAP) ax = ""
       if (!ax) {
@@ -330,30 +325,9 @@ export function createPlayer(ctx: Ctx) {
       const dv = ax === "x" ? dx : dy
       if (!dv) return
       e.preventDefault()
-      const a = Math.abs(dv)
-      const d = Math.sign(dv)
-      if (
-        now - lastW > GAP ||
-        (d && dir && d !== dir) ||
-        (!armed && low < peak * 0.5 && a > low * 2 + 8)
-      ) {
-        armed = true
-        acc = 0
-      }
       lastW = now
-      if (d) dir = d
-      if (!armed) {
-        if (a > peak) peak = low = a
-        else low = Math.min(low, a)
-        return
-      }
-      acc += dv
-      if (Math.abs(acc) < DEAD || f.stepBusy) return
-      const sg = acc > 0 ? 1 : -1
-      armed = false
-      peak = low = a
-      acc = 0
-      void stepPlayer(sg, ax)
+      const sg = gesture(dv, now, f.stepBusy)
+      if (sg) void stepPlayer(sg, ax)
     }
     player.addEventListener("wheel", onWheel, { passive: false })
 
