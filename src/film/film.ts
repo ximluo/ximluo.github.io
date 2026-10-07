@@ -74,8 +74,8 @@ export function startFilm(grain: HTMLCanvasElement, cursor: HTMLElement, flashNo
   }
   const sizeGrain = () => {
     const k = TOUCH ? 0.45 : 0.55
-    grain.width = Math.ceil(innerWidth * k)
-    grain.height = Math.ceil(innerHeight * k)
+    grain.width = Math.ceil((grain.clientWidth || innerWidth) * k)
+    grain.height = Math.ceil((grain.clientHeight || innerHeight) * k)
   }
   sizeGrain()
   addEventListener("resize", sizeGrain)
