@@ -433,9 +433,9 @@ body.m-proj #blist .lr.pg em{display:none}
 
 /* ===== round 2 of the branch: compact info row, email in the HUD, visible close, compact pages, shader heroes ===== */
 @media (min-width:761px){
-  /* About and Recognition: two filled mono pills on a hairline under the list, their bottom edge on the line of the corner mark (14px above the frame, see .vf.bl); hovering previews the page, and the pill under the pointer or open goes white */
-  .lu-pin{display:flex;flex-wrap:wrap;gap:6px;padding:12px 0 14px;margin-top:6px;border-top:1px solid rgba(236,235,230,.16)}
-  #blist .lr.pg,body.m-proj #blist .lr.pg{display:inline-flex;align-items:center;gap:8px;height:30px;padding:0 12px;background:var(--bone);border:1px solid var(--bone);border-radius:2px;opacity:1;grid-template-columns:none;transition:background .15s steps(2),border-color .15s steps(2)}
+  /* About and Recognition: two filled mono pills on a hairline under the list, level with the player's Open pill (32px tall, 18px above the frame like the player's padding); hovering previews the page, and the pill under the pointer or open goes white */
+  .lu-pin{display:flex;flex-wrap:wrap;gap:6px;padding:12px 0 18px;margin-top:6px;border-top:1px solid rgba(236,235,230,.16)}
+  #blist .lr.pg,body.m-proj #blist .lr.pg{display:inline-flex;align-items:center;gap:8px;height:32px;padding:0 12px;background:var(--bone);border:1px solid var(--bone);border-radius:2px;opacity:1;grid-template-columns:none;transition:background .15s steps(2),border-color .15s steps(2)}
   #blist .lr.pg .n,#blist .lr.pg em,body.m-proj #blist .lr.pg em{display:none}
   #blist .lr.pg b,body.m-proj #blist .lr.pg b{font:400 10px/1 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:#0b0c0e}
   #blist .lr.pg b::after{content:" \2192";color:#0b0c0e}
