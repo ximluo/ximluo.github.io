@@ -1,9 +1,9 @@
 /* The facts the About page and the HUD share. */
 export const AB = {
   email: "ximluo@upenn.edu",
-  bio: "Graphics, machine learning and software. Also an artist, mostly ink, digital and fire.",
+  bio: "Graphics, machine learning, and software. Also an artist.",
   /* The claim under the name on the title card. */
-  claim: "renders by hand and on the GPU",
+  claim: "make it real",
   study: "CS & Computer Graphics @ UPenn",
   education: [
     {
