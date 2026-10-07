@@ -440,6 +440,8 @@ body.m-proj #blist .lr.pg em{display:none}
   #blist .lr.pg:hover{border-color:var(--bone)} #blist .lr.pg:hover b{color:#fff}
   #blist .lr.pg.on{background:var(--bone);border-color:var(--bone)} #blist .lr.pg.on b{color:#0b0c0e}
   #blist .lr.pg::before{display:none}
+  /* the pills are not rows of the reel: hovering a title dims the other rows, never them */
+  #blist.hov .lr.pg{opacity:1}
 }
 /* how to move through the reel, top right on phones only; it leaves while a page or the wall is open */
 .h-how{display:none;color:var(--silver2)}
