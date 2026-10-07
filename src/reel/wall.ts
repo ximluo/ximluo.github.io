@@ -5,6 +5,7 @@ import { flash } from "../film/film"
 import { split } from "../film/split"
 import { eio, eout, tween, wait } from "../film/tween"
 import { heroOf, thumbOf } from "../media"
+import { artPath } from "../paths"
 import { nav } from "../routing"
 import { mountPhantomWall, type WallItem, type WallTheme } from "../wall/phantomwall"
 import type { Actions, Ctx } from "./ctx"
@@ -97,7 +98,7 @@ export function createWall(ctx: Ctx) {
     if (isPhone()) ctx.a.setSnap("peek")
     mountWall()
     syncScrolled(ctx)
-    nav.replace("?art")
+    nav.replace(artPath())
     if (!o.instant) await split.enter(dom.awp)
     else dom.awp.style.clipPath = ""
     setBodyClass("cutting", false)
@@ -170,7 +171,7 @@ export function createWall(ctx: Ctx) {
     store.set({ adShown: true, lineOn: false })
     fitDetail()
     syncScrolled(ctx)
-    nav.replace("?art=" + id)
+    nav.replace(artPath(id))
     const { ad, adSheet, adFig, awp } = dom
     if (!o.instant) {
       if (isHandheld()) {
@@ -227,7 +228,7 @@ export function createWall(ctx: Ctx) {
     store.set({ adShown: false, detailId: null })
     dom.adImg.removeAttribute("src")
     syncScrolled(ctx)
-    nav.replace("?art")
+    nav.replace(artPath())
     ctx.wallApi?.focus(id)
     f.dBusy = false
   }
@@ -256,7 +257,7 @@ export function createWall(ctx: Ctx) {
     dom.adImg.src = pre.src
     fitDetail()
     syncScrolled(ctx)
-    nav.replace("?art=" + w.id)
+    nav.replace(artPath(w.id))
     ctx.wallApi?.focus(w.id)
     refocus()
     adFig.style.transform = `translateX(${d * 90 * px}px)`

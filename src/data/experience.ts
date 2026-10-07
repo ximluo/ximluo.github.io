@@ -53,7 +53,7 @@ export const EXPERIENCE: readonly Experience[] = [
   {
     org: "Women in Computer Science",
     role: "President · ESAC Club of the Year",
-    year: "",
+    year: "Present",
     kind: "lead",
   },
   {

@@ -1,5 +1,6 @@
-/* The player: the hero stack (images are managed by reel/player.ts), the wall's moving preview, the typographic
-   card for entries without a picture, and the caption with its meta grid and Open pill. */
+/* The player: the hero stack (images are managed by reel/player.ts), the wall's moving preview, the canvas card
+   for works drawn by an effect, and the caption with its meta grid and Open pill. The info pages show only their
+   tint and caption. */
 import { Fragment, useEffect, useLayoutEffect, useRef } from "react"
 import type { Entry } from "../data/types"
 import { RM } from "../env"
@@ -15,25 +16,13 @@ const WALL_TAG_SHORT = "Ink, charcoal, woodburn, scratchboard and more."
 function PlayerCard({ cur }: { cur: Entry | null }) {
   const ref = useRef<HTMLDivElement>(null)
   const fx = cur?.kind === "work" ? cur.fx : undefined
-  const isCard = cur?.kind === "page" || !!fx
   useEffect(() => {
     const el = ref.current
     if (!el || !fx) return
     mountFx(el, fx)
     return () => unmountFx(el)
   }, [fx])
-  const lines = cur?.kind === "page" ? cur.card : cur ? [captionOf(cur)] : []
-  return (
-    <div className="pl-card" id="pl-card" hidden={!isCard} ref={ref}>
-      {isCard && !fx && (
-        <ul>
-          {lines.map((t, i) => (
-            <li key={i}>{t}</li>
-          ))}
-        </ul>
-      )}
-    </div>
-  )
+  return <div className="pl-card" id="pl-card" hidden={!fx} ref={ref}></div>
 }
 
 export function Player() {

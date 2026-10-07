@@ -27,6 +27,7 @@ jobs:
       - run: npm run lint
       - run: npm run build
       - run: test -f dist/CNAME && test -f dist/404.html && test -f dist/index.html
+      - run: test -f dist/about.html && test -f dist/art.html && test -f dist/art/index.html && test -f dist/painterly.html && test -f dist/art/photo-12.html && test -f dist/sitemap.xml
       - uses: actions/upload-pages-artifact@v5
         with:
           path: dist

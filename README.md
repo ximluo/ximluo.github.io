@@ -66,21 +66,24 @@ Media paths are relative to `public/media`: project images under `media/img/<pro
 
 ## Routes
 
-The site is one page and routes by query string:
+The site is one page and routes by path. Every route is also a real file: the build ends with
+`scripts/prerender.ts`, which copies `dist/index.html` once per route with its own title, description and
+preview image, so GitHub Pages answers each address directly and a shared link previews the page it points to.
 
-| URL                        | Opens                                         |
-| -------------------------- | --------------------------------------------- |
-| `/?open=<id>`              | A project page (`?about`, `?recognition` too) |
-| `/?art`                    | The artwork wall                              |
-| `/?art=<photo-id>`         | A piece, enlarged over the wall               |
-| `/?index` or `/?view=list` | The player with every section unfolded        |
-| `/?skipintro`              | Skips the leader (deep links do this anyway)  |
-| `/?tint=grey`              | A grey leader                                 |
+| URL               | Opens                                                 |
+| ----------------- | ----------------------------------------------------- |
+| `/<id>`           | A project page (`/about` and `/recognition` too)      |
+| `/art`            | The artwork wall                                      |
+| `/art/<photo-id>` | A piece, enlarged over the wall                       |
+| `/index`          | The player with every section unfolded                |
+| `/?skipintro`     | Skips the leader (every path other than `/` does too) |
+| `/?tint=grey`     | A grey leader                                         |
 
-After the first visit the leader is skipped; the name at the top left replays it.
+After the first visit the leader is skipped; the name at the top left replays it. Links of the old shape
+(`/?open=<id>`, `/?art=<id>`, `/?about`) still work: the address is rewritten to the path once the site is up.
 
-Links to the previous site (`/portfolio/<id>`, `/creative`, `/about`) are redirected by `public/404.html`,
-which GitHub Pages serves for any unknown path.
+Links to the site before 2026 (`/portfolio/<id>`, `/creative`) and paths with a trailing slash are redirected
+by `public/404.html`, which GitHub Pages serves for any unknown path.
 
 ## Deploy
 

@@ -64,9 +64,9 @@ export function createList(ctx: Ctx) {
     void ctx.a.pick(w)
   }
 
-  const listHover: Actions["listHover"] = (w, row) => {
+  const listHover: Actions["listHover"] = (w) => {
     if (TOUCH) return
-    if (row.classList.contains("pg") || w.id === f.hov || !canHover()) return
+    if (w.id === f.hov || !canHover()) return
     f.hov = w.id
     store.set({ listHov: true })
     setActive(w.id)

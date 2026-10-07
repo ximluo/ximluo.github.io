@@ -2,16 +2,17 @@
 <html lang="en">
 <head>
 <script>
-/* links to the site before 2026 land on the page they meant; everything else falls through to the not-found page below */
+/* links to the site before 2026, the old ?open=photo-N shortcut and paths with a trailing slash land on the page they meant; everything else falls through to the not-found page below */
 (function () {
-  var p = location.pathname.replace(/\/+$/, '') || '/', q = new URLSearchParams(location.search), to = null;
+  var full = location.pathname, p = full.replace(/\/+$/, '') || '/', q = new URLSearchParams(location.search), to = null;
   var ids = { 'ar-mri-point-cloud': 1, 'hci-research-jhu': 1, 'lost-at-penn': 1, 'mini-minecraft': 1, 'neuroscent': 1, 'painterly': 1, 'pbr-renderer': 1, 'penn-capsule': 1, 'penn-mobile': 1, 'pennos': 1, 'petsteps': 1, 'relight': 1, 'rewind': 1, 'statistical-learning-returns': 1, 'undertone': 1, 'web-experiments': 1 };
-  var m = p.match(/^\/portfolio\/([a-z0-9-]+)$/);
-  if (m && ids[m[1]]) to = '/?open=' + m[1];
-  else if (p === '/portfolio') to = '/?index';
-  else if (p === '/creative') { var ph = q.get('photo'); to = ph && /^photo-\d+$/.test(ph) ? '/?art=' + ph : '/?art'; }
-  else if (p === '/about') to = '/?about';
-  if (to) { document.documentElement.style.visibility = 'hidden'; location.replace(to); }
+  var m = p.match(/^\/portfolio\/([a-z0-9-]+)$/), pm = p.match(/^\/(photo-\d+)$/), ph = q.get('photo');
+  if (p === '/creative') to = ph && /^photo-\d+$/.test(ph) ? '/art/' + ph : '/art';
+  else if (m && ids[m[1]]) to = '/' + m[1];
+  else if (p === '/portfolio') to = '/index';
+  else if (pm) to = '/art/' + pm[1];
+  else if (p !== full) to = p + location.search + location.hash;
+  if (to && to !== full + location.search + location.hash) { document.documentElement.style.visibility = 'hidden'; location.replace(to); }
 })();
 </script>
 <meta charset="utf-8">

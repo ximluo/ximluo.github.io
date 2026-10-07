@@ -23,7 +23,6 @@ export const RECOGNITION_TYPES: [RecognitionType, string][] = [
 
 export const recognitionOf = (id: string) => RECOGNITION.filter((r) => r.works.includes(id))
 
-const top = sortedByYear(RECOGNITION.filter((r) => r.top))
 const count = (f: (r: Recognition) => boolean) => String(RECOGNITION.filter(f).length)
 
 export const aboutPage: PageEntry = {
@@ -33,7 +32,6 @@ export const aboutPage: PageEntry = {
   sub: "Bio · Education · Experience",
   kick: "Info",
   tagline: AB.bio,
-  card: [AB.bio, AB.email],
   meta: [
     ["Email", AB.email],
     ["Based", AB.based],
@@ -47,7 +45,6 @@ export const recognitionPage: PageEntry = {
   sub: "Awards · Exhibitions · Fellowships",
   kick: "Info",
   tagline: "Awards, exhibitions and fellowships.",
-  card: top.slice(0, 4).map((r) => r.title + " · " + r.year),
   meta: [
     ["Awards", count((r) => r.type === "award")],
     ["Exhibitions", count((r) => r.type === "exhibition")],

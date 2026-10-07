@@ -1,5 +1,5 @@
 /* Google Analytics events, named as the previous site named them so the reports stay continuous. Page views for
-   query-string navigation come from GA4's enhanced measurement of history changes. */
+   path navigation come from GA4's enhanced measurement of history changes. */
 type Gtag = (...args: unknown[]) => void
 
 function gtag(): Gtag | null {

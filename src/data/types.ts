@@ -68,8 +68,6 @@ export interface PageEntry {
   sub: string
   kick: string
   tagline: string
-  /** Lines of the typographic card shown in the player. */
-  card: string[]
   /** Rows of the player's meta grid. */
   meta: [string, string][]
 }

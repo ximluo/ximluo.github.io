@@ -4,6 +4,7 @@ import { Fragment, type MouseEvent } from "react"
 import { RECOGNITION } from "../data/recognition"
 import { RECOGNITION_TYPES, sortedByYear } from "../data/pages"
 import type { Recognition } from "../data/types"
+import { artPath, openPath } from "../paths"
 import { useReel } from "../reel/context"
 
 function WorkLink({ id, r }: { id: string; r: Recognition }) {
@@ -17,11 +18,11 @@ function WorkLink({ id, r }: { id: string; r: Recognition }) {
     f()
   }
   return w.kind === "art" ? (
-    <a href={`?art=${id}`} data-art={id} onClick={stop(() => void actions.openArt(id))}>
+    <a href={artPath(id)} data-art={id} onClick={stop(() => void actions.openArt(id))}>
       {t}
     </a>
   ) : (
-    <a href={`?open=${id}`} data-go={id} onClick={stop(() => void actions.projGo(id))}>
+    <a href={openPath(id)} data-go={id} onClick={stop(() => void actions.projGo(id))}>
       {t}
     </a>
   )

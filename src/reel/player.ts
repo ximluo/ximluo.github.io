@@ -161,7 +161,8 @@ export function createPlayer(ctx: Ctx) {
     const sg = d < 0 ? -1 : 1
     const nw = cat.entry(ids[(((k + d) % n) + n) % n]!)
     const A = axis === "x" ? "X" : "Y"
-    const span = axis === "x" ? innerWidth * 0.45 : 56
+    /* a vertical step leaves at least as far as the finger already dragged, so the card never turns back first */
+    const span = axis === "x" ? innerWidth * 0.45 : Math.max(56, Math.abs(from) + 8)
     f.stepBusy = true
     touch()
     await tween(110, (e) => setOff(A, from + (-sg * span - from) * e, 1 - e), {
@@ -201,9 +202,19 @@ export function createPlayer(ctx: Ctx) {
       }),
     )
 
-    /* phone: swipe the card left / right for next / previous, up to open the sheet */
-    let ps: { x: number; y: number; t: number; lock: "x" | "y" | null; dx: number } | null = null
+    /* phone: swipe the card left / right or up / down for next / previous. With the sheet open, a swipe on the
+       player above it moves the sheet instead (up to full, down to closed); the Menu button is what opens it */
+    let ps: {
+      x: number
+      y: number
+      t: number
+      lock: "x" | "y" | null
+      dx: number
+      dy: number
+    } | null = null
     const live = () => isPhone() && s().view === "code" && !s().projOn && s().started
+    const sheetClosed = () => s().snap === "peek"
+    const fade = (d: number) => 1 - Math.min(0.6, Math.abs(d) / 420)
     const onStart = (e: TouchEvent) => {
       if (!live() || e.touches.length !== 1 || (e.target as Element).closest("button")) {
         ps = null
@@ -211,7 +222,7 @@ export function createPlayer(ctx: Ctx) {
       }
       const t = e.touches[0]!
       touch()
-      ps = { x: t.clientX, y: t.clientY, t: performance.now(), lock: null, dx: 0 }
+      ps = { x: t.clientX, y: t.clientY, t: performance.now(), lock: null, dx: 0, dy: 0 }
     }
     const onMove = (e: TouchEvent) => {
       if (!ps) return
@@ -224,41 +235,41 @@ export function createPlayer(ctx: Ctx) {
       }
       if (ps.lock === "x") {
         ps.dx = dx
-        if (!f.stepBusy) setOff("X", dx * 0.6, 1 - Math.min(0.6, Math.abs(dx) / 420))
+        if (!f.stepBusy) setOff("X", dx * 0.6, fade(dx))
+      } else if (sheetClosed()) {
+        ps.dy = dy
+        if (!f.stepBusy) setOff("Y", dy * 0.6, fade(dy))
       }
     }
-    const pend = () => {
+    /* the finger lifts: a long or quick swipe steps (left or up is next), a short one springs back */
+    const settle = (A: "X" | "Y", d: number, dt: number) => {
+      const off = f.stepBusy ? 0 : d * 0.6
+      const v = d / dt
+      if (Math.abs(d) > 56 || (Math.abs(v) > 0.5 && Math.abs(d) > 24))
+        void stepPlayer(d < 0 ? 1 : -1, A === "X" ? "x" : "y", off)
+      else if (!f.stepBusy)
+        void tween(160, (e) => setOff(A, off * (1 - e), 1 - (1 - e) * (1 - fade(d))), {
+          fps: 20,
+          ease: eout,
+        }).then(() => setOff(A, 0, 1))
+    }
+    const onEnd = (e: TouchEvent) => {
       if (!ps) return
       const sw = ps
       ps = null
       const dt = Math.max(30, performance.now() - sw.t)
-      if (sw.lock === "x") {
-        const off = f.stepBusy ? 0 : sw.dx * 0.6
-        const v = sw.dx / dt
-        if (Math.abs(sw.dx) > 56 || (Math.abs(v) > 0.5 && Math.abs(sw.dx) > 24))
-          void stepPlayer(sw.dx < 0 ? 1 : -1, "x", off)
-        else if (!f.stepBusy)
-          void tween(
-            160,
-            (e) => setOff("X", off * (1 - e), 1 - (1 - e) * Math.min(0.6, Math.abs(sw.dx) / 420)),
-            { fps: 20, ease: eout },
-          ).then(() => setOff("X", 0, 1))
+      if (sw.lock === "x") settle("X", sw.dx, dt)
+      else if (sw.lock === "y") {
+        if (sheetClosed()) settle("Y", sw.dy, dt)
+        else {
+          const dy = e.changedTouches[0]!.clientY - sw.y
+          if (dy < -36) ctx.a.setSnap("full")
+          else if (dy > 36) ctx.a.setSnap("peek")
+        }
       }
-    }
-    const onEnd = (e: TouchEvent) => {
-      if (ps && ps.lock === "y") {
-        const t = e.changedTouches[0]!
-        const dy = t.clientY - ps.y
-        const snap = s().snap
-        if (dy < -36) ctx.a.setSnap(snap === "peek" ? "half" : "full")
-        else if (dy > 36 && snap !== "peek") ctx.a.setSnap("peek")
-        ps = null
-        return
-      }
-      pend()
     }
     const onCancel = () => {
-      if (ps && ps.lock === "x" && !f.stepBusy) setOff("X", 0, 1)
+      if (ps?.lock && !f.stepBusy) setOff(ps.lock === "x" ? "X" : "Y", 0, 1)
       ps = null
     }
     player.addEventListener("touchstart", onStart, { passive: true })

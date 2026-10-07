@@ -1,11 +1,13 @@
-/* The project list: one section per catalogue section with the wall row under Selected, and the info pages
-   pinned beneath the scroll area. Folds and the scroll position survive a reload within the session. */
+/* The project list: the About and Recognition pills pinned above the scroll area, then one section per
+   catalogue section with the wall row under Selected. Folds and the scroll position survive a reload within the
+   session. */
 import { useCallback, useEffect, useRef, type MouseEvent } from "react"
 import { cx } from "../cx"
 import { WALL_ID, type Section } from "../data/catalog"
 import type { Entry, PageEntry, WorkEntry } from "../data/types"
 import { RM } from "../env"
 import { wallLoop } from "../media"
+import { artPath, openPath } from "../paths"
 import { useDomRef, useReel, useReelState } from "../reel/context"
 import { readListMemory, saveListMemory } from "../reel/state"
 
@@ -22,7 +24,7 @@ function WorkRow({ w, section }: { w: WorkEntry; section: Section }) {
         on && "on",
         tight && "tight",
       )}
-      href={`?open=${w.id}`}
+      href={openPath(w.id)}
       data-id={w.id}
       data-k={w.kind}
     >
@@ -41,7 +43,7 @@ function WallRow() {
   const on = useReelState((s) => s.activeId === WALL_ID)
   const a = cat.artRow
   return (
-    <a className={cx("lr aw t1", on && "on")} href="?art" data-id={a.id} data-k="wall">
+    <a className={cx("lr aw t1", on && "on")} href={artPath()} data-id={a.id} data-k="wall">
       <span className="n">{cat.num(a)}</span>
       <b>{a.label}</b>
       <em>
@@ -56,7 +58,7 @@ function WallRow() {
 function PageRow({ w }: { w: PageEntry }) {
   const on = useReelState((s) => s.activeId === w.id)
   return (
-    <a className={cx("lr pg", on && "on")} href={`?open=${w.id}`} data-id={w.id} data-k="page">
+    <a className={cx("lr pg", on && "on")} href={openPath(w.id)} data-id={w.id} data-k="page">
       <span className="n">→</span>
       <b>{w.title}</b>
       <em>{w.sub || ""}</em>
@@ -139,6 +141,11 @@ export function ListUI() {
       }}
       onMouseLeave={() => actions.listLeave()}
     >
+      <nav className="lu-pin" aria-label="Info">
+        {cat.info.map((w) => (
+          <PageRow key={w.id} w={w} />
+        ))}
+      </nav>
       <div
         className="lu-scroll"
         ref={scrollRef}
@@ -152,11 +159,6 @@ export function ListUI() {
           <div className="lu-end"></div>
         </div>
       </div>
-      <nav className="lu-pin" aria-label="Info">
-        {cat.info.map((w) => (
-          <PageRow key={w.id} w={w} />
-        ))}
-      </nav>
     </div>
   )
 }

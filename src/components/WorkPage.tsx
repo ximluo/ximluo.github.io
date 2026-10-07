@@ -5,6 +5,7 @@ import { cx } from "../cx"
 import type { WorkEntry } from "../data/types"
 import { RM } from "../env"
 import { heroOf, thumbOf } from "../media"
+import { openPath } from "../paths"
 import { useReel } from "../reel/context"
 import { pad, rich, slug } from "../text"
 import { BlockView, FxHero, PjImg } from "./Blocks"
@@ -63,7 +64,11 @@ export function WorkPage({ w }: { w: WorkEntry }) {
             ? recs.map((r, i) => (
                 <Fragment key={i}>
                   {i > 0 && <br />}
-                  <a href="?open=recognition" data-go="recognition" onClick={go("recognition")}>
+                  <a
+                    href={openPath("recognition")}
+                    data-go="recognition"
+                    onClick={go("recognition")}
+                  >
                     {r.title + (r.detail ? " · " + r.detail : "")}
                   </a>
                 </Fragment>
@@ -181,7 +186,7 @@ export function WorkPage({ w }: { w: WorkEntry }) {
       </div>
       <section className="pj-nextband" id="pj-nextband">
         <p className="pj-nlab">Next up</p>
-        <a className="pj-ncard" href="#" data-act="next" onClick={go(n.id)}>
+        <a className="pj-ncard" href={openPath(n.id)} data-act="next" onClick={go(n.id)}>
           {nt ? (
             <PjImg src={nt} alt="" variant="card" />
           ) : (
@@ -198,10 +203,10 @@ export function WorkPage({ w }: { w: WorkEntry }) {
         </a>
         <div className="pj-then">
           <span>Then</span>
-          <a href="#" data-go={n2.id} onClick={go(n2.id)}>
+          <a href={openPath(n2.id)} data-go={n2.id} onClick={go(n2.id)}>
             {n2.title}
           </a>
-          <a href="#" data-go={n3.id} onClick={go(n3.id)}>
+          <a href={openPath(n3.id)} data-go={n3.id} onClick={go(n3.id)}>
             {n3.title}
           </a>
         </div>

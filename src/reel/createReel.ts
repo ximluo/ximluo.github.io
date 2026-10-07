@@ -5,7 +5,8 @@ import type { Entry } from "../data/types"
 import { isPhone } from "../env"
 import { startFilm } from "../film/film"
 import { createIntro, type Intro } from "../film/leader"
-import type { Route } from "../routing"
+import { artPath, INDEX_PATH, openPath } from "../paths"
+import { nav, type Route } from "../routing"
 import type { Store } from "../store"
 import type { Actions, Ctx } from "./ctx"
 import type { ReelDom } from "./dom"
@@ -100,6 +101,17 @@ export function createReel(store: Store<ReelState>, dom: ReelDom, route: Route):
     const artQ = route.art || openE?.kind === "art"
     const artId = route.artId || (openE?.kind === "art" ? openE.id : "")
     const direct = directEntry(route)
+    /* a link of the old shape: the address becomes the path it means */
+    if (route.legacy)
+      nav.replace(
+        direct
+          ? openPath(direct.id)
+          : artQ
+            ? artPath(artId && catalog.get(artId)?.kind === "art" ? artId : "")
+            : route.index
+              ? INDEX_PATH
+              : null,
+      )
     a.select(homeEntry(route))
     if (route.noIntro) dom.leader.hidden = true
     else await ctx.intro.run()
