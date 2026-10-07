@@ -433,14 +433,14 @@ body.m-proj #blist .lr.pg em{display:none}
 
 /* ===== round 2 of the branch: compact info row, email in the HUD, visible close, compact pages, shader heroes ===== */
 @media (min-width:761px){
-  /* About and Recognition: two filled mono pills on a hairline under the list, level with the player's Open pill (32px tall, 18px above the frame like the player's padding); hovering previews the page, and the pill under the pointer or open goes white */
+  /* About and Recognition: two outlined mono pills on a hairline under the list, level with the player's Open pill (32px tall, 18px above the frame like the player's padding), so Open stays the one filled pill on the row; hovering previews the page and brightens the pill, the open one is filled */
   .lu-pin{display:flex;flex-wrap:wrap;gap:6px;padding:12px 0 18px;margin-top:6px;border-top:1px solid rgba(236,235,230,.16)}
-  #blist .lr.pg,body.m-proj #blist .lr.pg{display:inline-flex;align-items:center;gap:8px;height:32px;padding:0 12px;background:var(--bone);border:1px solid var(--bone);border-radius:2px;opacity:1;grid-template-columns:none;transition:background .15s steps(2),border-color .15s steps(2)}
+  #blist .lr.pg,body.m-proj #blist .lr.pg{display:inline-flex;align-items:center;gap:8px;height:32px;padding:0 12px;background:rgba(17,19,23,.6);border:1px solid rgba(236,235,230,.3);border-radius:2px;opacity:1;grid-template-columns:none;transition:background .15s steps(2),border-color .15s steps(2)}
   #blist .lr.pg .n,#blist .lr.pg em,body.m-proj #blist .lr.pg em{display:none}
-  #blist .lr.pg b,body.m-proj #blist .lr.pg b{font:400 10px/1 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:#0b0c0e}
-  #blist .lr.pg b::after{content:" \2192";color:#0b0c0e}
-  #blist .lr.pg:hover,#blist .lr.pg.on{background:#fff;border-color:#fff}
-  #blist .lr.pg.on b::after{color:var(--ruby)}
+  #blist .lr.pg b,body.m-proj #blist .lr.pg b{font:400 10px/1 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--silver);transition:color .15s steps(2)}
+  #blist .lr.pg b::after{content:" \2192";color:var(--silver2)}
+  #blist .lr.pg:hover{border-color:var(--bone)} #blist .lr.pg:hover b,#blist .lr.pg:hover b::after{color:#fff}
+  #blist .lr.pg.on{background:var(--bone);border-color:var(--bone)} #blist .lr.pg.on b,#blist .lr.pg.on b::after{color:#0b0c0e}
   #blist .lr.pg::before{display:none}
 }
 /* how to move through the reel, top right on phones only; it leaves while a page or the wall is open */
