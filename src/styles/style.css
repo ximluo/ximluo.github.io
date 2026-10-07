@@ -22,7 +22,7 @@ body.m-proj #side{padding:12px 12px 0 calc(var(--gut) + 28px);background:rgba(17
 #blist.hov .lr:not(.on){opacity:.4}
 #blist .lu-end{height:10vh}
 body.m-proj #blist .lr em{display:none}
-body.m-proj #blist .lr.t1 b{font-size:18px} body.m-proj #blist .lr.t2 b{font-size:16px}
+body.m-proj #blist .lr.t1 b{font-size:20px} body.m-proj #blist .lr.t2 b{font-size:18px}
 body.m-proj #blist .lr{grid-template-columns:2.4em minmax(0,1fr);opacity:.6} body.m-proj #blist .lr.on{opacity:1}
 body.m-proj #blist .lr::before{left:-12px;width:6px}
 body.m-proj .sd-head{min-height:40px}
@@ -504,7 +504,7 @@ body.m-proj:not(.m-page) #pj-prev,body.m-proj:not(.m-page) #pj-next{display:inli
   body.m-wall #side{padding:12px 12px 0 calc(var(--gut) + 28px);background:rgba(17,19,23,.94);border-right:1px solid rgba(236,235,230,.12)}
   body.m-wall .sd-head{min-height:40px}
   body.m-wall #blist .lr em{display:none}
-  body.m-wall #blist .lr.t1 b{font-size:18px} body.m-wall #blist .lr.t2 b{font-size:16px}
+  body.m-wall #blist .lr.t1 b{font-size:20px} body.m-wall #blist .lr.t2 b{font-size:18px}
   body.m-wall #blist .lr:hover{opacity:1}
   body.m-wall #ticks{opacity:0;pointer-events:none}
   body.m-wall #player{opacity:0;pointer-events:none}
