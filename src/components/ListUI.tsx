@@ -59,7 +59,7 @@ function PageRow({ w }: { w: PageEntry }) {
   const on = useReelState((s) => s.activeId === w.id)
   return (
     <a className={cx("lr pg", on && "on")} href={openPath(w.id)} data-id={w.id} data-k="page">
-      <span className="n">→</span>
+      <span className="pt" aria-hidden="true"></span>
       <b>{w.title}</b>
       <em>{w.sub || ""}</em>
     </a>

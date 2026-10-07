@@ -394,11 +394,9 @@ body.m-proj #blist .lr:hover{opacity:1}
 .lu-pin{flex:none;display:grid;border-top:1px solid rgba(236,235,230,.16);padding:10px 0 12px;margin-top:6px}
 #blist .lr.pg{grid-template-columns:2.7em minmax(0,1fr) auto;padding:3px 0;opacity:.85}
 #blist .lr.pg b{font-size:clamp(20px,1.8vw,28px);line-height:1.25}
-#blist .lr.pg .n{color:var(--silver2)}
 #blist .lr.pg em::after{content:" \2192";color:var(--bone)}
 body.m-proj #blist .lr.pg b{font-size:18px}
 body.m-proj #blist .lr.pg em{display:none}
-#blist .lr.pg.on .n,#blist .lr.pg:hover .n{color:var(--ruby)}
 .rk{display:inline-block;width:.3em;height:.3em;border-radius:50%;background:var(--ruby);margin-left:.45em;vertical-align:.5em}
 .pl-card{position:absolute;inset:0;display:grid;place-content:center;text-align:center;padding:24px;box-shadow:0 0 0 1px rgba(236,235,230,.14)}
 .pl-card[hidden]{display:none}
@@ -425,7 +423,7 @@ body.m-proj #blist .lr.pg em{display:none}
   body.m-proj:not(.m-q) .h-tr{display:none}
   .lu-pin{display:none}
   #blist .lr.pg,body.m-proj #blist .lr.pg{display:flex;align-items:center;justify-content:center;min-height:44px;padding:0;border:1px solid rgba(236,235,230,.22);border-radius:2px;opacity:1}
-  #blist .lr.pg .n,#blist .lr.pg em,body.m-proj #blist .lr.pg em{display:none!important}
+  #blist .lr.pg .pt,#blist .lr.pg em,body.m-proj #blist .lr.pg em{display:none!important}
   #blist .lr.pg b,body.m-proj #blist .lr.pg b{font:400 11px/1 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--bone)}
   #proj .pj-hero--card{padding:12px 0}
   #proj .is-page .ab-roll{padding-top:24px}
@@ -433,14 +431,14 @@ body.m-proj #blist .lr.pg em{display:none}
 
 /* ===== round 2 of the branch: compact info row, email in the HUD, visible close, compact pages, shader heroes ===== */
 @media (min-width:761px){
-  /* About and Recognition: two outlined mono pills on a hairline under the list, level with the player's Open pill (32px tall, 18px above the frame like the player's padding), so Open stays the one filled pill on the row; hovering previews the page and brightens the pill, the open one is filled */
+  /* About and Recognition: two outlined mono pills on a hairline under the list, each led by the ruby play mark, level with the player's Open pill (32px tall, 18px above the frame like the player's padding), so Open stays the one filled pill on the row; hovering previews the page and brightens the pill, the open one is filled */
   .lu-pin{display:flex;flex-wrap:wrap;gap:6px;padding:12px 0 18px;margin-top:6px;border-top:1px solid rgba(236,235,230,.16)}
   #blist .lr.pg,body.m-proj #blist .lr.pg{display:inline-flex;align-items:center;gap:8px;height:32px;padding:0 12px;background:rgba(17,19,23,.6);border:1px solid rgba(236,235,230,.3);border-radius:2px;opacity:1;grid-template-columns:none;transition:background .15s steps(2),border-color .15s steps(2)}
-  #blist .lr.pg .n,#blist .lr.pg em,body.m-proj #blist .lr.pg em{display:none}
+  #blist .lr.pg em,body.m-proj #blist .lr.pg em{display:none}
+  #blist .lr.pg .pt{margin:0}
   #blist .lr.pg b,body.m-proj #blist .lr.pg b{font:400 10px/1 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--silver);transition:color .15s steps(2)}
-  #blist .lr.pg b::after{content:" \2192";color:var(--silver2)}
-  #blist .lr.pg:hover{border-color:var(--bone)} #blist .lr.pg:hover b,#blist .lr.pg:hover b::after{color:#fff}
-  #blist .lr.pg.on{background:var(--bone);border-color:var(--bone)} #blist .lr.pg.on b,#blist .lr.pg.on b::after{color:#0b0c0e}
+  #blist .lr.pg:hover{border-color:var(--bone)} #blist .lr.pg:hover b{color:#fff}
+  #blist .lr.pg.on{background:var(--bone);border-color:var(--bone)} #blist .lr.pg.on b{color:#0b0c0e}
   #blist .lr.pg::before{display:none}
 }
 /* how to move through the reel, top right on phones only; it leaves while a page or the wall is open */
