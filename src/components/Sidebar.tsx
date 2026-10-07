@@ -7,6 +7,11 @@ export function Sidebar() {
       <button className="sd-grab" aria-label="Drag to open the work list" data-hot="">
         <i></i>
       </button>
+      <div className="sd-head">
+        <span className="mono sd-lab">
+          <span className="pt"></span>Now playing
+        </span>
+      </div>
       <ListUI />
     </aside>
   )

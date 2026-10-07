@@ -6,6 +6,8 @@ body.m-proj{--sw:340px;--tw:0px}
 #side{grid-column:1;grid-row:1} #ticks{grid-column:2;grid-row:1} #player{grid-column:3;grid-row:1}
 #side{position:relative;z-index:3;display:flex;flex-direction:column;min-height:0;min-width:0;padding:14px 1.2vw 0 calc(var(--gut) + 28px);overflow:hidden}
 body.m-proj #side{padding:12px 12px 0 calc(var(--gut) + 28px);background:rgba(17,19,23,.94);border-right:1px solid rgba(236,235,230,.12)}
+.sd-head{flex:none;min-height:44px;display:flex;align-items:center;justify-content:space-between;gap:10px;color:var(--silver);padding-bottom:6px}
+.sd-lab{color:var(--silver2)}
 .sd-grab{display:none}
 #blist{flex:1;min-height:0}
 #blist .lr{grid-template-columns:2.7em minmax(0,1fr) auto;padding:1px 0;opacity:.8;position:relative}
@@ -23,6 +25,7 @@ body.m-proj #blist .lr em{display:none}
 body.m-proj #blist .lr.t1 b{font-size:18px} body.m-proj #blist .lr.t2 b{font-size:16px}
 body.m-proj #blist .lr{grid-template-columns:2.4em minmax(0,1fr);opacity:.6} body.m-proj #blist .lr.on{opacity:1}
 body.m-proj #blist .lr::before{left:-12px;width:6px}
+body.m-proj .sd-head{min-height:40px}
 
 #ticks{display:flex;flex-direction:column;justify-content:center;align-items:center;padding:20px 0;overflow:hidden;opacity:1;transition:opacity .2s steps(3)}
 body.m-proj #ticks{opacity:0;pointer-events:none}
@@ -106,6 +109,7 @@ body:not(.touch) .pj-fig img{cursor:none}
   .h-br button i{margin-left:4px}
   .h-br button.on{background:linear-gradient(var(--bone),var(--bone)) 50% calc(50% + 11px)/calc(100% - 16px) 1px no-repeat}
   .h-br button.on::before{display:none}
+  .sd-head{display:none!important}
   #proj .pj-bar{grid-template-columns:auto 1fr auto;gap:6px}
   #proj .pj-q b{display:none}#proj .pj-bar .pj-q i{display:inline;font-size:20px}
   #proj .pj-room{justify-self:center}#proj .pj-room button{padding:0 8px;font-size:10.5px}
@@ -132,6 +136,7 @@ body:not(.touch) .pj-fig img{cursor:none}
   body.m-proj #side{border-right:0;background:#0b0c0f}
   .sd-grab{display:grid;place-items:center;height:26px;width:100%;flex:none;touch-action:none}
   .sd-grab i{display:block;width:44px;height:4px;border-radius:2px;background:#555a60}
+  .sd-head{display:none}
   #blist{padding-bottom:8px}
   #blist .lr,body.m-proj #blist .lr{grid-template-columns:2.4em minmax(0,1fr);min-height:48px;align-items:baseline;padding:6px 0;opacity:.8}
   #blist .lr.on,body.m-proj #blist .lr.on{opacity:1}
@@ -156,6 +161,7 @@ body:not(.touch) .pj-fig img{cursor:none}
 
 /* ===== round 15: Artworks row, phantom wall panel, enlarged detail ===== */
 #split{grid-template-rows:minmax(0,1fr)}
+.sd-head .pt{margin-right:8px}
 #blist .lr.aw b{font-style:italic}
 #blist .lr.aw em{display:flex;align-items:center;gap:10px;align-self:center}
 .aw-ct{font-style:normal;font-family:var(--mono);font-size:10px;letter-spacing:.12em;color:var(--silver)}
@@ -385,7 +391,7 @@ body:not(.touch) .ad-fig img{cursor:none}
 
 /* ===== now playing: sections, pinned info rows, cards, project pages inside the border ===== */
 body.m-proj #blist .lr:hover{opacity:1}
-.lu-pin{flex:none;display:grid;border-bottom:1px solid rgba(236,235,230,.16);padding:10px 0 12px;margin-bottom:6px}
+.lu-pin{flex:none;display:grid;border-top:1px solid rgba(236,235,230,.16);padding:10px 0 12px;margin-top:6px}
 #blist .lr.pg{grid-template-columns:2.7em minmax(0,1fr) auto;padding:3px 0;opacity:.85}
 #blist .lr.pg b{font-size:clamp(20px,1.8vw,28px);line-height:1.25}
 #blist .lr.pg .n{color:var(--silver2)}
@@ -427,9 +433,8 @@ body.m-proj #blist .lr.pg em{display:none}
 
 /* ===== round 2 of the branch: compact info row, email in the HUD, visible close, compact pages, shader heroes ===== */
 @media (min-width:761px){
-  /* About and Recognition: two filled mono pills above the list, where the reel's header was; hovering previews the page, and the pill under the pointer or open goes white */
-  .lu-pin{display:flex;flex-wrap:wrap;align-items:center;gap:6px;min-height:44px;padding:0 0 6px;margin-bottom:6px;border-bottom:1px solid rgba(236,235,230,.16)}
-  body.m-proj .lu-pin,body.m-wall .lu-pin{min-height:40px}
+  /* About and Recognition: two filled mono pills on a hairline under the list, their bottom edge on the line of the corner mark (14px above the frame, see .vf.bl); hovering previews the page, and the pill under the pointer or open goes white */
+  .lu-pin{display:flex;flex-wrap:wrap;gap:6px;padding:12px 0 14px;margin-top:6px;border-top:1px solid rgba(236,235,230,.16)}
   #blist .lr.pg,body.m-proj #blist .lr.pg{display:inline-flex;align-items:center;gap:8px;height:30px;padding:0 12px;background:var(--bone);border:1px solid var(--bone);border-radius:2px;opacity:1;grid-template-columns:none;transition:background .15s steps(2),border-color .15s steps(2)}
   #blist .lr.pg .n,#blist .lr.pg em,body.m-proj #blist .lr.pg em{display:none}
   #blist .lr.pg b,body.m-proj #blist .lr.pg b{font:400 10px/1 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:#0b0c0e}
@@ -495,6 +500,7 @@ body.m-proj:not(.m-page) #pj-prev,body.m-proj:not(.m-page) #pj-next{display:inli
 @media (min-width:761px){
   body.m-wall{--sw:340px;--tw:0px}
   body.m-wall #side{padding:12px 12px 0 calc(var(--gut) + 28px);background:rgba(17,19,23,.94);border-right:1px solid rgba(236,235,230,.12)}
+  body.m-wall .sd-head{min-height:40px}
   body.m-wall #blist .lr em{display:none}
   body.m-wall #blist .lr.t1 b{font-size:18px} body.m-wall #blist .lr.t2 b{font-size:16px}
   body.m-wall #blist .lr:hover{opacity:1}

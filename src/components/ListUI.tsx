@@ -1,5 +1,5 @@
-/* The project list: the About and Recognition pills pinned above the scroll area, then one section per
-   catalogue section with the wall row under Selected. Folds and the scroll position survive a reload within the
+/* The project list: one section per catalogue section with the wall row under Selected, and the About and
+   Recognition pills pinned beneath the scroll area. Folds and the scroll position survive a reload within the
    session. */
 import { useCallback, useEffect, useRef, type MouseEvent } from "react"
 import { cx } from "../cx"
@@ -141,11 +141,6 @@ export function ListUI() {
       }}
       onMouseLeave={() => actions.listLeave()}
     >
-      <nav className="lu-pin" aria-label="Info">
-        {cat.info.map((w) => (
-          <PageRow key={w.id} w={w} />
-        ))}
-      </nav>
       <div
         className="lu-scroll"
         ref={scrollRef}
@@ -159,6 +154,11 @@ export function ListUI() {
           <div className="lu-end"></div>
         </div>
       </div>
+      <nav className="lu-pin" aria-label="Info">
+        {cat.info.map((w) => (
+          <PageRow key={w.id} w={w} />
+        ))}
+      </nav>
     </div>
   )
 }
