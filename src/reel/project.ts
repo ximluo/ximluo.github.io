@@ -7,13 +7,23 @@ import { setTint } from "../film/tint"
 import { nav } from "../routing"
 import type { Actions, Ctx } from "./ctx"
 import { setBodyClass, setMenuQ, syncScrolled } from "./ctx"
+import { saveSeen } from "./state"
 
 export function createProject(ctx: Ctx) {
   const { store, dom, cat, f } = ctx
   const s = () => store.get()
   const on = () => s().projOn
 
+  /** An info page that was open and is now left: its pill's mark goes grey for the rest of the session. */
+  function leave(id: string | null) {
+    if (!id || cat.get(id)?.kind !== "page" || s().seen.includes(id)) return
+    const seen = [...s().seen, id]
+    store.set({ seen })
+    saveSeen(seen)
+  }
+
   function change(id: string) {
+    if (s().projId !== id) leave(s().projId)
     const w = cat.entry(id)
     store.set({ projId: id })
     setTint(w)
@@ -74,6 +84,7 @@ export function createProject(ctx: Ctx) {
   async function projHide() {
     if (!on() || f.closing) return
     f.closing = true
+    leave(s().projId)
     onHide()
     setBodyClass("m-proj", false)
     await split.leave(dom.proj)
@@ -86,6 +97,7 @@ export function createProject(ctx: Ctx) {
   /* instant teardown, used while the leader covers the screen */
   function projReset() {
     if (!on()) return
+    leave(s().projId)
     onHide()
     setBodyClass("m-proj", false)
     dom.proj.hidden = true

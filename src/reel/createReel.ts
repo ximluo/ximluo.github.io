@@ -14,7 +14,7 @@ import { createList } from "./list"
 import { createPlayer } from "./player"
 import { createProject } from "./project"
 import { createShell } from "./shell"
-import { readListMemory, type ReelState } from "./state"
+import { readListMemory, readSeen, type ReelState } from "./state"
 import { createWall } from "./wall"
 
 export interface Reel {
@@ -57,6 +57,7 @@ export function initialState(route: Route): ReelState {
     listHov: false,
     fold: readListMemory().fold ?? {},
     tight: [],
+    seen: readSeen(),
   }
 }
 

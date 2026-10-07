@@ -57,8 +57,15 @@ function WallRow() {
 
 function PageRow({ w }: { w: PageEntry }) {
   const on = useReelState((s) => s.activeId === w.id)
+  const open = useReelState((s) => s.projOn && s.pageId === w.id)
+  const seen = useReelState((s) => s.seen.includes(w.id))
   return (
-    <a className={cx("lr pg", on && "on")} href={openPath(w.id)} data-id={w.id} data-k="page">
+    <a
+      className={cx("lr pg", on && "on", open && "open", seen && "seen")}
+      href={openPath(w.id)}
+      data-id={w.id}
+      data-k="page"
+    >
       <span className="pt" aria-hidden="true"></span>
       <b>{w.title}</b>
       <em>{w.sub || ""}</em>

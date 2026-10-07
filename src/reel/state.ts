@@ -37,6 +37,8 @@ export interface ReelState {
   listHov: boolean
   fold: Readonly<Record<string, boolean>>
   tight: readonly string[]
+  /** Info pages opened and then left in this session; their pill's mark is grey. */
+  seen: readonly string[]
 }
 
 export const LIST_STORE_KEY = "np-l2-sec"
@@ -58,6 +60,26 @@ export function readListMemory(): ListMemory {
 export function saveListMemory(m: ListMemory) {
   try {
     sessionStorage.setItem(LIST_STORE_KEY, JSON.stringify(m))
+  } catch {
+    /* storage may be unavailable */
+  }
+}
+
+export const SEEN_STORE_KEY = "np-seen"
+
+export function readSeen(): string[] {
+  try {
+    const raw = sessionStorage.getItem(SEEN_STORE_KEY)
+    const v: unknown = raw ? JSON.parse(raw) : []
+    return Array.isArray(v) ? v.filter((x): x is string => typeof x === "string") : []
+  } catch {
+    return []
+  }
+}
+
+export function saveSeen(ids: readonly string[]) {
+  try {
+    sessionStorage.setItem(SEEN_STORE_KEY, JSON.stringify(ids))
   } catch {
     /* storage may be unavailable */
   }
