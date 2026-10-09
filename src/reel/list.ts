@@ -100,6 +100,8 @@ export function createList(ctx: Ctx) {
       (b, i) => !!b && rs[i]!.offsetParent !== null && b.scrollWidth > b.clientWidth + 1,
     )
     bs.forEach((b) => b && (b.style.whiteSpace = ""))
+    /* put the classes straight back: when the result is unchanged the store does not re-render the rows */
+    rs.forEach((a, i) => a.classList.toggle("tight", over[i]!))
     const tight = rs.filter((_, i) => over[i]).map((a) => a.dataset.id!)
     const was = store.get().tight
     if (tight.length !== was.length || tight.some((id, i) => id !== was[i])) store.set({ tight })

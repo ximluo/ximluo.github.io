@@ -11,7 +11,7 @@ that shows the current one, docked project pages, and a draggable wall of artwor
 - [Vite](https://vite.dev), [React 19](https://react.dev) and TypeScript in strict mode
 - Plain CSS, kept in `src/styles` (the design lives there; nothing is generated)
 - WebGL2 for the artwork wall, 2D canvas for the grain and the code-glyph hero
-- Self-hosted type: Boska, Bodoni Moda, B612 Mono and League Gothic (licences sit beside the files in
+- Self-hosted type: Gambetta, Bodoni Moda, B612 Mono, League Gothic and Literata (licences sit beside the files in
   `public/media/fonts`)
 - No other runtime dependencies
 

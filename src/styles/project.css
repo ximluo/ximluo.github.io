@@ -27,7 +27,7 @@
 /* layout */
 .pj-wrap { max-width: 1320px; margin: 0 auto; padding: clamp(24px, 4vw, 56px) var(--pj-gut) 0; display: grid; column-gap: clamp(28px, 4vw, 64px); row-gap: 40px; align-items: start;
   grid-template-columns: 150px minmax(0, 5fr) minmax(0, 7fr);
-  grid-template-areas: "toc head hero" "toc main main" ". next next" }   /* Next up starts where the body text starts */
+  grid-template-areas: "toc head head" "toc hero hero" "toc meta meta" "toc main main" ". next next" }   /* the hero runs the full width with the meta under it; Next up starts where the body text starts */
 .pj-head { grid-area: head; align-self: start }
 .pj-hero { grid-area: hero; margin: 0; border-radius: var(--pj-r); overflow: hidden; background: var(--pj-card); display: grid; place-items: center }
 .pj-hero img { max-height: 76vh; width: auto; margin: 0 auto }
@@ -36,6 +36,8 @@
 .pj-toc a { color: var(--pj-mut); text-decoration: none; padding: 8px 0 8px 14px; border-left: 2px solid var(--pj-line); transition: color .2s, border-color .2s }
 .pj-toc a:hover { color: var(--pj-fg) }
 .pj-toc a.on { color: var(--pj-fg); border-left-color: var(--pj-accent) }
+/* the story's parts, under the contents and set like them */
+.pj-parts { display: grid; gap: 4px; margin-top: 18px }
 .pj-main { grid-area: main; display: grid; gap: 48px; min-width: 0 }
 .pj-nextband { grid-area: next }
 
@@ -43,7 +45,9 @@
 .pj-kick { margin: 0 0 14px; font: 500 12px/1.2 var(--pj-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--pj-accent) }
 .pj-title { margin: 0; font: var(--pj-title-w) clamp(40px, 5.4vw, 84px)/var(--pj-title-lh) var(--pj-disp); letter-spacing: var(--pj-title-ls); text-transform: var(--pj-title-tt); text-wrap: balance; overflow-wrap: anywhere }
 .pj-tag { margin: 18px 0 0; font-size: clamp(16px, 1.5vw, 20px); line-height: 1.4; color: var(--pj-mut); max-width: 34ch }
-.pj-meta { margin: 28px 0 0; display: grid; grid-template-columns: 1fr 1fr; gap: 0 24px }
+/* the meta and the parts' jump links, under the hero */
+.pj-facts { grid-area: meta; margin-top: -16px; min-width: 0 }
+.pj-meta { margin: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 0 24px }
 .pj-meta div { padding: 12px 0; border-top: 1px solid var(--pj-line) }
 .pj-meta dt { font: 400 10.5px/1.2 var(--pj-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--pj-mut); margin-bottom: 6px }
 .pj-meta dd { margin: 0; font-size: 14px; line-height: 1.35; overflow-wrap: anywhere }
@@ -92,10 +96,10 @@
   .pj-step button { padding: 0 18px }
   .pj-pos em { display: none }
   .pj-wrap, .pj-wrap.is-art { grid-template-columns: minmax(0, 1fr); padding-top: 20px; row-gap: 26px;
-    grid-template-areas: "head" "hero" "toc" "main" "next" }
+    grid-template-areas: "head" "hero" "meta" "toc" "main" "next" }
   .pj-wrap.is-art { grid-template-areas: "head" "hero" "next" }
   .pj-toc { position: sticky; top: 0; z-index: 20; display: flex; gap: 6px; background: var(--pj-bar-bg); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); margin: 0 calc(var(--pj-gut) * -1); padding: 10px var(--pj-gut); border-bottom: 1px solid var(--pj-line) }
-  .pj-toc p { display: none }
+  .pj-toc p, .pj-parts { display: none }
   .pj-toc a { flex: 1 1 0; text-align: center; padding: 10px 4px; border-left: 0; border-bottom: 2px solid var(--pj-line); font-size: 11px }
   .pj-toc a.on { border-bottom-color: var(--pj-accent) }
   .pj-title { font-size: clamp(38px, 12vw, 56px) }

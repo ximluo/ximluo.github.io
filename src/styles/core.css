@@ -3,7 +3,7 @@
 @property --tb{syntax:'<number>';inherits:true;initial-value:28}
 :root{
   --ink:#111317; --ink2:#191c21; --silver:#a9abaf; --silver2:#7d8086; --bone:#ecebe6; --ruby:#e1262d;
-  --serif:"Boska","Bodoni 72",Didot,Georgia,serif;
+  --serif:"Gambetta",Georgia,serif;
   --mono:"B612 Mono",ui-monospace,Menlo,monospace;
   --top:46px; --bot:46px; --gut:max(16px,2vw);
   --tr:196; --tg:22; --tb:28;

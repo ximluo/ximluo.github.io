@@ -1,13 +1,14 @@
-/* self-hosted type. Boska by Indian Type Foundry (ITF Free Font License), B612 Mono and League Gothic (SIL Open Font License); licenses sit next to the files in public/media/fonts */
-@font-face{font-family:"Boska";src:url("/media/fonts/Boska-Light.woff2") format("woff2");font-weight:300;font-style:normal;font-display:swap}
-@font-face{font-family:"Boska";src:url("/media/fonts/Boska-LightItalic.woff2") format("woff2");font-weight:300;font-style:italic;font-display:swap}
-@font-face{font-family:"Boska";src:url("/media/fonts/Boska-Regular.woff2") format("woff2");font-weight:400;font-style:normal;font-display:swap}
-@font-face{font-family:"Boska";src:url("/media/fonts/Boska-Italic.woff2") format("woff2");font-weight:400;font-style:italic;font-display:swap}
-@font-face{font-family:"Boska";src:url("/media/fonts/Boska-Medium.woff2") format("woff2");font-weight:500;font-style:normal;font-display:swap}
-@font-face{font-family:"Boska";src:url("/media/fonts/Boska-MediumItalic.woff2") format("woff2");font-weight:500;font-style:italic;font-display:swap}
+/* self-hosted type. Gambetta by Paulo Goode for Indian Type Foundry (ITF Free Font License), B612 Mono and League Gothic (SIL Open Font License); licenses sit next to the files in public/media/fonts */
+@font-face{font-family:"Gambetta";src:url("/media/fonts/Gambetta-Light.woff2") format("woff2");font-weight:300;font-style:normal;font-display:swap}
+@font-face{font-family:"Gambetta";src:url("/media/fonts/Gambetta-LightItalic.woff2") format("woff2");font-weight:300;font-style:italic;font-display:swap}
+@font-face{font-family:"Gambetta";src:url("/media/fonts/Gambetta-Regular.woff2") format("woff2");font-weight:400;font-style:normal;font-display:swap}
+@font-face{font-family:"Gambetta";src:url("/media/fonts/Gambetta-Italic.woff2") format("woff2");font-weight:400;font-style:italic;font-display:swap}
+@font-face{font-family:"Gambetta";src:url("/media/fonts/Gambetta-Medium.woff2") format("woff2");font-weight:500;font-style:normal;font-display:swap}
+@font-face{font-family:"Gambetta";src:url("/media/fonts/Gambetta-MediumItalic.woff2") format("woff2");font-weight:500;font-style:italic;font-display:swap}
 @font-face{font-family:"B612 Mono";src:url("/media/fonts/B612Mono-Regular.woff2") format("woff2");font-weight:400;font-style:normal;font-display:swap}
 @font-face{font-family:"B612 Mono";src:url("/media/fonts/B612Mono-Italic.woff2") format("woff2");font-weight:400;font-style:italic;font-display:swap}
 @font-face{font-family:"B612 Mono";src:url("/media/fonts/B612Mono-Bold.woff2") format("woff2");font-weight:700;font-style:normal;font-display:swap}
 @font-face{font-family:"League Gothic";src:url("/media/fonts/LeagueGothic-Regular.woff2") format("woff2");font-weight:400;font-style:normal;font-display:swap}
-/* Bodoni Moda (indestructible type, SIL Open Font License): the name at the top left keeps the face of the earlier site */
+/* Bodoni Moda (indestructible type, SIL Open Font License): the name, SemiBold at the top left as on the earlier site, Medium on the title card (cut from the variable font, Latin, optical sizes kept) */
+@font-face{font-family:"Bodoni Moda";src:url("/media/fonts/BodoniModa-Medium.woff2") format("woff2");font-weight:500;font-style:normal;font-display:swap}
 @font-face{font-family:"Bodoni Moda";src:url("/media/fonts/BodoniModa-SemiBold.woff2") format("woff2");font-weight:600;font-style:normal;font-display:swap}

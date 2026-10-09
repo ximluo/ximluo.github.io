@@ -38,7 +38,7 @@ function TitleCard({ on, phone }: { on: boolean; phone: boolean }) {
         <p className="ph-sub mono">{AB.study}</p>
         <p className="ph-go mono">
           <span className="pt" aria-hidden="true"></span>
-          {phone ? "Swipe to start the reel" : "Scroll to start the reel"}
+          {phone ? "Swipe to start" : "Scroll to start"}
         </p>
       </div>
       <div className="ph-fig" aria-hidden="true">
@@ -109,7 +109,17 @@ export function Player() {
   const isA = cur?.kind === "wall"
   const isP = cur?.kind === "work" && !!cur.fx
   const page = cur?.kind === "page" ? cur : null
-  const kind = !cur ? undefined : isH ? "home" : isA ? "wall" : page ? "page" : isP ? "card" : "work"
+  const kind = !cur
+    ? undefined
+    : isH
+      ? "home"
+      : isA
+        ? "wall"
+        : page
+          ? "page"
+          : isP
+            ? "card"
+            : "work"
   const sec = cur && (cur.kind === "work" || cur.kind === "wall") ? cat.secOf(cur) : null
   const kick = !cur
     ? ""

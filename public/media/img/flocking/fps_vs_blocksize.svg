@@ -1,60 +1,60 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="780" height="420" viewBox="0 0 780 420" font-family="system-ui, -apple-system, &quot;Segoe UI&quot;, sans-serif">
-<rect width="780" height="420" fill="#fcfcfb"/>
-<text x="74" y="26" fill="#0b0b0b" font-size="15" font-weight="600" text-anchor="start" dominant-baseline="middle">Framerate vs Block Size (50k Boids)</text>
-<line x1="74" y1="50" x2="90" y2="50" stroke="#2a78d6" stroke-width="2" stroke-linecap="round"/>
-<circle cx="82" cy="50" r="3.5" fill="#2a78d6"/>
-<text x="96" y="50" fill="#52514e" font-size="12" font-weight="400" text-anchor="start" dominant-baseline="middle">Naive</text>
-<line x1="152" y1="50" x2="168" y2="50" stroke="#eb6834" stroke-width="2" stroke-linecap="round"/>
-<circle cx="160" cy="50" r="3.5" fill="#eb6834"/>
-<text x="174" y="50" fill="#52514e" font-size="12" font-weight="400" text-anchor="start" dominant-baseline="middle">Scattered uniform grid</text>
-<line x1="338.8" y1="50" x2="354.8" y2="50" stroke="#1baf7a" stroke-width="2" stroke-linecap="round"/>
-<circle cx="346.8" cy="50" r="3.5" fill="#1baf7a"/>
-<text x="360.8" y="50" fill="#52514e" font-size="12" font-weight="400" text-anchor="start" dominant-baseline="middle">Coherent uniform grid</text>
-<line x1="74" y1="360" x2="668" y2="360" stroke="#e1e0d9" stroke-width="1"/>
-<text x="66" y="360" fill="#898781" font-size="11" font-weight="400" text-anchor="end" dominant-baseline="middle">10</text>
-<line x1="74" y1="264.7" x2="668" y2="264.7" stroke="#e1e0d9" stroke-width="1"/>
-<text x="66" y="264.7" fill="#898781" font-size="11" font-weight="400" text-anchor="end" dominant-baseline="middle">100</text>
-<line x1="74" y1="169.3" x2="668" y2="169.3" stroke="#e1e0d9" stroke-width="1"/>
-<text x="66" y="169.3" fill="#898781" font-size="11" font-weight="400" text-anchor="end" dominant-baseline="middle">1,000</text>
-<line x1="74" y1="74" x2="668" y2="74" stroke="#e1e0d9" stroke-width="1"/>
-<text x="66" y="74" fill="#898781" font-size="11" font-weight="400" text-anchor="end" dominant-baseline="middle">10,000</text>
-<line x1="74" y1="360" x2="74" y2="364" stroke="#c3c2b7" stroke-width="1"/>
-<text x="74" y="375" fill="#898781" font-size="11" font-weight="400" text-anchor="middle" dominant-baseline="middle">32</text>
-<line x1="192.8" y1="360" x2="192.8" y2="364" stroke="#c3c2b7" stroke-width="1"/>
-<text x="192.8" y="375" fill="#898781" font-size="11" font-weight="400" text-anchor="middle" dominant-baseline="middle">64</text>
-<line x1="311.6" y1="360" x2="311.6" y2="364" stroke="#c3c2b7" stroke-width="1"/>
-<text x="311.6" y="375" fill="#898781" font-size="11" font-weight="400" text-anchor="middle" dominant-baseline="middle">128</text>
-<line x1="430.4" y1="360" x2="430.4" y2="364" stroke="#c3c2b7" stroke-width="1"/>
-<text x="430.4" y="375" fill="#898781" font-size="11" font-weight="400" text-anchor="middle" dominant-baseline="middle">256</text>
-<line x1="549.2" y1="360" x2="549.2" y2="364" stroke="#c3c2b7" stroke-width="1"/>
-<text x="549.2" y="375" fill="#898781" font-size="11" font-weight="400" text-anchor="middle" dominant-baseline="middle">512</text>
-<line x1="668" y1="360" x2="668" y2="364" stroke="#c3c2b7" stroke-width="1"/>
-<text x="668" y="375" fill="#898781" font-size="11" font-weight="400" text-anchor="middle" dominant-baseline="middle">1024</text>
-<line x1="74" y1="360" x2="668" y2="360" stroke="#c3c2b7" stroke-width="1"/>
-<text x="371" y="404" fill="#52514e" font-size="11" font-weight="400" text-anchor="middle" dominant-baseline="middle">Threads per block</text>
-<text x="0" y="0" fill="#52514e" font-size="11" font-weight="400" text-anchor="middle" dominant-baseline="middle" transform="translate(18 217) rotate(-90)">Frames per second</text>
-<path d="M74 289 L192.8 293.4 L311.6 293.1 L430.4 293 L549.2 289.3 L668 295" fill="none" stroke="#2a78d6" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
-<circle cx="74" cy="289" r="4" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/>
-<circle cx="192.8" cy="293.4" r="4" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/>
-<circle cx="311.6" cy="293.1" r="4" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/>
-<circle cx="430.4" cy="293" r="4" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/>
-<circle cx="549.2" cy="289.3" r="4" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/>
-<circle cx="668" cy="295" r="4" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/>
-<path d="M74 180.7 L192.8 182.4 L311.6 182.1 L430.4 181.6 L549.2 179.5 L668 185.5" fill="none" stroke="#eb6834" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
-<circle cx="74" cy="180.7" r="4" fill="#eb6834" stroke="#fcfcfb" stroke-width="2"/>
-<circle cx="192.8" cy="182.4" r="4" fill="#eb6834" stroke="#fcfcfb" stroke-width="2"/>
-<circle cx="311.6" cy="182.1" r="4" fill="#eb6834" stroke="#fcfcfb" stroke-width="2"/>
-<circle cx="430.4" cy="181.6" r="4" fill="#eb6834" stroke="#fcfcfb" stroke-width="2"/>
-<circle cx="549.2" cy="179.5" r="4" fill="#eb6834" stroke="#fcfcfb" stroke-width="2"/>
-<circle cx="668" cy="185.5" r="4" fill="#eb6834" stroke="#fcfcfb" stroke-width="2"/>
-<path d="M74 141.1 L192.8 139.5 L311.6 140.2 L430.4 139.3 L549.2 139.1 L668 141.6" fill="none" stroke="#1baf7a" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
-<circle cx="74" cy="141.1" r="4" fill="#1baf7a" stroke="#fcfcfb" stroke-width="2"/>
-<circle cx="192.8" cy="139.5" r="4" fill="#1baf7a" stroke="#fcfcfb" stroke-width="2"/>
-<circle cx="311.6" cy="140.2" r="4" fill="#1baf7a" stroke="#fcfcfb" stroke-width="2"/>
-<circle cx="430.4" cy="139.3" r="4" fill="#1baf7a" stroke="#fcfcfb" stroke-width="2"/>
-<circle cx="549.2" cy="139.1" r="4" fill="#1baf7a" stroke="#fcfcfb" stroke-width="2"/>
-<circle cx="668" cy="141.6" r="4" fill="#1baf7a" stroke="#fcfcfb" stroke-width="2"/>
-<text x="679" y="141.6" fill="#52514e" font-size="11" font-weight="400" text-anchor="start" dominant-baseline="middle">1,953</text>
-<text x="679" y="185.5" fill="#52514e" font-size="11" font-weight="400" text-anchor="start" dominant-baseline="middle">676</text>
-<text x="679" y="295" fill="#52514e" font-size="11" font-weight="400" text-anchor="start" dominant-baseline="middle">48.0</text>
+<rect width="780" height="420" fill="#16181c"/>
+<text x="74" y="26" fill="#ecebe6" font-size="15" font-weight="600" text-anchor="start" dominant-baseline="middle">Framerate vs Block Size (50k Boids)</text>
+<line x1="74" y1="50" x2="90" y2="50" stroke="#5b9cf0" stroke-width="2" stroke-linecap="round"/>
+<circle cx="82" cy="50" r="3.5" fill="#5b9cf0"/>
+<text x="96" y="50" fill="#c4c3bd" font-size="12" font-weight="400" text-anchor="start" dominant-baseline="middle">Naive</text>
+<line x1="152" y1="50" x2="168" y2="50" stroke="#f2875a" stroke-width="2" stroke-linecap="round"/>
+<circle cx="160" cy="50" r="3.5" fill="#f2875a"/>
+<text x="174" y="50" fill="#c4c3bd" font-size="12" font-weight="400" text-anchor="start" dominant-baseline="middle">Scattered uniform grid</text>
+<line x1="338.8" y1="50" x2="354.8" y2="50" stroke="#35c891" stroke-width="2" stroke-linecap="round"/>
+<circle cx="346.8" cy="50" r="3.5" fill="#35c891"/>
+<text x="360.8" y="50" fill="#c4c3bd" font-size="12" font-weight="400" text-anchor="start" dominant-baseline="middle">Coherent uniform grid</text>
+<line x1="74" y1="360" x2="668" y2="360" stroke="#2a2c31" stroke-width="1"/>
+<text x="66" y="360" fill="#8f9196" font-size="11" font-weight="400" text-anchor="end" dominant-baseline="middle">10</text>
+<line x1="74" y1="264.7" x2="668" y2="264.7" stroke="#2a2c31" stroke-width="1"/>
+<text x="66" y="264.7" fill="#8f9196" font-size="11" font-weight="400" text-anchor="end" dominant-baseline="middle">100</text>
+<line x1="74" y1="169.3" x2="668" y2="169.3" stroke="#2a2c31" stroke-width="1"/>
+<text x="66" y="169.3" fill="#8f9196" font-size="11" font-weight="400" text-anchor="end" dominant-baseline="middle">1,000</text>
+<line x1="74" y1="74" x2="668" y2="74" stroke="#2a2c31" stroke-width="1"/>
+<text x="66" y="74" fill="#8f9196" font-size="11" font-weight="400" text-anchor="end" dominant-baseline="middle">10,000</text>
+<line x1="74" y1="360" x2="74" y2="364" stroke="#4a4c52" stroke-width="1"/>
+<text x="74" y="375" fill="#8f9196" font-size="11" font-weight="400" text-anchor="middle" dominant-baseline="middle">32</text>
+<line x1="192.8" y1="360" x2="192.8" y2="364" stroke="#4a4c52" stroke-width="1"/>
+<text x="192.8" y="375" fill="#8f9196" font-size="11" font-weight="400" text-anchor="middle" dominant-baseline="middle">64</text>
+<line x1="311.6" y1="360" x2="311.6" y2="364" stroke="#4a4c52" stroke-width="1"/>
+<text x="311.6" y="375" fill="#8f9196" font-size="11" font-weight="400" text-anchor="middle" dominant-baseline="middle">128</text>
+<line x1="430.4" y1="360" x2="430.4" y2="364" stroke="#4a4c52" stroke-width="1"/>
+<text x="430.4" y="375" fill="#8f9196" font-size="11" font-weight="400" text-anchor="middle" dominant-baseline="middle">256</text>
+<line x1="549.2" y1="360" x2="549.2" y2="364" stroke="#4a4c52" stroke-width="1"/>
+<text x="549.2" y="375" fill="#8f9196" font-size="11" font-weight="400" text-anchor="middle" dominant-baseline="middle">512</text>
+<line x1="668" y1="360" x2="668" y2="364" stroke="#4a4c52" stroke-width="1"/>
+<text x="668" y="375" fill="#8f9196" font-size="11" font-weight="400" text-anchor="middle" dominant-baseline="middle">1024</text>
+<line x1="74" y1="360" x2="668" y2="360" stroke="#4a4c52" stroke-width="1"/>
+<text x="371" y="404" fill="#c4c3bd" font-size="11" font-weight="400" text-anchor="middle" dominant-baseline="middle">Threads per block</text>
+<text x="0" y="0" fill="#c4c3bd" font-size="11" font-weight="400" text-anchor="middle" dominant-baseline="middle" transform="translate(18 217) rotate(-90)">Frames per second</text>
+<path d="M74 289 L192.8 293.4 L311.6 293.1 L430.4 293 L549.2 289.3 L668 295" fill="none" stroke="#5b9cf0" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+<circle cx="74" cy="289" r="4" fill="#5b9cf0" stroke="#16181c" stroke-width="2"/>
+<circle cx="192.8" cy="293.4" r="4" fill="#5b9cf0" stroke="#16181c" stroke-width="2"/>
+<circle cx="311.6" cy="293.1" r="4" fill="#5b9cf0" stroke="#16181c" stroke-width="2"/>
+<circle cx="430.4" cy="293" r="4" fill="#5b9cf0" stroke="#16181c" stroke-width="2"/>
+<circle cx="549.2" cy="289.3" r="4" fill="#5b9cf0" stroke="#16181c" stroke-width="2"/>
+<circle cx="668" cy="295" r="4" fill="#5b9cf0" stroke="#16181c" stroke-width="2"/>
+<path d="M74 180.7 L192.8 182.4 L311.6 182.1 L430.4 181.6 L549.2 179.5 L668 185.5" fill="none" stroke="#f2875a" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+<circle cx="74" cy="180.7" r="4" fill="#f2875a" stroke="#16181c" stroke-width="2"/>
+<circle cx="192.8" cy="182.4" r="4" fill="#f2875a" stroke="#16181c" stroke-width="2"/>
+<circle cx="311.6" cy="182.1" r="4" fill="#f2875a" stroke="#16181c" stroke-width="2"/>
+<circle cx="430.4" cy="181.6" r="4" fill="#f2875a" stroke="#16181c" stroke-width="2"/>
+<circle cx="549.2" cy="179.5" r="4" fill="#f2875a" stroke="#16181c" stroke-width="2"/>
+<circle cx="668" cy="185.5" r="4" fill="#f2875a" stroke="#16181c" stroke-width="2"/>
+<path d="M74 141.1 L192.8 139.5 L311.6 140.2 L430.4 139.3 L549.2 139.1 L668 141.6" fill="none" stroke="#35c891" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+<circle cx="74" cy="141.1" r="4" fill="#35c891" stroke="#16181c" stroke-width="2"/>
+<circle cx="192.8" cy="139.5" r="4" fill="#35c891" stroke="#16181c" stroke-width="2"/>
+<circle cx="311.6" cy="140.2" r="4" fill="#35c891" stroke="#16181c" stroke-width="2"/>
+<circle cx="430.4" cy="139.3" r="4" fill="#35c891" stroke="#16181c" stroke-width="2"/>
+<circle cx="549.2" cy="139.1" r="4" fill="#35c891" stroke="#16181c" stroke-width="2"/>
+<circle cx="668" cy="141.6" r="4" fill="#35c891" stroke="#16181c" stroke-width="2"/>
+<text x="679" y="141.6" fill="#c4c3bd" font-size="11" font-weight="400" text-anchor="start" dominant-baseline="middle">1,953</text>
+<text x="679" y="185.5" fill="#c4c3bd" font-size="11" font-weight="400" text-anchor="start" dominant-baseline="middle">676</text>
+<text x="679" y="295" fill="#c4c3bd" font-size="11" font-weight="400" text-anchor="start" dominant-baseline="middle">48.0</text>
 </svg>

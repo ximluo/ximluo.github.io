@@ -1,79 +1,79 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="780" height="420" viewBox="0 0 780 420" font-family="system-ui, -apple-system, &quot;Segoe UI&quot;, sans-serif">
-<rect width="780" height="420" fill="#fcfcfb"/>
-<text x="74" y="26" fill="#0b0b0b" font-size="15" font-weight="600" text-anchor="start" dominant-baseline="middle">Framerate vs Boids (Visualization Off)</text>
-<line x1="74" y1="50" x2="90" y2="50" stroke="#2a78d6" stroke-width="2" stroke-linecap="round"/>
-<circle cx="82" cy="50" r="3.5" fill="#2a78d6"/>
-<text x="96" y="50" fill="#52514e" font-size="12" font-weight="400" text-anchor="start" dominant-baseline="middle">Naive</text>
-<line x1="152" y1="50" x2="168" y2="50" stroke="#eb6834" stroke-width="2" stroke-linecap="round"/>
-<circle cx="160" cy="50" r="3.5" fill="#eb6834"/>
-<text x="174" y="50" fill="#52514e" font-size="12" font-weight="400" text-anchor="start" dominant-baseline="middle">Scattered uniform grid</text>
-<line x1="338.8" y1="50" x2="354.8" y2="50" stroke="#1baf7a" stroke-width="2" stroke-linecap="round"/>
-<circle cx="346.8" cy="50" r="3.5" fill="#1baf7a"/>
-<text x="360.8" y="50" fill="#52514e" font-size="12" font-weight="400" text-anchor="start" dominant-baseline="middle">Coherent uniform grid</text>
-<line x1="74" y1="360" x2="668" y2="360" stroke="#e1e0d9" stroke-width="1"/>
-<text x="66" y="360" fill="#898781" font-size="11" font-weight="400" text-anchor="end" dominant-baseline="middle">0.1</text>
-<line x1="74" y1="302.8" x2="668" y2="302.8" stroke="#e1e0d9" stroke-width="1"/>
-<text x="66" y="302.8" fill="#898781" font-size="11" font-weight="400" text-anchor="end" dominant-baseline="middle">1</text>
-<line x1="74" y1="245.6" x2="668" y2="245.6" stroke="#e1e0d9" stroke-width="1"/>
-<text x="66" y="245.6" fill="#898781" font-size="11" font-weight="400" text-anchor="end" dominant-baseline="middle">10</text>
-<line x1="74" y1="188.4" x2="668" y2="188.4" stroke="#e1e0d9" stroke-width="1"/>
-<text x="66" y="188.4" fill="#898781" font-size="11" font-weight="400" text-anchor="end" dominant-baseline="middle">100</text>
-<line x1="74" y1="131.2" x2="668" y2="131.2" stroke="#e1e0d9" stroke-width="1"/>
-<text x="66" y="131.2" fill="#898781" font-size="11" font-weight="400" text-anchor="end" dominant-baseline="middle">1,000</text>
-<line x1="74" y1="74" x2="668" y2="74" stroke="#e1e0d9" stroke-width="1"/>
-<text x="66" y="74" fill="#898781" font-size="11" font-weight="400" text-anchor="end" dominant-baseline="middle">10,000</text>
-<line x1="74" y1="360" x2="74" y2="364" stroke="#c3c2b7" stroke-width="1"/>
-<text x="74" y="375" fill="#898781" font-size="11" font-weight="400" text-anchor="middle" dominant-baseline="middle">1k</text>
-<line x1="212.4" y1="360" x2="212.4" y2="364" stroke="#c3c2b7" stroke-width="1"/>
-<text x="212.4" y="375" fill="#898781" font-size="11" font-weight="400" text-anchor="middle" dominant-baseline="middle">5k</text>
-<line x1="272" y1="360" x2="272" y2="364" stroke="#c3c2b7" stroke-width="1"/>
-<text x="272" y="375" fill="#898781" font-size="11" font-weight="400" text-anchor="middle" dominant-baseline="middle">10k</text>
-<line x1="331.6" y1="360" x2="331.6" y2="364" stroke="#c3c2b7" stroke-width="1"/>
-<text x="331.6" y="375" fill="#898781" font-size="11" font-weight="400" text-anchor="middle" dominant-baseline="middle">20k</text>
-<line x1="410.4" y1="360" x2="410.4" y2="364" stroke="#c3c2b7" stroke-width="1"/>
-<text x="410.4" y="375" fill="#898781" font-size="11" font-weight="400" text-anchor="middle" dominant-baseline="middle">50k</text>
-<line x1="470" y1="360" x2="470" y2="364" stroke="#c3c2b7" stroke-width="1"/>
-<text x="470" y="375" fill="#898781" font-size="11" font-weight="400" text-anchor="middle" dominant-baseline="middle">100k</text>
-<line x1="529.6" y1="360" x2="529.6" y2="364" stroke="#c3c2b7" stroke-width="1"/>
-<text x="529.6" y="375" fill="#898781" font-size="11" font-weight="400" text-anchor="middle" dominant-baseline="middle">200k</text>
-<line x1="608.4" y1="360" x2="608.4" y2="364" stroke="#c3c2b7" stroke-width="1"/>
-<text x="608.4" y="375" fill="#898781" font-size="11" font-weight="400" text-anchor="middle" dominant-baseline="middle">500k</text>
-<line x1="668" y1="360" x2="668" y2="364" stroke="#c3c2b7" stroke-width="1"/>
-<text x="668" y="375" fill="#898781" font-size="11" font-weight="400" text-anchor="middle" dominant-baseline="middle">1M</text>
-<line x1="74" y1="360" x2="668" y2="360" stroke="#c3c2b7" stroke-width="1"/>
-<text x="371" y="404" fill="#52514e" font-size="11" font-weight="400" text-anchor="middle" dominant-baseline="middle">Number of boids</text>
-<text x="0" y="0" fill="#52514e" font-size="11" font-weight="400" text-anchor="middle" dominant-baseline="middle" transform="translate(18 217) rotate(-90)">Frames per second</text>
-<path d="M74 106.5 L212.4 129.7 L272 143.1 L331.6 161.6 L410.4 205.5 L470 235.5 L529.6 269.2 L608.4 314.7 L668 348.3" fill="none" stroke="#2a78d6" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
-<circle cx="74" cy="106.5" r="4" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/>
-<circle cx="212.4" cy="129.7" r="4" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/>
-<circle cx="272" cy="143.1" r="4" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/>
-<circle cx="331.6" cy="161.6" r="4" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/>
-<circle cx="410.4" cy="205.5" r="4" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/>
-<circle cx="470" cy="235.5" r="4" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/>
-<circle cx="529.6" cy="269.2" r="4" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/>
-<circle cx="608.4" cy="314.7" r="4" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/>
-<circle cx="668" cy="348.3" r="4" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/>
-<path d="M74 106.3 L212.4 109.7 L272 111.6 L331.6 117.3 L410.4 138.9 L470 156.3 L529.6 178 L608.4 217.3 L668 250.1" fill="none" stroke="#eb6834" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
-<circle cx="74" cy="106.3" r="4" fill="#eb6834" stroke="#fcfcfb" stroke-width="2"/>
-<circle cx="212.4" cy="109.7" r="4" fill="#eb6834" stroke="#fcfcfb" stroke-width="2"/>
-<circle cx="272" cy="111.6" r="4" fill="#eb6834" stroke="#fcfcfb" stroke-width="2"/>
-<circle cx="331.6" cy="117.3" r="4" fill="#eb6834" stroke="#fcfcfb" stroke-width="2"/>
-<circle cx="410.4" cy="138.9" r="4" fill="#eb6834" stroke="#fcfcfb" stroke-width="2"/>
-<circle cx="470" cy="156.3" r="4" fill="#eb6834" stroke="#fcfcfb" stroke-width="2"/>
-<circle cx="529.6" cy="178" r="4" fill="#eb6834" stroke="#fcfcfb" stroke-width="2"/>
-<circle cx="608.4" cy="217.3" r="4" fill="#eb6834" stroke="#fcfcfb" stroke-width="2"/>
-<circle cx="668" cy="250.1" r="4" fill="#eb6834" stroke="#fcfcfb" stroke-width="2"/>
-<path d="M74 108.9 L212.4 108.4 L272 109.9 L331.6 108.6 L410.4 113.7 L470 118.1 L529.6 139.9 L608.4 163.9 L668 194.6" fill="none" stroke="#1baf7a" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
-<circle cx="74" cy="108.9" r="4" fill="#1baf7a" stroke="#fcfcfb" stroke-width="2"/>
-<circle cx="212.4" cy="108.4" r="4" fill="#1baf7a" stroke="#fcfcfb" stroke-width="2"/>
-<circle cx="272" cy="109.9" r="4" fill="#1baf7a" stroke="#fcfcfb" stroke-width="2"/>
-<circle cx="331.6" cy="108.6" r="4" fill="#1baf7a" stroke="#fcfcfb" stroke-width="2"/>
-<circle cx="410.4" cy="113.7" r="4" fill="#1baf7a" stroke="#fcfcfb" stroke-width="2"/>
-<circle cx="470" cy="118.1" r="4" fill="#1baf7a" stroke="#fcfcfb" stroke-width="2"/>
-<circle cx="529.6" cy="139.9" r="4" fill="#1baf7a" stroke="#fcfcfb" stroke-width="2"/>
-<circle cx="608.4" cy="163.9" r="4" fill="#1baf7a" stroke="#fcfcfb" stroke-width="2"/>
-<circle cx="668" cy="194.6" r="4" fill="#1baf7a" stroke="#fcfcfb" stroke-width="2"/>
-<text x="679" y="194.6" fill="#52514e" font-size="11" font-weight="400" text-anchor="start" dominant-baseline="middle">78.0</text>
-<text x="679" y="250.1" fill="#52514e" font-size="11" font-weight="400" text-anchor="start" dominant-baseline="middle">8.35</text>
-<text x="679" y="348.3" fill="#52514e" font-size="11" font-weight="400" text-anchor="start" dominant-baseline="middle">0.160</text>
+<rect width="780" height="420" fill="#16181c"/>
+<text x="74" y="26" fill="#ecebe6" font-size="15" font-weight="600" text-anchor="start" dominant-baseline="middle">Framerate vs Boids (Visualization Off)</text>
+<line x1="74" y1="50" x2="90" y2="50" stroke="#5b9cf0" stroke-width="2" stroke-linecap="round"/>
+<circle cx="82" cy="50" r="3.5" fill="#5b9cf0"/>
+<text x="96" y="50" fill="#c4c3bd" font-size="12" font-weight="400" text-anchor="start" dominant-baseline="middle">Naive</text>
+<line x1="152" y1="50" x2="168" y2="50" stroke="#f2875a" stroke-width="2" stroke-linecap="round"/>
+<circle cx="160" cy="50" r="3.5" fill="#f2875a"/>
+<text x="174" y="50" fill="#c4c3bd" font-size="12" font-weight="400" text-anchor="start" dominant-baseline="middle">Scattered uniform grid</text>
+<line x1="338.8" y1="50" x2="354.8" y2="50" stroke="#35c891" stroke-width="2" stroke-linecap="round"/>
+<circle cx="346.8" cy="50" r="3.5" fill="#35c891"/>
+<text x="360.8" y="50" fill="#c4c3bd" font-size="12" font-weight="400" text-anchor="start" dominant-baseline="middle">Coherent uniform grid</text>
+<line x1="74" y1="360" x2="668" y2="360" stroke="#2a2c31" stroke-width="1"/>
+<text x="66" y="360" fill="#8f9196" font-size="11" font-weight="400" text-anchor="end" dominant-baseline="middle">0.1</text>
+<line x1="74" y1="302.8" x2="668" y2="302.8" stroke="#2a2c31" stroke-width="1"/>
+<text x="66" y="302.8" fill="#8f9196" font-size="11" font-weight="400" text-anchor="end" dominant-baseline="middle">1</text>
+<line x1="74" y1="245.6" x2="668" y2="245.6" stroke="#2a2c31" stroke-width="1"/>
+<text x="66" y="245.6" fill="#8f9196" font-size="11" font-weight="400" text-anchor="end" dominant-baseline="middle">10</text>
+<line x1="74" y1="188.4" x2="668" y2="188.4" stroke="#2a2c31" stroke-width="1"/>
+<text x="66" y="188.4" fill="#8f9196" font-size="11" font-weight="400" text-anchor="end" dominant-baseline="middle">100</text>
+<line x1="74" y1="131.2" x2="668" y2="131.2" stroke="#2a2c31" stroke-width="1"/>
+<text x="66" y="131.2" fill="#8f9196" font-size="11" font-weight="400" text-anchor="end" dominant-baseline="middle">1,000</text>
+<line x1="74" y1="74" x2="668" y2="74" stroke="#2a2c31" stroke-width="1"/>
+<text x="66" y="74" fill="#8f9196" font-size="11" font-weight="400" text-anchor="end" dominant-baseline="middle">10,000</text>
+<line x1="74" y1="360" x2="74" y2="364" stroke="#4a4c52" stroke-width="1"/>
+<text x="74" y="375" fill="#8f9196" font-size="11" font-weight="400" text-anchor="middle" dominant-baseline="middle">1k</text>
+<line x1="212.4" y1="360" x2="212.4" y2="364" stroke="#4a4c52" stroke-width="1"/>
+<text x="212.4" y="375" fill="#8f9196" font-size="11" font-weight="400" text-anchor="middle" dominant-baseline="middle">5k</text>
+<line x1="272" y1="360" x2="272" y2="364" stroke="#4a4c52" stroke-width="1"/>
+<text x="272" y="375" fill="#8f9196" font-size="11" font-weight="400" text-anchor="middle" dominant-baseline="middle">10k</text>
+<line x1="331.6" y1="360" x2="331.6" y2="364" stroke="#4a4c52" stroke-width="1"/>
+<text x="331.6" y="375" fill="#8f9196" font-size="11" font-weight="400" text-anchor="middle" dominant-baseline="middle">20k</text>
+<line x1="410.4" y1="360" x2="410.4" y2="364" stroke="#4a4c52" stroke-width="1"/>
+<text x="410.4" y="375" fill="#8f9196" font-size="11" font-weight="400" text-anchor="middle" dominant-baseline="middle">50k</text>
+<line x1="470" y1="360" x2="470" y2="364" stroke="#4a4c52" stroke-width="1"/>
+<text x="470" y="375" fill="#8f9196" font-size="11" font-weight="400" text-anchor="middle" dominant-baseline="middle">100k</text>
+<line x1="529.6" y1="360" x2="529.6" y2="364" stroke="#4a4c52" stroke-width="1"/>
+<text x="529.6" y="375" fill="#8f9196" font-size="11" font-weight="400" text-anchor="middle" dominant-baseline="middle">200k</text>
+<line x1="608.4" y1="360" x2="608.4" y2="364" stroke="#4a4c52" stroke-width="1"/>
+<text x="608.4" y="375" fill="#8f9196" font-size="11" font-weight="400" text-anchor="middle" dominant-baseline="middle">500k</text>
+<line x1="668" y1="360" x2="668" y2="364" stroke="#4a4c52" stroke-width="1"/>
+<text x="668" y="375" fill="#8f9196" font-size="11" font-weight="400" text-anchor="middle" dominant-baseline="middle">1M</text>
+<line x1="74" y1="360" x2="668" y2="360" stroke="#4a4c52" stroke-width="1"/>
+<text x="371" y="404" fill="#c4c3bd" font-size="11" font-weight="400" text-anchor="middle" dominant-baseline="middle">Number of boids</text>
+<text x="0" y="0" fill="#c4c3bd" font-size="11" font-weight="400" text-anchor="middle" dominant-baseline="middle" transform="translate(18 217) rotate(-90)">Frames per second</text>
+<path d="M74 106.5 L212.4 129.7 L272 143.1 L331.6 161.6 L410.4 205.5 L470 235.5 L529.6 269.2 L608.4 314.7 L668 348.3" fill="none" stroke="#5b9cf0" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+<circle cx="74" cy="106.5" r="4" fill="#5b9cf0" stroke="#16181c" stroke-width="2"/>
+<circle cx="212.4" cy="129.7" r="4" fill="#5b9cf0" stroke="#16181c" stroke-width="2"/>
+<circle cx="272" cy="143.1" r="4" fill="#5b9cf0" stroke="#16181c" stroke-width="2"/>
+<circle cx="331.6" cy="161.6" r="4" fill="#5b9cf0" stroke="#16181c" stroke-width="2"/>
+<circle cx="410.4" cy="205.5" r="4" fill="#5b9cf0" stroke="#16181c" stroke-width="2"/>
+<circle cx="470" cy="235.5" r="4" fill="#5b9cf0" stroke="#16181c" stroke-width="2"/>
+<circle cx="529.6" cy="269.2" r="4" fill="#5b9cf0" stroke="#16181c" stroke-width="2"/>
+<circle cx="608.4" cy="314.7" r="4" fill="#5b9cf0" stroke="#16181c" stroke-width="2"/>
+<circle cx="668" cy="348.3" r="4" fill="#5b9cf0" stroke="#16181c" stroke-width="2"/>
+<path d="M74 106.3 L212.4 109.7 L272 111.6 L331.6 117.3 L410.4 138.9 L470 156.3 L529.6 178 L608.4 217.3 L668 250.1" fill="none" stroke="#f2875a" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+<circle cx="74" cy="106.3" r="4" fill="#f2875a" stroke="#16181c" stroke-width="2"/>
+<circle cx="212.4" cy="109.7" r="4" fill="#f2875a" stroke="#16181c" stroke-width="2"/>
+<circle cx="272" cy="111.6" r="4" fill="#f2875a" stroke="#16181c" stroke-width="2"/>
+<circle cx="331.6" cy="117.3" r="4" fill="#f2875a" stroke="#16181c" stroke-width="2"/>
+<circle cx="410.4" cy="138.9" r="4" fill="#f2875a" stroke="#16181c" stroke-width="2"/>
+<circle cx="470" cy="156.3" r="4" fill="#f2875a" stroke="#16181c" stroke-width="2"/>
+<circle cx="529.6" cy="178" r="4" fill="#f2875a" stroke="#16181c" stroke-width="2"/>
+<circle cx="608.4" cy="217.3" r="4" fill="#f2875a" stroke="#16181c" stroke-width="2"/>
+<circle cx="668" cy="250.1" r="4" fill="#f2875a" stroke="#16181c" stroke-width="2"/>
+<path d="M74 108.9 L212.4 108.4 L272 109.9 L331.6 108.6 L410.4 113.7 L470 118.1 L529.6 139.9 L608.4 163.9 L668 194.6" fill="none" stroke="#35c891" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+<circle cx="74" cy="108.9" r="4" fill="#35c891" stroke="#16181c" stroke-width="2"/>
+<circle cx="212.4" cy="108.4" r="4" fill="#35c891" stroke="#16181c" stroke-width="2"/>
+<circle cx="272" cy="109.9" r="4" fill="#35c891" stroke="#16181c" stroke-width="2"/>
+<circle cx="331.6" cy="108.6" r="4" fill="#35c891" stroke="#16181c" stroke-width="2"/>
+<circle cx="410.4" cy="113.7" r="4" fill="#35c891" stroke="#16181c" stroke-width="2"/>
+<circle cx="470" cy="118.1" r="4" fill="#35c891" stroke="#16181c" stroke-width="2"/>
+<circle cx="529.6" cy="139.9" r="4" fill="#35c891" stroke="#16181c" stroke-width="2"/>
+<circle cx="608.4" cy="163.9" r="4" fill="#35c891" stroke="#16181c" stroke-width="2"/>
+<circle cx="668" cy="194.6" r="4" fill="#35c891" stroke="#16181c" stroke-width="2"/>
+<text x="679" y="194.6" fill="#c4c3bd" font-size="11" font-weight="400" text-anchor="start" dominant-baseline="middle">78.0</text>
+<text x="679" y="250.1" fill="#c4c3bd" font-size="11" font-weight="400" text-anchor="start" dominant-baseline="middle">8.35</text>
+<text x="679" y="348.3" fill="#c4c3bd" font-size="11" font-weight="400" text-anchor="start" dominant-baseline="middle">0.160</text>
 </svg>
