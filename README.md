@@ -2,7 +2,7 @@
 
 ![The home screen: the list of projects down the left, the current one playing on the right](.github/screenshot.png)
 
-Ximing Luo's portfolio, presented as a film reel: an opening leader, a list of projects down the left, a player
+Ximing Luo's portfolio, presented as a film reel: a list of projects down the left, a player
 that shows the current one, docked project pages, and a draggable wall of artworks. Live at
 [ximingluo.com](https://ximingluo.com).
 
@@ -10,8 +10,9 @@ that shows the current one, docked project pages, and a draggable wall of artwor
 
 - [Vite](https://vite.dev), [React 19](https://react.dev) and TypeScript in strict mode
 - Plain CSS, kept in `src/styles` (the design lives there; nothing is generated)
-- WebGL2 for the artwork wall, 2D canvas for the grain and the code-glyph hero
-- Self-hosted type: Gambetta, Bodoni Moda, B612 Mono, League Gothic and Literata (licences sit beside the files in
+- WebGL2 for the artwork wall, the ink field over the Home card and the stage photo on the About card; 2D
+  canvas for the grain and the code-glyph hero
+- Self-hosted type: Gambetta, Monsieur La Doulaise, B612 Mono, League Gothic and Literata (licences sit beside the files in
   `public/media/fonts`)
 - No other runtime dependencies
 
@@ -39,6 +40,7 @@ src/
                           elements the components register.
   film/                   grain, cursor and timecode loop; the leader; the split cut; tweens; the page tint
   wall/                   the WebGL wall and the canvas effects
+  gl/                     shared WebGL2 plumbing (context, loop, pointer), the ink field (Home, and the About card's photo)
   styles/                 fonts, project pages, core, layout, wall
 public/                   static files served as they are: icons, `404.html`, `echoes.pdf`, `media/`
 scripts/prerender.ts      runs after the build: one HTML file per route, each with its own head, plus the sitemap
@@ -83,7 +85,7 @@ preview image, so GitHub Pages answers each address directly and a shared link p
 | `/index`          | The player with every section unfolded                    |
 | `/?tint=grey`     | A grey leader                                             |
 
-After the first visit the leader is skipped; the name at the top left opens About. Links of the old shape
+The leader no longer plays; the name at the top left returns to the Home card. Links of the old shape
 (`/?open=<id>`, `/?art=<id>`, `/?about`) still work: the address is rewritten to the path once the site is up.
 
 Links to the site before 2026 (`/portfolio/<id>`, `/creative`) and paths with a trailing slash are redirected

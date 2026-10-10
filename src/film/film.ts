@@ -1,7 +1,8 @@
-/* The film furniture that runs for the whole visit: the grain canvas with dust and scratches at 12 fps, the eased
+/* The film furniture that runs for the whole visit: the grain canvas with dust and scratches at about 8 fps (one still
+   tile under reduced motion), the eased
    custom cursor, the running timecode, and one requestAnimationFrame loop that also drives the frame hooks the
    rest of the site registers (auto-advance, the phone bar). */
-import { TOUCH } from "../env"
+import { RM, TOUCH } from "../env"
 import { wait } from "./tween"
 
 export type FrameHook = (now: number) => void
@@ -67,15 +68,31 @@ export function startFilm(grain: HTMLCanvasElement, cursor: HTMLElement, flashNo
     for (let p = 0; p < d.data.length; p += 4) {
       const v = Math.random() < 0.5 ? 0 : 255
       d.data[p] = d.data[p + 1] = d.data[p + 2] = v
-      d.data[p + 3] = Math.pow(Math.random(), 2.2) * (v ? 30 : 56)
+      d.data[p + 3] = Math.pow(Math.random(), 2.8) * (v ? 18 : 40)
     }
     x.putImageData(d, 0, 0)
     tiles.push(c)
+  }
+  /* one tile over the whole canvas at a random offset */
+  const drawGrain = () => {
+    const W = grain.width
+    const H = grain.height
+    g.clearRect(0, 0, W, H)
+    g.save()
+    g.translate(-Math.random() * 128, -Math.random() * 128)
+    const tile = tiles[(Math.random() * tiles.length) | 0]
+    const pat = tile && g.createPattern(tile, "repeat")
+    if (pat) {
+      g.fillStyle = pat
+      g.fillRect(0, 0, W + 128, H + 128)
+    }
+    g.restore()
   }
   const sizeGrain = () => {
     const k = TOUCH ? 0.45 : 0.55
     grain.width = Math.ceil((grain.clientWidth || innerWidth) * k)
     grain.height = Math.ceil((grain.clientHeight || innerHeight) * k)
+    drawGrain()
   }
   sizeGrain()
   addEventListener("resize", sizeGrain)
@@ -104,41 +121,35 @@ export function startFilm(grain: HTMLCanvasElement, cursor: HTMLElement, flashNo
     C.x += (P.x - C.x) * 0.35
     C.y += (P.y - C.y) * 0.35
     cursor.style.transform = `translate(${C.x}px,${C.y}px)`
-    if (now - gT > 83) {
-      gT = now /* 12 fps grain */
-      const W = grain.width
-      const H = grain.height
-      g.clearRect(0, 0, W, H)
-      g.save()
-      g.translate(-Math.random() * 128, -Math.random() * 128)
-      const tile = tiles[(Math.random() * tiles.length) | 0]
-      const pat = tile && g.createPattern(tile, "repeat")
-      if (pat) {
-        g.fillStyle = pat
-        g.fillRect(0, 0, W + 128, H + 128)
-      }
-      g.restore()
-      if (Math.random() < 0.5) {
-        const x = Math.random() * W
-        const y = Math.random() * H
-        const r = Math.random() * 1.8 + 0.4
-        g.fillStyle = Math.random() < 0.6 ? "rgba(0,0,0,.6)" : "rgba(236,235,230,.45)"
-        g.beginPath()
-        g.arc(x, y, r, 0, 7)
-        g.fill()
-      }
-      if (Math.random() < 0.03)
-        scratch.push({
-          x: Math.random() * W,
-          life: 5 + Math.random() * 14,
-          a: 0.05 + Math.random() * 0.08,
+    if (now - gT > 120) {
+      gT =
+        now /* ~8 fps grain: every 8th frame at 60 Hz. Under reduced motion the first tile stays */
+      if (!RM) {
+        drawGrain()
+        const W = grain.width
+        const H = grain.height
+        if (Math.random() < 0.15) {
+          const x = Math.random() * W
+          const y = Math.random() * H
+          const r = Math.random() * 1.1 + 0.3
+          g.fillStyle = Math.random() < 0.6 ? "rgba(0,0,0,.45)" : "rgba(236,235,230,.3)"
+          g.beginPath()
+          g.arc(x, y, r, 0, 7)
+          g.fill()
+        }
+        if (Math.random() < 0.01)
+          scratch.push({
+            x: Math.random() * W,
+            life: 5 + Math.random() * 14,
+            a: 0.04 + Math.random() * 0.05,
+          })
+        scratch = scratch.filter((s) => s.life-- > 0)
+        scratch.forEach((s) => {
+          s.x += Math.random() - 0.5
+          g.fillStyle = `rgba(236,235,230,${s.a})`
+          g.fillRect(s.x, 0, 0.7, H)
         })
-      scratch = scratch.filter((s) => s.life-- > 0)
-      scratch.forEach((s) => {
-        s.x += Math.random() - 0.5
-        g.fillStyle = `rgba(236,235,230,${s.a})`
-        g.fillRect(s.x, 0, 0.7, H)
-      })
+      }
       const t = timecode((performance.now() - t00) / 1000)
       tcEls.forEach((e) => (e.textContent = t))
     }

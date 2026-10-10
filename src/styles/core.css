@@ -6,6 +6,7 @@
   --serif:"Gambetta",Georgia,serif;
   --mono:"B612 Mono",ui-monospace,Menlo,monospace;
   --top:46px; --bot:46px; --gut:max(16px,2vw);
+  --r-s:6px; --r-m:999px; --r-l:14px; --r-xl:20px; /* corners: chips, pills (full), media, sheets */
   --tr:196; --tg:22; --tb:28;
   --tint:rgba(var(--tr),var(--tg),var(--tb),1);
   transition:--tr .5s steps(6),--tg .5s steps(6),--tb .5s steps(6);
@@ -13,7 +14,7 @@
 }
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%;background:var(--ink);color:var(--bone);overflow:hidden;overscroll-behavior:none}
-body{font-family:var(--serif);-webkit-font-smoothing:antialiased}
+body{background:radial-gradient(ellipse at 60% 40%,#101216,var(--ink) 72%);font-family:var(--serif);-webkit-font-smoothing:antialiased}
 body:not(.touch){cursor:none}
 body:not(.touch) button,body:not(.touch) a{cursor:none}
 button{font:inherit;color:inherit;background:none;border:0}
@@ -26,9 +27,8 @@ img{display:block}
 body.rec-on .pt{width:7px;height:7px;border-radius:50%;clip-path:none;animation:blink 1.6s steps(1) infinite;margin-right:4px;vertical-align:0}
 @keyframes blink{50%{opacity:.15}}
 
-/* bars + HUD */
-#bars i{position:fixed;left:0;right:0;background:#000;z-index:50;pointer-events:none;transition:height .2s steps(3)}
-#bars .b-top{top:0;height:var(--top)} #bars .b-bot{bottom:0;height:var(--bot)}
+/* HUD: the four corners sit in the --top / --bot rows. The rows are layout insets only (the black bars that filled
+   them are gone), so the list, player and pane keep their alignment and the field shows through them */
 #hud{position:fixed;inset:0;z-index:51;pointer-events:none}
 .h{position:absolute;display:flex;align-items:center;gap:12px;pointer-events:auto;height:var(--top);color:var(--bone);white-space:nowrap}
 .h b{font-weight:400}
@@ -51,7 +51,7 @@ body.rec-on .pt{width:7px;height:7px;border-radius:50%;clip-path:none;animation:
 .vf.br{right:var(--gut);bottom:calc(var(--bot) + 14px);border-right-width:1px;border-bottom-width:1px}
 .cue{display:inline-block;width:12px;height:12px;border-radius:50%;border:1px solid rgba(236,235,230,.3)}
 .cue.fl{background:var(--bone);border-color:var(--bone)}
-#home{text-align:left} #home:hover b{text-decoration:underline;text-underline-offset:4px}
+#home{text-align:left} #home:hover b{text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:.3em;text-decoration-color:var(--silver)}
 
 /* tint plate: sits behind images only */
 .glow{position:absolute;pointer-events:none;background:
@@ -59,7 +59,7 @@ body.rec-on .pt{width:7px;height:7px;border-radius:50%;clip-path:none;animation:
 
 /* leader: a scratched head leader. --ld-font is the name face, --ld-num the numeral; --fl is the lamp flicker set by R.intro */
 #leader{--ring:min(62vmin,520px);--npad:max(20px,2.5vw);--nfs:min(calc((50vw - var(--ring)/2 - var(--ngap) - var(--col) - 2*var(--npad))/3.4),150px);
-  --ngap:clamp(12px,2vw,32px);--col:calc(var(--edge) + 60px);--ld-font:var(--serif);--ld-num:"League Gothic",Impact,"Arial Narrow",sans-serif;--ld-c:236,235,230;--ld-ink:rgb(var(--ld-c));--ld-line:rgba(var(--ld-c),.55);--ld-bg0:#3a2628;--ld-bg1:#1b1618;--ld-bg2:#0a0a0b;--edge:max(10px,1.2vw);--fl:1;
+  --ngap:clamp(12px,2vw,32px);--col:calc(var(--edge) + 60px);--ld-font:"Monsieur La Doulaise",cursive;--ld-num:"League Gothic",Impact,"Arial Narrow",sans-serif;--ld-c:236,235,230;--ld-ink:rgb(var(--ld-c));--ld-line:rgba(var(--ld-c),.55);--ld-bg0:#3a2628;--ld-bg1:#1b1618;--ld-bg2:#0a0a0b;--edge:max(10px,1.2vw);--fl:1;
   position:fixed;inset:0;z-index:70;background:radial-gradient(ellipse 46% 42% at 50% 50%,var(--ld-bg0) 0,var(--ld-bg1) 58%,var(--ld-bg2) 100%);filter:brightness(var(--fl));
   -webkit-mask-image:radial-gradient(circle at var(--x,50%) var(--y,50%),transparent var(--r,0px),#000 calc(var(--r,0px) + 1px));
   mask-image:radial-gradient(circle at var(--x,50%) var(--y,50%),transparent var(--r,0px),#000 calc(var(--r,0px) + 1px))}
@@ -78,7 +78,7 @@ body.rec-on .pt{width:7px;height:7px;border-radius:50%;clip-path:none;animation:
 .ld-sweep{position:absolute;inset:0;border-radius:50%;background:conic-gradient(from 0deg,rgba(0,0,0,.42) var(--a,0deg),transparent var(--a,0deg))}
 .ld-sweep::after{content:"";position:absolute;left:50%;top:0;width:1px;height:50%;margin-left:-.5px;background:var(--ld-line);transform-origin:50% 100%;transform:rotate(var(--a,0deg))}
 #ldn{position:relative;font-family:var(--ld-num);font-weight:400;font-size:min(32vmin,265px);line-height:1;color:var(--ld-ink);margin-top:-.03em;text-shadow:3px 0 0 rgba(0,0,0,.4),-2px 0 0 rgba(var(--ld-c),.12)}
-.ld-name{position:absolute;inset:0;margin:0;font-family:var(--ld-font);font-weight:300;font-size:var(--nfs);line-height:1;letter-spacing:.04em;text-transform:uppercase;color:var(--ld-ink);white-space:nowrap;pointer-events:none}
+.ld-name{position:absolute;inset:0;margin:0;font-family:var(--ld-font);font-weight:400;font-size:var(--nfs);line-height:1;letter-spacing:0;text-transform:none;color:var(--ld-ink);white-space:nowrap;pointer-events:none}
 /* each half of the name is centred in its column beside the ring; nothing else is written on the leader */
 .ld-name span{position:absolute;top:50%;transform:translateY(-48%);text-align:center;filter:url(#ld-noise)}
 .ld-name span:first-child{left:var(--col);right:calc(50% + var(--ring)/2 + var(--ngap))}
@@ -100,7 +100,7 @@ body.rec-on .pt{width:7px;height:7px;border-radius:50%;clip-path:none;animation:
 #flash{position:fixed;inset:0;background:var(--bone);opacity:0;z-index:60;pointer-events:none;mix-blend-mode:screen}
 
 /* film overlays */
-#grain{position:fixed;left:0;top:var(--top);width:100%;height:calc(100% - var(--top) - var(--bot));z-index:80;pointer-events:none;opacity:.4}
+#grain{position:fixed;inset:0;width:100%;height:100%;z-index:80;pointer-events:none;opacity:.2}
 #vignette{position:fixed;inset:0;z-index:79;pointer-events:none;background:radial-gradient(ellipse 80% 75% at 50% 50%,transparent 62%,rgba(0,0,0,.4) 100%)}
 #cursor{position:fixed;left:0;top:0;width:0;height:0;z-index:90;pointer-events:none;mix-blend-mode:difference}
 #cursor i{position:absolute;width:9px;height:9px;border:0 solid #fff;transition:transform .18s steps(3)}
@@ -151,7 +151,7 @@ body.touch #cursor{display:none}
 .ab-exp li b{grid-column:2;grid-row:1;font-weight:400;font-style:italic;font-size:clamp(20px,1.7vw,26px);line-height:1.15}
 .ab-exp li .y{grid-column:2;grid-row:2;font:400 10px/1.5 var(--mono);letter-spacing:.1em;color:var(--silver2)}
 .ab-ln{margin-top:3vh;display:flex;flex-wrap:wrap;justify-content:center;gap:4px 8px}
-.ab-ln a{display:inline-flex;align-items:center;min-height:44px;padding:0 14px;font:400 10.5px/1 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--bone);text-decoration:none;border:1px solid rgba(236,235,230,.2)}
+.ab-ln a{display:inline-flex;align-items:center;min-height:44px;padding:0 14px;font:400 10.5px/1 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--bone);text-decoration:none;border:1px solid rgba(236,235,230,.2);border-radius:var(--r-m)}
 .ab-ln a:hover{border-color:var(--bone)}
 .ab-fin{margin-top:10vh;color:var(--silver2);letter-spacing:.5em}
 .ab-mail{margin-top:3vh}.ab-mail a{font-style:italic;font-size:clamp(22px,2.4vw,36px);color:var(--bone);text-decoration:none;border-bottom:1px solid rgba(236,235,230,.4)}.ab-mail a:hover{border-color:var(--bone)}
@@ -166,7 +166,7 @@ body.touch #cursor{display:none}
 .rc-old[open] summary{margin-bottom:2vh}
 .rc-old .ab-exp h3{display:none}
 /* slate */
-.slate{border:1px solid rgba(236,235,230,.34);background:rgba(17,19,23,.74);width:100%;max-width:340px;font-family:var(--mono);text-transform:uppercase;font-size:10.5px;letter-spacing:.12em;overflow:hidden}
+.slate{border:1px solid rgba(236,235,230,.34);background:rgba(17,19,23,.74);width:100%;max-width:340px;font-family:var(--mono);text-transform:uppercase;font-size:10.5px;letter-spacing:.12em;overflow:hidden;border-radius:var(--r-s)}
 .slate .clap{display:block;height:20px;background:repeating-linear-gradient(115deg,#ecebe6 0 14px,#111317 14px 28px);border-bottom:1px solid rgba(236,235,230,.34);transform-origin:0 100%}
 .slate dl{display:grid;grid-template-columns:auto minmax(0,1fr)}
 .slate dt,.slate dd{padding:8px 12px;border-top:1px solid rgba(236,235,230,.14);line-height:1.35}

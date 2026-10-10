@@ -1,9 +1,10 @@
-/* The site, in the order the stylesheet layers it: the three columns (list, scrubber, player or wall), then the
-   overlays, the HUD, the phone bar, and the film furniture on top. */
+/* The site, in the order the stylesheet layers it: the three columns (list, scrubber, player or wall), the ink field
+   over them on Home, then the overlays, the HUD, the phone bar, and the film furniture on top. */
 import { useEffect } from "react"
-import { Bars, Corners, Cursor, Flash, Grain, Vignette } from "./components/Film"
+import { Corners, Cursor, Flash, Grain, Vignette } from "./components/Film"
 import { FullImage } from "./components/FullImage"
 import { Hud } from "./components/Hud"
+import { InkField } from "./components/InkField"
 import { Leader } from "./components/Leader"
 import { CloseX, PageNav } from "./components/PageNav"
 import { PhoneBar } from "./components/PhoneBar"
@@ -26,11 +27,11 @@ export function App({ start, stop }: { start(): void; stop(): void }) {
         <Player />
         <WallPanel />
       </div>
+      <InkField />
       <FullImage />
       <ProjectPane />
       <CloseX />
       <PageNav />
-      <Bars />
       <Flash />
       <Hud />
       <PhoneBar />

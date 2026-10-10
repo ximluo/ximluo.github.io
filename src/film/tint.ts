@@ -42,3 +42,11 @@ export function setTint(entry: Entry | null) {
   st.setProperty("--tg", String(g))
   st.setProperty("--tb", String(b))
 }
+
+/** The page light as the stylesheet shows it right now, 0..1 per channel: the stepped transition on --tr/--tg/--tb
+    is read, not the target, so an effect reading it every frame follows the same six steps the CSS does. */
+export function readTint(): [number, number, number] {
+  const cs = getComputedStyle(document.documentElement)
+  const n = (k: string) => (parseFloat(cs.getPropertyValue(k)) || 0) / 255
+  return [n("--tr"), n("--tg"), n("--tb")]
+}

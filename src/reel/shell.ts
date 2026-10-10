@@ -4,8 +4,7 @@ import { trackExternalLink } from "../analytics"
 import { isPhone } from "../env"
 import { clamp } from "../film/tween"
 import type { Actions, Ctx } from "./ctx"
-import { setBodyClass, setMenuQ } from "./ctx"
-import { nav } from "../routing"
+import { setMenuQ } from "./ctx"
 import type { Snap } from "./state"
 
 const SNAPS: Snap[] = ["peek", "half", "full"]
@@ -81,28 +80,10 @@ export function createShell(ctx: Ctx) {
     else if (s().view === "wall") void a.closeWall()
   }
 
-  /* ---------- home: the top-left name replays the opening and returns to the Home card. The leader plays nowhere else ---------- */
-  async function resetHome() {
-    a.closeFull()
-    a.projReset()
-    if (s().view === "wall") await a.closeWall({ instant: true, force: true })
-    for (const c of ["lb", "cutting", "m-wall"]) setBodyClass(c, false)
-    setMenuQ(ctx, false)
-    setSnap("peek")
-    a.setOff("Y", 0, 1)
-    f.idleT = -1e9
-    f.first = true
-    a.select(cat.home)
-    const sc = dom.blist.querySelector(".lu-scroll")
-    if (sc) sc.scrollTop = 0
-    nav.clear()
-  }
+  /* ---------- home: the top-left name returns to the Home card the way the Home row does; the leader plays nowhere ---------- */
   async function goHome() {
     if (ctx.intro.on || f.busy || f.dBusy || f.stepBusy) return
-    store.set({ started: false })
-    await ctx.intro.run({ onCover: resetHome })
-    store.set({ started: true })
-    f.autoT = performance.now()
+    await a.pick(cat.home)
   }
 
   /* ---------- keys: the app layer first, then the open project's, both ahead of the leader and the wall ---------- */

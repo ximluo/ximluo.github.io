@@ -32,7 +32,7 @@ export function readRoute(pathname = location.pathname, search = location.search
     : path
   /* Recognition is a section of About now; its old address still opens it */
   if (r.open === "recognition") r.open = "about"
-  /* the site always opens on the Home card; the leader plays only from the top-left name */
+  /* the site always opens on the Home card; the leader no longer plays */
   return { ...r, noIntro: true, tintGrey: Q.get("tint") === "grey", legacy }
 }
 

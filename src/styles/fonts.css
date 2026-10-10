@@ -9,6 +9,5 @@
 @font-face{font-family:"B612 Mono";src:url("/media/fonts/B612Mono-Italic.woff2") format("woff2");font-weight:400;font-style:italic;font-display:swap}
 @font-face{font-family:"B612 Mono";src:url("/media/fonts/B612Mono-Bold.woff2") format("woff2");font-weight:700;font-style:normal;font-display:swap}
 @font-face{font-family:"League Gothic";src:url("/media/fonts/LeagueGothic-Regular.woff2") format("woff2");font-weight:400;font-style:normal;font-display:swap}
-/* Bodoni Moda (indestructible type, SIL Open Font License): the name, SemiBold at the top left as on the earlier site, Medium on the title card (cut from the variable font, Latin, optical sizes kept) */
-@font-face{font-family:"Bodoni Moda";src:url("/media/fonts/BodoniModa-Medium.woff2") format("woff2");font-weight:500;font-style:normal;font-display:swap}
-@font-face{font-family:"Bodoni Moda";src:url("/media/fonts/BodoniModa-SemiBold.woff2") format("woff2");font-weight:600;font-style:normal;font-display:swap}
+/* Monsieur La Doulaise (Alejandro Paul / Sudtipos, SIL Open Font License with a Reserved Font Name, so the file is the unmodified font, only compressed to woff2): the name */
+@font-face{font-family:"Monsieur La Doulaise";src:url("/media/fonts/MonsieurLaDoulaise-Regular.woff2") format("woff2");font-weight:400;font-style:normal;font-display:swap}

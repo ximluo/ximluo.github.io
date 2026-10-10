@@ -10,6 +10,9 @@ import { artPath, openPath } from "../paths"
 import { useDomRef, useReel, useReelState } from "../reel/context"
 import { readListMemory, saveListMemory } from "../reel/state"
 
+/* the row's small label: the meta line without its year (a bare year shows nothing) */
+const rowLabel = (meta: string) => meta.replace(/\s*·\s*\d{4}\s*$/, "").replace(/^\d{4}$/, "")
+
 function WorkRow({ w, section }: { w: WorkEntry; section: Section }) {
   const { cat } = useReel()
   const on = useReelState((s) => s.activeId === w.id)
@@ -28,11 +31,8 @@ function WorkRow({ w, section }: { w: WorkEntry; section: Section }) {
       data-k={w.kind}
     >
       <span className="n">{cat.num(w)}</span>
-      <b>
-        {w.label || w.title}
-        {cat.recOf(w.id).length > 0 && <i className="rk" title="Recognised"></i>}
-      </b>
-      <em>{w.meta || w.year || ""}</em>
+      <b>{w.label || w.title}</b>
+      <em>{rowLabel(w.meta)}</em>
     </a>
   )
 }

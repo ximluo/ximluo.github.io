@@ -1,4 +1,4 @@
-/* The heads-up display in the four corners: the name (replays the opening and returns to Home), the wall's Back button, the timecode,
+/* The heads-up display in the four corners: the name (returns to Home), the wall's Back button, the timecode,
    the reel and scene numbers, the player toggle and the address. */
 import { cx } from "../cx"
 import { AB } from "../data/about"
@@ -7,7 +7,6 @@ import { pad } from "../text"
 
 export function Hud() {
   const { cat, actions } = useReel()
-  const phone = useReelState((s) => s.phone)
   const cur = useReelState((s) => s.cur)
   const view = useReelState((s) => s.view)
   const detailId = useReelState((s) => s.detailId)
@@ -35,7 +34,7 @@ export function Hud() {
         className="h h-tl mono"
         id="home"
         data-hot=""
-        aria-label="Ximing Luo: replay the opening and return to the start"
+        aria-label="Ximing Luo: return to the start"
         onClick={(e) => {
           e.currentTarget.blur()
           void actions.goHome()
@@ -45,11 +44,6 @@ export function Hud() {
         <span id="hud-lab"></span>
         <b>Ximing Luo</b>
       </button>
-      <div className="h h-tr mono">
-        <span className="h-how dim" id="h-how">
-          {phone ? "Swipe or use the arrows" : ""}
-        </span>
-      </div>
       <div className="h h-wt mono">
         <button id="wt-back" data-hot="" onClick={() => void actions.wallBack()}>
           ‹ Back

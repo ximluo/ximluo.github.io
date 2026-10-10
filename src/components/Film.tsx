@@ -1,12 +1,5 @@
-/* The film furniture around the site: black bars, the flash, viewfinder corners, grain, vignette and the cursor. */
+/* The film furniture around the site: the flash, viewfinder corners, grain, vignette and the cursor. */
 import { useDomRef } from "../reel/context"
-
-export const Bars = () => (
-  <div id="bars" aria-hidden="true">
-    <i className="b-top"></i>
-    <i className="b-bot"></i>
-  </div>
-)
 
 export const Flash = () => <div id="flash" aria-hidden="true" ref={useDomRef("flash")}></div>
 

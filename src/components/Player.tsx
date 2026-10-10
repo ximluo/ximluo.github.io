@@ -1,6 +1,6 @@
 /* The player: the hero stack (images are managed by reel/player.ts), the wall's moving preview, the canvas card
-   for works drawn by an effect, the title card (no caption on that frame), the About card (the address and the
-   links), and the caption with its meta grid and Open pill. */
+   for works drawn by an effect, the title card (no caption on that frame), the About card (the bio and the links
+   beside the stage photo), and the caption with its meta grid and Open pill. */
 import { Fragment, useEffect, useLayoutEffect, useRef } from "react"
 import { AB, CLAIM } from "../data/about"
 import type { Entry, PageEntry } from "../data/types"
@@ -26,9 +26,8 @@ function PlayerCard({ cur }: { cur: Entry | null }) {
   return <div className="pl-card" id="pl-card" hidden={!fx} ref={ref}></div>
 }
 
-/* The title card: the name, the claim, the course line and the reel hint on the left; the stage photo on the
-   right, monochrome under the page light, its left edge dissolving into the dark. */
-const PHOTO = "img/ximing-stage.webp"
+/* The title card: the name, the claim, the course line and the reel hint, set over the ink field (the stage photo
+   lives on the About card now, under the same field). */
 function TitleCard({ on, phone }: { on: boolean; phone: boolean }) {
   return (
     <div className="pl-home" id="pl-home" hidden={!on}>
@@ -36,54 +35,57 @@ function TitleCard({ on, phone }: { on: boolean; phone: boolean }) {
         <h1 className="ph-name">Ximing Luo</h1>
         <p className="ph-line">{CLAIM}</p>
         <p className="ph-sub mono">{AB.study}</p>
-        <p className="ph-go mono">
-          <span className="pt" aria-hidden="true"></span>
-          {phone ? "Swipe to start" : "Scroll to start"}
-        </p>
-      </div>
-      <div className="ph-fig" aria-hidden="true">
-        <img src={media(PHOTO)} alt="" width={1254} height={1254} decoding="async" />
+        <p className="ph-go mono">{phone ? "Swipe to start" : "Scroll to start"}</p>
       </div>
     </div>
   )
 }
 
-/* The About frame's stage, one stack: the title, the bio, the Open pill, then the three link pills on the line
-   under it. This frame shows no caption either. */
+/* The About frame's stage: the stage photo on the right, feathered into the dark, and one stack on the left: the
+   title, the bio, the Open pill, then the three link pills on the line under it. The ink field (InkField.tsx) runs
+   over this frame as it does over the title card, lighter under the stack and the photo. No caption on this frame
+   either. */
+const PHOTO = "img/ximing-stage.webp"
 function AboutCard({ w }: { w: PageEntry | null }) {
   const { actions } = useReel()
   return (
     <div className="pl-about" id="pl-about" hidden={!w}>
-      <p className="pa-kick mono">{w?.kick || "Info"}</p>
-      <h2 className="pa-title">{w?.title ?? "About"}</h2>
-      <p className="pa-bio">{AB.bio}</p>
-      <p className="pa-open">
-        <button
-          className="open btn"
-          onClick={(e) => {
-            if (!w || e.detail > 1) return
-            void actions.pick(w)
-          }}
-        >
-          Open {w?.title ?? "About"} <i>→</i>
-        </button>
-      </p>
-      <p className="pa-ln">
-        {AB.links.map(([t, href]) => {
-          const ext = /^https?:/.test(href)
-          return (
-            <a
-              key={t}
-              className="btn"
-              href={href}
-              target={ext ? "_blank" : undefined}
-              rel={ext ? "noopener" : undefined}
-            >
-              {t} <i>{ext ? "↗" : "→"}</i>
-            </a>
-          )
-        })}
-      </p>
+      <div className="pa-text">
+        <h2 className="pa-title">{w?.title ?? "About"}</h2>
+        <p className="pa-bio">{AB.bio}</p>
+        <p className="pa-open">
+          <button
+            className="open btn"
+            onClick={(e) => {
+              if (!w || e.detail > 1) return
+              void actions.pick(w)
+            }}
+          >
+            Open {w?.title ?? "About"} <i>→</i>
+          </button>
+        </p>
+        <p className="pa-ln">
+          {AB.links.map(([t, href]) => {
+            const ext = /^https?:/.test(href)
+            return (
+              <a
+                key={t}
+                className="btn"
+                href={href}
+                target={ext ? "_blank" : undefined}
+                rel={ext ? "noopener" : undefined}
+              >
+                {t} <i>{ext ? "↗" : "→"}</i>
+              </a>
+            )
+          })}
+        </p>
+      </div>
+      <div className="pa-fig" aria-hidden="true">
+        <div className="pa-ph">
+          <img src={media(PHOTO)} alt="" width={1254} height={1254} decoding="async" />
+        </div>
+      </div>
     </div>
   )
 }
